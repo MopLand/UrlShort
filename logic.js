@@ -198,6 +198,24 @@ var whatIs = function(url, request, response){
 	});
 };
 
+//This method looks up stats of a specific short URL and sends it to the client
+var statIs = function(url, request, response){
+	pool.getConnection(function(err, con){
+		var hash = url;
+		if(!hash) hash = "";
+		hash = hash.replace(cons.root_url, "");
+		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
+			if(err || rows.length == 0){
+				response.send({result: false, url: null});
+			}
+			else{
+				response.send({result: true, url: rows[0].url, hash: hash, clicks: rows[0].num_of_clicks});
+			}
+		});
+		con.release();
+	});
+};
+
 //This function returns the correct IP address. Node.js apps normally run behind a proxy, so the remoteAddress will be equal to the proxy. A proxy sends a header "X-Forwarded-For", so if this header is set, this IP address will be used.
 function getIP(request){
 	return request.header("x-forwarded-for") || request.connection.remoteAddress;
@@ -206,3 +224,4 @@ function getIP(request){
 exports.getUrl = getUrl;
 exports.addUrl = addUrl;
 exports.whatIs = whatIs;
+exports.statIs = statIs;
