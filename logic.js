@@ -104,20 +104,36 @@ var getUrl = function(segment, request, response){
 		con.query(cons.get_query.replace("{SEGMENT}", con.escape(segment)), function(err, rows){
 			var result = rows;
 			if(!err && rows.length > 0){
+				
 				var referer = "";
 				if(request.headers.referer){
 					referer = request.headers.referer;
 				}
-				con.query(cons.insert_view.replace("{IP}", con.escape(getIP(request))).replace("{URL_ID}", con.escape(result[0].id)).replace("{REFERER}", con.escape(referer)), function(err, rows){
-					if(err){
-						console.log(err);
-					}
-					con.query(cons.update_views_query.replace("{VIEWS}", con.escape(result[0].num_of_clicks+1)).replace("{ID}", con.escape(result[0].id)), function(err, rows){
+				var ip = getIP(request);
+				
+				////////////////////////
+				
+				getIPInfo( ip, function( info ){
+					
+					console.log( info );
+				
+					con.query( cons.insert_view, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city ], function(err, rows){
 						if(err){
 							console.log(err);
 						}
-					});
-				});
+						/*
+						con.query(cons.update_views_query.replace("{VIEWS}", con.escape(result[0].num_of_clicks+1)).replace("{ID}", con.escape(result[0].id)), function(err, rows){
+							if(err){
+								console.log(err);
+							}
+						});
+						*/
+					});	
+					
+				} );
+				
+				////////////////////////
+				
 				response.redirect(result[0].url);
 			}
 			else{
@@ -219,6 +235,23 @@ var statIs = function(url, request, response){
 //This function returns the correct IP address. Node.js apps normally run behind a proxy, so the remoteAddress will be equal to the proxy. A proxy sends a header "X-Forwarded-For", so if this header is set, this IP address will be used.
 function getIP(request){
 	return request.header("x-forwarded-for") || request.connection.remoteAddress;
+}
+
+function getIPInfo( ip, fn ){
+	var ip = '171.41.72.243';
+	var url = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
+	req( url, function( error, response, body ){
+		
+		if (!error && response.statusCode == 200) {
+			var res = JSON.parse( body );
+			if( res.code == 0 ){
+				fn && fn( res.data );
+				return;
+			}				
+		}
+		
+		fn && fn( { country : null, area : null, region : null, city : null } );		
+	} );
 }
 
 exports.getUrl = getUrl;
