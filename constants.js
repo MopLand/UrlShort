@@ -9,6 +9,7 @@ exports.update_views_query = 'UPDATE urls SET num_of_clicks = {VIEWS} WHERE id =
 //exports.insert_view = 'INSERT INTO stats SET ip = {IP}, url_id = {URL_ID}, referer = {REFERER}';
 exports.insert_view = 'INSERT INTO stats SET ip = ?, url_id = ?, referer = ?, country = ?, area = ?, region = ?, city = ?';
 exports.check_ip_query = 'SELECT COUNT(id) as counted FROM urls WHERE datetime_added >= now() - INTERVAL 1 HOUR AND ip = {IP}';
+exports.get_statis = 'CALL count_by_url_id( ? )';
 
 exports.host = 'localhost';
 exports.user = 'root';

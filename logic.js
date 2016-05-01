@@ -104,36 +104,36 @@ var getUrl = function(segment, request, response){
 		con.query(cons.get_query.replace("{SEGMENT}", con.escape(segment)), function(err, rows){
 			var result = rows;
 			if(!err && rows.length > 0){
-				
+
 				var referer = "";
 				if(request.headers.referer){
 					referer = request.headers.referer;
 				}
 				var ip = getIP(request);
-				
+
 				////////////////////////
-				
+
 				getIPInfo( ip, function( info ){
-					
+
 					console.log( info );
-				
+
 					con.query( cons.insert_view, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city ], function(err, rows){
 						if(err){
 							console.log(err);
 						}
 						/*
-						con.query(cons.update_views_query.replace("{VIEWS}", con.escape(result[0].num_of_clicks+1)).replace("{ID}", con.escape(result[0].id)), function(err, rows){
+						con.query(cons.update_views_query.replace("{VIEWS}", con.escape(result[0].clicks+1)).replace("{ID}", con.escape(result[0].id)), function(err, rows){
 							if(err){
 								console.log(err);
 							}
 						});
 						*/
-					});	
-					
+					});
+
 				} );
-				
+
 				////////////////////////
-				
+
 				response.redirect(result[0].url);
 			}
 			else{
@@ -207,7 +207,7 @@ var whatIs = function(url, request, response){
 				response.send({result: false, url: null});
 			}
 			else{
-				response.send({result: true, url: rows[0].url, hash: hash, clicks: rows[0].num_of_clicks});
+				response.send({result: true, url: rows[0].url, hash: hash, clicks: rows[0].clicks});
 			}
 		});
 		con.release();
@@ -220,12 +220,15 @@ var statIs = function(url, request, response){
 		var hash = url;
 		if(!hash) hash = "";
 		hash = hash.replace(cons.root_url, "");
-		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
+		con.query(cons.get_statis, hash, function(err, rows){
 			if(err || rows.length == 0){
 				response.send({result: false, url: null});
 			}
 			else{
-				response.send({result: true, url: rows[0].url, hash: hash, clicks: rows[0].num_of_clicks});
+				var res = rows;
+				res.result = true;
+				//{result: true, url: rows[0].url, hash: hash, clicks: rows[0].clicks}
+				response.send( res );
 			}
 		});
 		con.release();
@@ -241,16 +244,16 @@ function getIPInfo( ip, fn ){
 	var ip = '171.41.72.243';
 	var url = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
 	req( url, function( error, response, body ){
-		
+
 		if (!error && response.statusCode == 200) {
 			var res = JSON.parse( body );
 			if( res.code == 0 ){
 				fn && fn( res.data );
 				return;
-			}				
+			}
 		}
-		
-		fn && fn( { country : null, area : null, region : null, city : null } );		
+
+		fn && fn( { country : null, area : null, region : null, city : null } );
 	} );
 }
 
