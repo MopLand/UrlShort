@@ -7,12 +7,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="author" content="Bun Wong">
   <title>易群推短网址 - yqt.so</title>
+  <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href="css/font-awesome.min.css" rel="stylesheet">
   <link href="css/freelancer.css" rel="stylesheet">
   <!--[if lt IE 9]>
-    <script src="js/html5shiv.min.js"></script>
-    <script src="js/respond.min.js"></script>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
   <script>
   var _hmt = _hmt || [];
@@ -37,7 +37,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/">YQT.SO 免费短网址服务</a>
+      <a class="navbar-brand" href="/">易群推免费短网址服务</a>
     </div>
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -64,7 +64,7 @@
     <form method="post" name="create" class="form-horizontal">
     <div class="row">
       <div class="col-md-8 col-md-offset-2 text-center">
-        <h4>短网址服务可以帮助你把一个长网址缩短，方便你在社交网络和微博上分享。</h4>
+        <h4>短网址服务可以帮助你把一个长网址缩短，方便你在社交网络上分享。</h4>
         <p class="text-warning">目前仅允许生成 taobao.com / tmall.com 域名的短网址。</p>
         <div class="bg-box">
           <div class="form-group">
@@ -82,6 +82,11 @@
                 <b>http://yqt.so/UrIBKJ</b>
                 <small class="txt-tip"><i class="fa fa-hand-o-left"></i> 点击复制</small>
               </a>
+            </span>
+          </div>
+		  <div class="form-group" id="create_qrcode" style="display:none; margin-top:-20px">
+            <span class="col-sm-9 col-sm-offset-3 text-left">
+              <img width="120" height="120">
             </span>
           </div>
           <div>
@@ -163,20 +168,19 @@
             <label class="col-sm-3 control-label" for="txt-url">请输入短网址</label>
             <div class="col-sm-8">
               <input id="txt-rurl" name="url" type="text" class="form-control input-sm" placeholder="请输入短网址" value="">
-			  <span class="text-danger help-block text-left" id="statis_wrong">请输入正确的 yqt.so 短网址</span>
+			  <span class="text-danger help-block text-left" id="statis_wrong" style="display:none;">请输入正确的 yqt.so 短网址</span>
             </div>
           </div>
           <div class="form-group">
             <button class="btn btn-primary btn-md">查询</button>
-          </div>
-		  
+          </div>		  
 		  
           <div class="row" id="statis_result" style="display:none;">
             <div class="col-sm-3">
               <div class="widget widget-ov">
-                <h3>0<small>访问量</small></h3>
+                <h3 id="bind_click">0<small>访问量</small></h3>
                 <hr>
-                <h3>0<small>独立访客</small></h3>
+                <h3 id="bind_visit">0<small>独立访客</small></h3>
               </div>
             </div>
             <div class="col-sm-9">
@@ -185,45 +189,18 @@
               </div>
             </div>
             <div class="col-sm-6">
-              <div class="widget">
-                <h3 class="no-data">暂无数据<small>来源分布</small></h3>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="widget">
-                <h3 class="no-data">暂无数据<small>地区分布</small></h3>
-              </div>
-            </div>
-          </div>
-		  
-		  
-		  <div class="row" style="display:none;">
-            <div class="col-sm-3">
-              <div class="widget widget-ov">
-                <h3>1<small>访问量</small></h3>
-                <hr>
-                <h3>1<small>独立访客</small></h3>
-              </div>
-            </div>
-            <div class="col-sm-9">
-              <div class="widget">
-                <div id="hours-chart" data-start="16042918" data-data="[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]" data-data-uv="[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]"></div>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="widget">
-                <div id="domains-chart" data-data="{&quot;\u76f4\u63a5\u8bbf\u95ee&quot;:1}"></div>
+              <div class="widget" id="bind_referer">
+			  	<div id="domains-chart" data-data="{&quot;\u76f4\u63a5\u8bbf\u95ee&quot;:1}"></div>
                 <h3><small>来源分布</small></h3>
               </div>
             </div>
             <div class="col-sm-6">
-              <div class="widget">
-                <div id="locations-chart" data-data="{&quot;\u5176\u5b83&quot;:0,&quot;\u6e56\u5317&quot;:1}"></div>
+              <div class="widget" id="bind_region">
+			  	<div id="locations-chart" data-data="{&quot;\u5176\u5b83&quot;:0,&quot;\u6e56\u5317&quot;:1}"></div>
                 <h3><small>地区分布</small></h3>
               </div>
             </div>
           </div>
-		  
 		  
         </div>
       </div>
@@ -255,6 +232,11 @@
                 <i class="fa fa-fw fa-envelope"></i>
               </a>
             </li>
+            <li>
+              <a data-toggle="modal" data-target="#qrcode" class="btn-social btn-outline">
+                <i class="fa fa-fw fa-weixin"></i>
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -265,12 +247,12 @@
       <div class="row">
         <div class="col-sm-6 col-xs-4 text-right">
           <a class="logo" href="http://www.yiquntui.com/" target="_blank">
-            <img src="img/logo.png" alt="易群推" width="100" height="40">
+            <img src="img/logo.png" alt="易群推" />
           </a>
         </div>
         <div class="col-sm-6 col-xs-8 text-left">
           版权所有 &copy; <a href="http://www.yiquntui.com/" target="_blank">易群推</a>, 2014-2016<br>
-          <a href="http://www.miitbeian.gov.cn/" target="_blank">粤ICP备15039816号-3</a>
+          <a href="http://www.miitbeian.gov.cn/" target="_blank">鄂ICP备14020770号</a>
         </div>
       </div>
     </div>
@@ -296,10 +278,10 @@
   </div>
 </div>
 
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
+  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="//cdn.bootcss.com/highcharts/4.2.3/highcharts.js"></script>
   <script src="js/plugin.min.js"></script>
-  <script src="js/highcharts.min.js"></script>
   <script src="js/freelancer.js"></script>
 </body>
 </html>

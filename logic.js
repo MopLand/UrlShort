@@ -35,7 +35,7 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 		hash = vanity;
 		var reg = /[^A-Za-z0-9-_]/;
 		//If the hash contains invalid characters or is equal to other methods ("add" or "whatis"), an error will be thrown
-		if(reg.test(hash) || hash == "add" || hash == "whatis"){
+		if(reg.test(hash) || hash == "add" || hash == "whatis" || hash == "statis"){
 			onError(response, request, con, 403);
 			return;
 		}
@@ -52,7 +52,7 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 		//This section creates a string for a short URL on basis of an SHA1 hash
 		var shasum = crypto.createHash('sha1');
 		shasum.update((new Date).getTime()+"");
-		hash = shasum.digest('hex').substring(0, 8);
+		hash = shasum.digest('hex').substring(0, 6);
 	}
 	//This section query's (with a query defined in "constants.js") and looks if the short URL with the specific segment already exists
 	//If the segment already exists, it will repeat the generateHash function until a segment is generated which does not exist in the database
@@ -115,7 +115,7 @@ var getUrl = function(segment, request, response){
 
 				getIPInfo( ip, function( info ){
 
-					console.log( info );
+					//console.log( info );
 
 					con.query( cons.insert_view, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city ], function(err, rows){
 						if(err){
@@ -221,13 +221,37 @@ var statIs = function(url, request, response){
 		if(!hash) hash = "";
 		hash = hash.replace(cons.root_url, "");
 		con.query(cons.get_statis, hash, function(err, rows){
-			if(err || rows.length == 0){
-				response.send({result: false, url: null});
-			}
-			else{
-				var res = rows;
-				res.result = true;
-				//{result: true, url: rows[0].url, hash: hash, clicks: rows[0].clicks}
+			//console.log( JSON.stringify( rows ) );
+			
+			if(err || rows.length == 0 || rows[0].length == 0){				
+				response.send({result: false, url: null});				
+			}else{
+				
+				var res = {};
+				res.result	= true;
+				res.visit	= rows[0][0]['visit'];
+				res.start	= rows[3][0]['start'];
+				res.uv		= rows[4][0]['uv'];
+				res.ip		= rows[4][0]['ip'];
+				res.click	= rows[4][0]['click'];
+				
+				///////////////////
+				res.referer	= {};
+				
+				for( var k in rows[1] ){
+					var item = rows[1][k];
+					res.referer[ item.referer ] = item.stats;
+				}
+				
+				///////////////////
+				
+				res.region	= {};
+				
+				for( var k in rows[2] ){
+					var item = rows[2][k];
+					res.region[ item.region ] = item.stats;
+				}
+				
 				response.send( res );
 			}
 		});

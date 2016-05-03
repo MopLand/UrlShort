@@ -22,7 +22,7 @@ p.small {
 
 a, a:hover, a:focus, a:active, a.active {
   outline: 0;
-  color: #18bc9c;
+  color: #0098F5;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -55,7 +55,7 @@ hr.star-light {
 
 hr.star-light:after {
   color: #fff;
-  background-color: #18bc9c;
+  background-color: #2681C3;
 }
 
 hr.star-primary {
@@ -114,10 +114,36 @@ hr.star-primary:after {
 
 .navbar-default, .navbar-inverse {
   border: 0;
+  background-color: #364D75;
+}
+
+.navbar-default .navbar-nav>.active>a{
+  color:#FFF;
+  background-color: #203354;
+}
+
+.navbar-default .navbar-brand{
+  color: #FFF;	
+}
+
+.navbar-default .navbar-brand:hover{
+  color: #0098F5;	
+}
+
+.navbar-default .navbar-nav>li>a{
+  color: #FFF;	
+}
+
+.navbar-default .navbar-nav>li>a:hover{
+  color: #0098F5;	
 }
 
 section {
   padding: 100px 0;
+}
+
+section, .modal-content{
+  background-image: url(../img/mark.png);
 }
 
 section h2 {
@@ -127,7 +153,7 @@ section h2 {
 
 section.success {
   color: #fff;
-  background: #18bc9c;
+  background: #2681C3;
 }
 
 section.success a, section.success a:hover, section.success a:focus, section.success a:active, section.success a.active {
@@ -154,7 +180,7 @@ section.success a, section.success a:hover, section.success a:focus, section.suc
 
 .btn-outline:hover, .btn-outline:focus, .btn-outline:active, .btn-outline.active {
   border: solid 2px #fff;
-  color: #18bc9c;
+  color: #0098F5;
   background: #fff;
 }
 
@@ -206,7 +232,7 @@ section.success a, section.success a:hover, section.success a:focus, section.suc
 }
 
 .floating-label-form-group-with-focus label {
-  color: #18bc9c;
+  color: #0098F5;
 }
 
 form .row:first-child .floating-label-form-group {
@@ -223,7 +249,7 @@ footer h3 {
 
 footer .footer-above {
   padding-top: 50px;
-  background-color: #2c3e50;
+  background-color: #486390;
 }
 
 footer .footer-col {
@@ -232,7 +258,7 @@ footer .footer-col {
 
 footer .footer-below {
   padding: 25px 0;
-  background-color: #233140;
+  background-color: #364D75;
 }
 
 footer a {
@@ -241,7 +267,7 @@ footer a {
 }
 footer a:hover {
   text-decoration: none;
-  border-bottom: 1px dotted #18bc9c;
+  border-bottom: 1px dotted #0098F5;
 }
 
 .btn-social {
@@ -413,12 +439,12 @@ input,button,select,textarea,.select2-selection {
 .table thead td {
   font-weight: bold;
   text-align: center;
-  background: #18bc9c;
+  background: #0098F5;
   color: #fff;
 }
 .success .table thead td {
   background: #fff;
-  color: #18bc9c;
+  color: #0098F5;
 }
 .success .table td {
   color: #fff;
@@ -457,7 +483,7 @@ input,button,select,textarea,.select2-selection {
   height: 21px;
 }
 #api-limit {
-  background: #18bc9c;
+  background: #0098F5;
   padding: 30px;
   text-align: center;
   border-radius: 6px;
@@ -551,7 +577,7 @@ input,button,select,textarea,.select2-selection {
   line-height: 30px;
 }
 .bg-box .txt-tip {
-  color: #18bc9c;
+  color: #0098F5;
   font-size: 14px;
 }
 .bg-box .widget {
