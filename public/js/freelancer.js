@@ -3,6 +3,24 @@
  * Code licensed under the Apache License v2.0.
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
+ 
+if (!String.prototype.splice) {
+    /**
+     * {JSDoc}
+     *
+     * The splice() method changes the content of a string by removing a range of
+     * characters and/or adding new characters.
+     *
+     * @this {String}
+     * @param {number} start Index at which to start changing the string.
+     * @param {number} delCount An integer indicating the number of old chars to remove.
+     * @param {string} newSubStr The String that is spliced in.
+     * @return {string} A new string with the spliced substring.
+     */
+    String.prototype.splice = function(start, delCount, newSubStr) {
+        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+    };
+}
 
 // jQuery for page scrolling feature - requires jQuery Easing plugin
 $(function() {
@@ -25,6 +43,13 @@ $('.navbar-collapse ul li a').click(function() {
 	$('.navbar-toggle:visible').click();
 });
 
+
+$('.clear-url').click(function() {
+	$('form[name=create] input[name=url]').val('').focus();
+	$('#create_wrong, #create_qrcode').hide();
+	$('#create_result, #create_mobile').hide();
+});
+
 $('form[name=create]').on('submit', function(){
 
 	var self = this;
@@ -40,11 +65,24 @@ $('form[name=create]').on('submit', function(){
 		success: function(data){
 			//console.log( data );
 
-			$('#create_result, #create_wrong, #create_qrcode').hide();
+			$('#create_wrong, #create_qrcode').hide();
+			$('#create_result, #create_mobile').hide();
 
 			if( data.result ){
+			
+				var coupon = /(taoquan|shop\.m)\.taobao\.com/i.test( $('[name=url]', self).val() );
+				var oblique = data.url.lastIndexOf('/') + 1;
+				//alert( coupon );
+			
 				$('#create_result').show();
-				$('#create_result b').html( data.url ).show().fadeIn('slow');
+				$('#create_result b').html( ( coupon ? data.url.splice(oblique, 0, 'p') : data.url ) ).show().fadeIn('slow');
+				
+				if( coupon ){
+				
+				$('#create_mobile').show();
+				$('#create_mobile b').html( ( coupon ? data.url.splice(oblique, 0, 'm') : data.url ) ).show().fadeIn('slow');
+				
+				}
 
 				$('#create_qrcode').show().fadeIn('slow');
 				$('#create_qrcode img').attr('src','https://api.qrserver.com/v1/create-qr-code/?data='+ data.url);

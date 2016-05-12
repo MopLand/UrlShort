@@ -63,6 +63,7 @@ CREATE TABLE `stats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url_id` int(11) NOT NULL,
   `clickdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mobile` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `country` varchar(64) DEFAULT NULL,
   `area` varchar(64) DEFAULT NULL,
   `region` varchar(64) DEFAULT NULL,
@@ -73,6 +74,8 @@ CREATE TABLE `stats` (
   KEY `url_id` (`url_id`),
   KEY `clickdate` (`clickdate`),
   KEY `ip` (`ip`),
+  KEY `country` (`country`),
+  KEY `mobile` (`mobile`),
   CONSTRAINT `stats_ibfk_1` FOREIGN KEY (`url_id`) REFERENCES `urls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

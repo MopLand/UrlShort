@@ -270,6 +270,8 @@ footer a:hover {
   border-bottom: 1px dotted #0098F5;
 }
 
+footer span{ color:#999; margin:0 5px; }
+
 .btn-social {
   display: inline-block;
   width: 50px;

@@ -35,7 +35,7 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 		hash = vanity;
 		var reg = /[^A-Za-z0-9-_]/;
 		//If the hash contains invalid characters or is equal to other methods ("add" or "whatis"), an error will be thrown
-		if(reg.test(hash) || hash == "add" || hash == "whatis" || hash == "statis"){
+		if(reg.test(hash) || hash == "add" || hash == "whatis" || hash == "statis" || hash == "admin"){
 			onError(response, request, con, 403);
 			return;
 		}
@@ -91,7 +91,7 @@ function handleHash(hash, url, request, response, con){
 //This function returns the object that will be sent to the client
 function urlResult(hash, result, statusCode){
 	return {
-		url: hash != null ? cons.root_url+hash : null,
+		url: hash != null ? cons.root_url + hash : null,
 		result: result,
 		statusCode: statusCode
 	};
@@ -101,7 +101,11 @@ function urlResult(hash, result, statusCode){
 //If the short URL exists, some statistics are saved to the database
 var getUrl = function(segment, request, response){
 	pool.getConnection(function(err, con){
-		con.query(cons.get_query.replace("{SEGMENT}", con.escape(segment)), function(err, rows){
+	
+		var hash = getHash( segment );
+		var port = getPort( segment );
+	
+		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 			var result = rows;
 			if(!err && rows.length > 0){
 
@@ -109,15 +113,17 @@ var getUrl = function(segment, request, response){
 				if(request.headers.referer){
 					referer = request.headers.referer;
 				}
-				var ip = getIP(request);
+				
+				var ip = getIP(request);				
+				var mob = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);
+				var url = result[0].url;
 
 				////////////////////////
 
 				getIPInfo( ip, function( info ){
 
 					//console.log( info );
-
-					con.query( cons.insert_view, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city ], function(err, rows){
+					con.query( cons.insert_view, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city, ( mob ? 1 : 0 ) ], function(err, rows){
 						if(err){
 							console.log(err);
 						}
@@ -133,8 +139,19 @@ var getUrl = function(segment, request, response){
 				} );
 
 				////////////////////////
+				//console.log( mob, url );
+				
+				//是手机访问
+				if( ( mob && port == '' ) || port == 'm' ){
+					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result_tmall.htm', 'shop.m.taobao.com/shop/coupon.htm');
+				}
+				
+				//是电脑访问
+				if( ( !mob && port == '' ) || port == 'p' ){
+					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result_tmall.htm') + '&need_ok=true';
+				}
 
-				response.redirect(result[0].url);
+				response.redirect( url );
 			}
 			else{
 				response.send(urlResult(null, false, 404));
@@ -149,9 +166,25 @@ var getUrl = function(segment, request, response){
 
 //This function adds attempts to add an URL to the database. If the URL returns a 404 or if there is another error, this method returns an error to the client, else an object with the newly shortened URL is sent back to the client.
 var addUrl = function(url, request, response, vanity){
+	
+	//验证 URL 有效性
+	cons.url_rule.lastIndex = 0;
+	if( cons.url_rule && cons.url_rule.test( url ) == false ){
+		response.send(urlResult(null, false, 403));		
+		return;
+	}
+	
 	pool.getConnection(function(err, con){
 		if(url){
-			url = decodeURIComponent(url).toLowerCase();
+		
+			/*
+			try{
+				url = decodeURIComponent(url).toLowerCase();
+			}catch(ex){
+				url = unescape(url).toLowerCase();
+			}
+			*/
+			
 			con.query(cons.check_ip_query.replace("{IP}", con.escape(getIP(request))), function(err, rows){
 				if(err){
 					console.log(err);
@@ -171,8 +204,9 @@ var addUrl = function(url, request, response, vanity){
 						}
 						if(!err && rows.length > 0){
 							response.send(urlResult(rows[0].segment, true, 100));
+							return;
 						}
-						else{
+						if( cons.url_verify ){
 							req(url, function(err, res, body){
 								if(res != undefined && res.statusCode == 200){
 									generateHash(handleHash, hashError, 50, url, request, response, con, vanity);
@@ -181,6 +215,9 @@ var addUrl = function(url, request, response, vanity){
 									response.send(urlResult(null, false, 401));
 								}
 							});
+						}
+						else{
+							generateHash(handleHash, hashError, 50, url, request, response, con, vanity);
 						}
 					});
 				}
@@ -199,9 +236,10 @@ var addUrl = function(url, request, response, vanity){
 //This method looks up stats of a specific short URL and sends it to the client
 var whatIs = function(url, request, response){
 	pool.getConnection(function(err, con){
-		var hash = url;
-		if(!hash) hash = "";
-		hash = hash.replace(cons.root_url, "");
+		//var hash = url;
+		//if(!hash) hash = "";
+		//hash = hash.replace(cons.root_url, "");
+		var hash = getHash( url );
 		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 			if(err || rows.length == 0){
 				response.send({result: false, url: null});
@@ -217,9 +255,9 @@ var whatIs = function(url, request, response){
 //This method looks up stats of a specific short URL and sends it to the client
 var statIs = function(url, request, response){
 	pool.getConnection(function(err, con){
-		var hash = url;
-		if(!hash) hash = "";
-		hash = hash.replace(cons.root_url, "");
+		//var hash = url;
+		//if(!hash) hash = "";
+		var hash = getHash( url );
 		con.query(cons.get_statis, hash, function(err, rows){
 			//console.log( JSON.stringify( rows ) );
 			
@@ -264,8 +302,9 @@ function getIP(request){
 	return request.header("x-forwarded-for") || request.connection.remoteAddress;
 }
 
+/* 获取IP归属地信息 */
 function getIPInfo( ip, fn ){
-	var ip = '171.41.72.243';
+	//var ip = '171.41.72.243';
 	var url = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
 	req( url, function( error, response, body ){
 
@@ -279,6 +318,26 @@ function getIPInfo( ip, fn ){
 
 		fn && fn( { country : null, area : null, region : null, city : null } );
 	} );
+}
+
+/* 获取真实短网址 */
+function getHash( hash ){
+	hash = ( hash || '' );
+	hash = hash.replace( cons.root_url, '' );
+	if( hash.length == 7 ){
+		return hash.substr(1);
+	}else{
+		return hash;
+	}
+}
+
+/* 获取平台信息 */
+function getPort( hash ){
+	if( hash.length == 7 ){
+		return hash.substr(0, 1);
+	}else{
+		return '';
+	}
 }
 
 exports.getUrl = getUrl;

@@ -34,7 +34,8 @@
       <ul class="nav navbar-nav navbar-right">
         <li class="page-scroll"><a href="#get">生成</a></li>
         <li class="page-scroll"><a href="#res">还原</a></li>
-        <li class="page-scroll"><a href="#data">数据统计</a></li>
+        <li class="page-scroll"><a href="#data">数据统计</a></li>		
+        <li class="page-scroll"><a href="http://www.yiquntui.com/contact" target="_blank">商务合作</a></li>		
       </ul>
     </div>
     <!-- /.navbar-collapse -->
@@ -55,18 +56,30 @@
     <div class="row">
       <div class="col-md-8 col-md-offset-2 text-center">
         <h4>短网址服务可以帮助你把一个长网址缩短，方便你在社交网络上分享。</h4>
-        <p class="text-warning">目前仅允许生成 taobao.com / tmall.com 域名的短网址。</p>
+        <p class="text-warning"><img src="img/qcloud-safe.png" width="100" height="40" class="hidden-xs"> 目前仅允许生成 taobao.com / tmall.com 域名的短网址。</p>
         <div class="bg-box">
           <div class="form-group">
-            <label class="col-sm-3 control-label" for="txt-gurl">请输入网址</label>
+            <label class="col-sm-2 control-label" for="txt-gurl">请输入网址</label>
             <div class="col-sm-8">
               <input id="url-field" name="url" type="text" class="form-control input-sm" placeholder="请输入网址" value="">
               <span class="help-block text-left">有效期为 300 天</span>
 			  <span class="text-danger help-block text-left" id="create_wrong" style="display:none;">目前仅支持 taobao.com / tmall.com 域名的网址生成</span>
             </div>
+			<div class="col-sm-2">
+				<p class="help-block clear-url"><a>清除</a></p>
+			</div>
           </div>
 		  <div class="form-group" id="create_result" style="display:none;">
             <label class="col-sm-3 control-label tl">生成短网址</label>
+            <span id="txt-result" class="col-sm-9 control-label">
+              <a href="javascript:void(0)" class="txt-copy">
+                <b>http://yqt.so/UrIBKJ</b>
+                <small class="txt-tip"><i class="fa fa-hand-o-left"></i> 点击复制</small>
+              </a>
+            </span>
+          </div>
+		  <div class="form-group" id="create_mobile" style="display:none;">
+            <label class="col-sm-3 control-label tl">手机券网址</label>
             <span id="txt-result" class="col-sm-9 control-label">
               <a href="javascript:void(0)" class="txt-copy">
                 <b>http://yqt.so/UrIBKJ</b>
@@ -242,7 +255,11 @@
         </div>
         <div class="col-sm-6 col-xs-8 text-left">
           版权所有 &copy; <a href="http://www.yiquntui.com/" target="_blank">易群推</a>, 2014-2016<br>
-          <a href="http://www.miitbeian.gov.cn/" target="_blank">鄂ICP备14020770号</a>
+          <a href="http://www.shihuizhu.com/" target="_blank">实惠猪</a>
+		  <span>/</span>
+		  <a href="http://rj.shihuizhu.com/" target="_blank">实惠猪软件</a>
+		  <span>/</span>
+		  <a href="http://www.miitbeian.gov.cn/" target="_blank">鄂ICP备14020770号</a>
         </div>
       </div>
     </div>
