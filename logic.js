@@ -80,7 +80,13 @@ function hashError(response, request, con, code){
 
 //The function that is executed when the short URL has been created successfully.
 function handleHash(hash, url, request, response, con){
-	con.query(cons.add_query.replace("{URL}", con.escape(url)).replace("{SEGMENT}", con.escape(hash)).replace("{IP}", con.escape(getIP(request))), function(err, rows){
+	con.query(
+		cons.add_query.replace("{URL}", con.escape(url)).
+		replace("{SEGMENT}", con.escape(hash)).
+		replace("{IP}", con.escape(getIP(request))).
+		replace("{API}", request.path == '/api' ? 1 : 0 )
+	, 
+	function(err, rows){
 		if(err){
 			console.log(err);
 		}
@@ -144,11 +150,14 @@ var getUrl = function(segment, request, response){
 				//是手机访问
 				if( ( mob && port == '' ) || port == 'm' ){
 					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result_tmall.htm', 'shop.m.taobao.com/shop/coupon.htm');
+					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result.htm', 'shop.m.taobao.com/shop/coupon.htm');
 				}
 				
 				//是电脑访问
 				if( ( !mob && port == '' ) || port == 'p' ){
-					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result_tmall.htm') + '&need_ok=true';
+					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result_tmall.htm');
+					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result.htm');
+					url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
 				}
 
 				response.redirect( url );
@@ -185,46 +194,61 @@ var addUrl = function(url, request, response, vanity){
 			}
 			*/
 			
-			con.query(cons.check_ip_query.replace("{IP}", con.escape(getIP(request))), function(err, rows){
-				if(err){
-					console.log(err);
-				}
-				if(rows[0].counted != undefined && rows[0].counted < cons.num_of_urls_per_hour){
-					con.query(cons.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
-						if(err){
-							console.log(err);
-						}
-						if(url.indexOf("http://localhost") > -1 || url.indexOf("https://localhost") > -1){
-							response.send(urlResult(null, false, 401));
-							return;
-						}
-						if(url.length > 1000){
-							response.send(urlResult(null, false, 406));
-							return;
-						}
-						if(!err && rows.length > 0){
-							response.send(urlResult(rows[0].segment, true, 100));
-							return;
-						}
-						if( cons.url_verify ){
-							req(url, function(err, res, body){
-								if(res != undefined && res.statusCode == 200){
-									generateHash(handleHash, hashError, 50, url, request, response, con, vanity);
-								}
-								else{
-									response.send(urlResult(null, false, 401));
-								}
-							});
-						}
-						else{
-							generateHash(handleHash, hashError, 50, url, request, response, con, vanity);
-						}
-					});
-				}
-				else{
-					response.send(urlResult(null, false, 408));
-				}
-			});
+			var fn = function(){
+				con.query(cons.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
+					if(err){
+						console.log(err);
+					}
+					if(url.indexOf("http://localhost") > -1 || url.indexOf("https://localhost") > -1){
+						response.send(urlResult(null, false, 401));
+						return;
+					}
+					if(url.length > 1000){
+						response.send(urlResult(null, false, 406));
+						return;
+					}
+					if(!err && rows.length > 0){
+						response.send(urlResult(rows[0].segment, true, 100));
+						return;
+					}
+					if( cons.url_verify ){
+						req(url, function(err, res, body){
+							if(res != undefined && res.statusCode == 200){
+								generateHash(handleHash, hashError, 50, url, request, response, con, vanity);
+							}
+							else{
+								response.send(urlResult(null, false, 401));
+							}
+						});
+					}
+					else{
+						generateHash(handleHash, hashError, 50, url, request, response, con, vanity);
+					}
+				});
+			};
+			
+			////////////////////////
+			
+			//不限制每小时生成数量
+			if( vanity === false ){
+			
+				fn();
+				
+			}else{
+			
+				//查询此IP最近一小时生成数量
+				con.query(cons.check_ip_query.replace("{IP}", con.escape(getIP(request))), function(err, rows){
+					if(err){
+						console.log(err);
+					}
+					if(rows[0].counted != undefined && rows[0].counted < cons.num_of_urls_per_hour){
+						fn();
+					}else{
+						response.send(urlResult(null, false, 408));
+					}
+				});
+			
+			}
 		}
 		else{
 			response.send(urlResult(null, false, 402));

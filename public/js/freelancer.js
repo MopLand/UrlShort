@@ -77,11 +77,13 @@ $('form[name=create]').on('submit', function(){
 				$('#create_result').show();
 				$('#create_result b').html( ( coupon ? data.url.splice(oblique, 0, 'p') : data.url ) ).show().fadeIn('slow');
 				
-				if( coupon ){
-				
-				$('#create_mobile').show();
-				$('#create_mobile b').html( ( coupon ? data.url.splice(oblique, 0, 'm') : data.url ) ).show().fadeIn('slow');
-				
+				if( coupon ){				
+					$('#create_mobile').show();
+					$('#create_mobile b').html( ( coupon ? data.url.splice(oblique, 0, 'm') : data.url ) ).show().fadeIn('slow');
+					
+					$('#create_result label').html( '电脑券网址' );				
+				}else{
+					$('#create_result label').html( '生成短网址' );
 				}
 
 				$('#create_qrcode').show().fadeIn('slow');
@@ -319,7 +321,8 @@ $('form[name=statis]').on('submit', function(){
 $(function() {
   // api-key
   ZeroClipboard.config({
-    swfPath: 'js/zeroclipboard.swf'
+    //swfPath: 'js/zeroclipboard.swf'
+    swfPath: 'http://dn-appserv.qbox.me/zeroclipboard.swf'
   });
   var zeroClientKey = new ZeroClipboard($('.bg-box a.txt-copy'));
   zeroClientKey.on('ready', function(e) {

@@ -18,6 +18,12 @@ var route = function(app){
 		logic.addUrl(url, request, response, vanity);
 	});
 	
+	app.get('/api', function(request, response){
+		var url = request.param('url');
+		var act = request.param('act');
+		logic.addUrl(url, request, response, false);
+	});
+	
 	app.get('/whatis', function(request, response){
 		var url = request.param('url');
 		logic.whatIs(url, request, response);
