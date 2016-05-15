@@ -85,7 +85,7 @@ function handleHash(hash, url, request, response, con){
 		replace("{SEGMENT}", con.escape(hash)).
 		replace("{IP}", con.escape(getIP(request))).
 		replace("{API}", request.path == '/api' ? 1 : 0 )
-	, 
+	,
 	function(err, rows){
 		if(err){
 			console.log(err);
@@ -103,24 +103,30 @@ function urlResult(hash, result, statusCode){
 	};
 }
 
+var getTab = function( id ){
+	return 'stats_' + id % 10;
+}
+
 //This method looks handles a short URL and redirects to that URL if it exists
 //If the short URL exists, some statistics are saved to the database
 var getUrl = function(segment, request, response){
 	pool.getConnection(function(err, con){
-	
+
 		var hash = getHash( segment );
 		var port = getPort( segment );
-	
+
 		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 			var result = rows;
 			if(!err && rows.length > 0){
 
 				var referer = "";
-				if(request.headers.referer){
+				if( request.headers.referer ){
 					referer = request.headers.referer;
+					var matches = referer.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
+					var referer = matches && matches[1];
 				}
-				
-				var ip = getIP(request);				
+
+				var ip = getIP(request);
 				var mob = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);
 				var url = result[0].url;
 
@@ -128,8 +134,10 @@ var getUrl = function(segment, request, response){
 
 				getIPInfo( ip, function( info ){
 
+					var sql = cons.insert_view.replace( '{TABLE}', getTab( result[0].id ) );
+
 					//console.log( info );
-					con.query( cons.insert_view, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city, ( mob ? 1 : 0 ) ], function(err, rows){
+					con.query( sql, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city, ( mob ? 1 : 0 ) ], function(err, rows){
 						if(err){
 							console.log(err);
 						}
@@ -146,13 +154,13 @@ var getUrl = function(segment, request, response){
 
 				////////////////////////
 				//console.log( mob, url );
-				
+
 				//是手机访问
 				if( ( mob && port == '' ) || port == 'm' ){
 					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result_tmall.htm', 'shop.m.taobao.com/shop/coupon.htm');
 					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result.htm', 'shop.m.taobao.com/shop/coupon.htm');
 				}
-				
+
 				//是电脑访问
 				if( ( !mob && port == '' ) || port == 'p' ){
 					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result_tmall.htm');
@@ -175,17 +183,17 @@ var getUrl = function(segment, request, response){
 
 //This function adds attempts to add an URL to the database. If the URL returns a 404 or if there is another error, this method returns an error to the client, else an object with the newly shortened URL is sent back to the client.
 var addUrl = function(url, request, response, vanity){
-	
+
 	//验证 URL 有效性
 	cons.url_rule.lastIndex = 0;
 	if( cons.url_rule && cons.url_rule.test( url ) == false ){
-		response.send(urlResult(null, false, 403));		
+		response.send(urlResult(null, false, 403));
 		return;
 	}
-	
+
 	pool.getConnection(function(err, con){
 		if(url){
-		
+
 			/*
 			try{
 				url = decodeURIComponent(url).toLowerCase();
@@ -193,7 +201,7 @@ var addUrl = function(url, request, response, vanity){
 				url = unescape(url).toLowerCase();
 			}
 			*/
-			
+
 			var fn = function(){
 				con.query(cons.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
 					if(err){
@@ -226,16 +234,14 @@ var addUrl = function(url, request, response, vanity){
 					}
 				});
 			};
-			
+
 			////////////////////////
-			
+
 			//不限制每小时生成数量
-			if( vanity === false ){
-			
+			if( vanity === false || cons.num_of_urls_per_hour == 0 ){
 				fn();
-				
 			}else{
-			
+
 				//查询此IP最近一小时生成数量
 				con.query(cons.check_ip_query.replace("{IP}", con.escape(getIP(request))), function(err, rows){
 					if(err){
@@ -247,7 +253,7 @@ var addUrl = function(url, request, response, vanity){
 						response.send(urlResult(null, false, 408));
 					}
 				});
-			
+
 			}
 		}
 		else{
@@ -284,11 +290,11 @@ var statIs = function(url, request, response){
 		var hash = getHash( url );
 		con.query(cons.get_statis, hash, function(err, rows){
 			//console.log( JSON.stringify( rows ) );
-			
-			if(err || rows.length == 0 || rows[0].length == 0){				
-				response.send({result: false, url: null});				
+
+			if(err || rows.length == 0 || rows[0].length == 0){
+				response.send({result: false, url: null});
 			}else{
-				
+
 				var res = {};
 				res.result	= true;
 				res.visit	= rows[0][0]['visit'];
@@ -296,24 +302,24 @@ var statIs = function(url, request, response){
 				res.uv		= rows[4][0]['uv'];
 				res.ip		= rows[4][0]['ip'];
 				res.click	= rows[4][0]['click'];
-				
+
 				///////////////////
 				res.referer	= {};
-				
+
 				for( var k in rows[1] ){
 					var item = rows[1][k];
 					res.referer[ item.referer ] = item.stats;
 				}
-				
+
 				///////////////////
-				
+
 				res.region	= {};
-				
+
 				for( var k in rows[2] ){
 					var item = rows[2][k];
 					res.region[ item.region ] = item.stats;
 				}
-				
+
 				response.send( res );
 			}
 		});
@@ -323,12 +329,21 @@ var statIs = function(url, request, response){
 
 //This function returns the correct IP address. Node.js apps normally run behind a proxy, so the remoteAddress will be equal to the proxy. A proxy sends a header "X-Forwarded-For", so if this header is set, this IP address will be used.
 function getIP(request){
-	return request.header("x-forwarded-for") || request.connection.remoteAddress;
+	//return request.header("x-forwarded-for") || request.connection.remoteAddress;
+	return (request.headers['x-forwarded-for'] || '').split(',')[0] || request.connection.remoteAddress;
 }
 
 /* 获取IP归属地信息 */
 function getIPInfo( ip, fn ){
 	//var ip = '171.41.72.243';
+
+	var empty = { country : null, area : null, region : null, city : null };
+
+	if( !ip || ip == '::ffff:127.0.0.1' ){
+		fn && fn( empty );
+		return;
+	}
+
 	var url = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
 	req( url, function( error, response, body ){
 
@@ -340,7 +355,7 @@ function getIPInfo( ip, fn ){
 			}
 		}
 
-		fn && fn( { country : null, area : null, region : null, city : null } );
+		fn && fn( empty );
 	} );
 }
 

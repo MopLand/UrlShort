@@ -7,23 +7,40 @@ DELIMITER ;;
 
 DROP PROCEDURE IF EXISTS `count_by_url_hash`;;
 CREATE PROCEDURE `count_by_url_hash`(IN `hash` varchar(15))
-BEGIN
+ThisSP:BEGIN
 
 	-- 查询记录
 	SELECT id, clicks INTO @url_id, @clicks FROM urls WHERE segment = hash LIMIT 1;
 
+	-- 没有记录
+	IF @url_id IS NULL THEN
+		LEAVE ThisSP;
+	END IF;
+
+	-- 统计分表
+	SET @table = CONCAT( 'stats_', @url_id % 10 );
+
 	-- 独立访客（总数）
-	SELECT COUNT( DISTINCT ip ) AS visit FROM `stats` WHERE url_id = @url_id GROUP BY ip;
+	-- SELECT COUNT( DISTINCT ip ) AS visit FROM @table WHERE url_id = @url_id GROUP BY ip;
+	SET @stmt := CONCAT('SELECT COUNT( DISTINCT ip ) AS visit FROM ', @table, ' WHERE url_id = ', @url_id, ' GROUP BY ip' );
+	PREPARE STMT FROM @stmt;
+	EXECUTE STMT;
 
 	-- 来源分布
-	SELECT IF( referer, referer, '直接访问' ) AS referer, count(*) AS stats FROM `stats` WHERE url_id = @url_id GROUP BY referer;
+	-- SELECT IF( referer, referer, '直接访问' ) AS referer, count(*) AS stats FROM @table WHERE url_id = @url_id GROUP BY referer;
+	SET @stmt := CONCAT('SELECT IF( referer, referer, \'直接访问\' ) AS referer, count(*) AS stats FROM ',@table,' WHERE url_id = ',@url_id,' GROUP BY referer');
+	PREPARE STMT FROM @stmt;
+	EXECUTE STMT;
 
 	-- 地区分布
-	SELECT region, COUNT(*) AS stats FROM `stats` WHERE url_id = @url_id GROUP BY region;
+	-- SELECT region, COUNT(*) AS stats FROM @table WHERE url_id = @url_id GROUP BY region;
+	SET @stmt := CONCAT('SELECT region, COUNT(*) AS stats FROM ',@table,' WHERE url_id = ',@url_id,' GROUP BY region');
+	PREPARE STMT FROM @stmt;
+	EXECUTE STMT;
 
 	-- 24小时 访问量/独立访客
 	-- SELECT HOUR(clickdate) AS hour, COUNT(*) AS stats FROM `stats` WHERE url_id = @url_id AND clickdate > DATE_ADD( now(), interval -1 day );
-	
+
 	-- **********************************
 
 	SET @h24uv = '';
@@ -36,15 +53,21 @@ BEGIN
 	SELECT DATE_FORMAT(NOW() - INTERVAL @y HOUR, '%y%m%d%H') AS start;
 
 	WHILE @y > 0 DO
-	
+
 		-- 24小时 访问量
-		SELECT COUNT(*) AS stats INTO @tmp FROM `stats` WHERE url_id = @url_id AND DATE_FORMAT( clickdate, '%Y%m%d%H' ) = DATE_FORMAT(NOW() - INTERVAL @y HOUR, '%Y%m%d%H');
+		-- SELECT COUNT(*) AS stats INTO @tmp FROM @table WHERE url_id = @url_id AND DATE_FORMAT( clickdate, '%Y%m%d%H' ) = DATE_FORMAT(NOW() - INTERVAL @y HOUR, '%Y%m%d%H');
+		SET @stmt := CONCAT('SELECT COUNT(*) AS stats INTO @tmp FROM ',@table,' WHERE url_id = ',@url_id,' AND DATE_FORMAT( clickdate, \'%Y%m%d%H\' ) = DATE_FORMAT(NOW() - INTERVAL ',@y,' HOUR, \'%Y%m%d%H\')');
+		PREPARE STMT FROM @stmt;
+		EXECUTE STMT;
 		SET @h24uv = concat( @h24uv, ',', @tmp );
-		
+
 		-- 24小时 独立访客
-		SELECT COUNT( DISTINCT ip ) AS stats INTO @tmp FROM `stats` WHERE url_id = @url_id AND DATE_FORMAT( clickdate, '%Y%m%d%H' ) = DATE_FORMAT(NOW() - INTERVAL @y HOUR, '%Y%m%d%H') GROUP BY ip;
+		-- SELECT COUNT( DISTINCT ip ) AS stats INTO @tmp FROM @table WHERE url_id = @url_id AND DATE_FORMAT( clickdate, '%Y%m%d%H' ) = DATE_FORMAT(NOW() - INTERVAL @y HOUR, '%Y%m%d%H') GROUP BY ip;
+		SET @stmt := CONCAT('SELECT COUNT( DISTINCT ip ) AS stats INTO @tmp FROM ',@table,' WHERE url_id = ',@url_id,' AND DATE_FORMAT( clickdate, \'%Y%m%d%H\' ) = DATE_FORMAT(NOW() - INTERVAL ',@y,' HOUR, \'%Y%m%d%H\') GROUP BY ip');
+		PREPARE STMT FROM @stmt;
+		EXECUTE STMT;
 		SET @h24ip = concat( @h24ip, ',', @tmp );
-		
+
 		SET @y = @y - 1;
 
 	END WHILE;
