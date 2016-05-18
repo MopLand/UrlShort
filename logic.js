@@ -156,13 +156,13 @@ var getUrl = function(segment, request, response){
 				//console.log( mob, url );
 
 				//是手机访问
-				if( ( mob && port == '' ) || port == 'm' ){
+				if( port == 'm' ){
 					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result_tmall.htm', 'shop.m.taobao.com/shop/coupon.htm');
 					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result.htm', 'shop.m.taobao.com/shop/coupon.htm');
 				}
 
 				//是电脑访问
-				if( ( !mob && port == '' ) || port == 'p' ){
+				if( port == 'p' ){
 					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result_tmall.htm');
 					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result.htm');
 					url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
