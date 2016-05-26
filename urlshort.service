@@ -1,0 +1,15 @@
+[Unit]
+Description=The url short server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/pm2 start /disk/www/url.hgbang.com/app.js
+ExecReload=/usr/local/bin/pm2 restart /disk/www/url.hgbang.com/app.js
+ExecStop=/usr/local/bin/pm2 stop /disk/www/url.hgbang.com/app.js
+
+Restart=always
+PrivateTmp=false
+
+[Install]
+WantedBy=multi-user.target

@@ -117,11 +117,13 @@ DELIMITER ;
 DROP TABLE IF EXISTS `urls`;
 CREATE TABLE `urls` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(1000) NOT NULL,
+  `url` varchar(700) NOT NULL,
   `segment` varchar(15) NOT NULL,
   `datetime_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ip` varchar(25) NOT NULL,
   `clicks` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `segment` (`segment`)
+  UNIQUE KEY `segment` (`segment`),
+  KEY `api` (`api`),
+  KEY `url` (`url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
