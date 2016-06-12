@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1, minimum-scale=1, user-scalable=no">
+</head>
+<body>
+<style>
+        /*reset*/
+        blockquote, body, dd, dir, dl, fieldset, figure, form, h1, h2, h3, h4, h5, h6, hr, input, legend, menu, ol, optgroup, p, pre, tbody, td, textarea, tfoot, th, thead, ul {
+            margin: 0;
+            padding: 0
+        }
+
+        ol, ul {
+            list-style-type: none;
+            list-style-image: none
+        }
+
+        body, button, input, select, textarea {
+            -ms-text-autospace: ideograph-alpha ideograph-numeric ideograph-parenthesis;
+            text-autospace: ideograph-alpha ideograph-numeric ideograph-parenthesis
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 400
+        }
+
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+        }
+
+        body {
+            background: #F6F5F7;
+        }
+
+        .beatHeader {
+            background: #494A4D;
+            height: 120px;
+            width: 100%;
+            position: relative;
+            z-index: 1px;
+            overflow: hidden;
+        }
+
+        .beatHeader {
+            height: 120px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .ios {
+            background: url(//gw.alicdn.com/tps/TB1PzXWKVXXXXaaaXXXXXXXXXXX-640-242.png) no-repeat #494A4D;
+            background-size: contain;
+            background-position: 50% 50%;
+        }
+
+        .android {
+            background: url(//gw.alicdn.com/tps/TB1Fb00KVXXXXcKXVXXXXXXXXXX-720-242.png) no-repeat #494A4D;
+            background-size: contain;
+            background-position: 50% 50%;
+        }
+
+        .beatMain {
+            padding: 0 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .beatMain .imgContainer {
+            padding: 0 16px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .beatMain .imgContainer img {
+            width: 100%;
+            height: auto;
+            margin-top: -16px;
+            box-shadow: 0px 3px 12px rgba(21, 0, 71, 0.16);
+        }
+
+        .beatMain .moonTitleContainer {
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.4);
+            margin-bottom: 16px;
+        }
+
+        .beatMain .moonTitleContainer span {
+            color: #FF5500;
+            margin-right: 16px;
+        }
+
+        .beatMain .itemContent {
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.80);
+            line-height: 21px;
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .beatMain .itemPrice {
+            font-family: STHeitiSC-Light;
+            font-size: 16px;
+            color: #FF5500;
+            line-height: 16.5px;
+            text-align: right;
+            margin-bottom: 16px;
+        }
+    </style>
+<div class="beatHeader {platform}" id="landingHeader">
+</div>
+<div class="beatMain">
+<div class="imgContainer">
+<img src="{thumb}">
+</div>
+<p class="itemContent">{name}</p>
+<p class="itemPrice">￥{price}</p>
+<p style="font-size:12px;color:rgba(0,0,0,.4);text-align:center;">你可以通过右上角“…”的浏览器打开 </p>
+</div>
+</body>
+</html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>【￥{price}】{name}</title>
+<meta name="Keywords" content="{name}"/>
+<meta name="Description" content="{name}"/>
+<script language="JavaScript">
+        var img = document.createElement("img");
+        img.setAttribute("src", "{thumb}");
+        img.setAttribute("style", "width:0px;height:0px;position:absolute;z-index:10;overflow:hidden;margin:0;padding:0;");
+        var d = document;
+        var body = document.createElement("body");
+        body.setAttribute("style", "width:0px;height:0px;position:absolute;z-index:10;overflow:hidden;margin:0;padding:0;");
+        body.appendChild(img);
+        var html = d.querySelector('html');
+        html.appendChild(body);
+    </script>
+</head>
+<frameset rows="100%" border="0" frameborder="0" framespacing="0" style="border: 0px">
+	<frame src="{url}" />
+</frameset>
+</html>

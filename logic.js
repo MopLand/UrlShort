@@ -11,6 +11,7 @@
 * 407: the vanity string has to contain more characters
 * 408: maximum number of URL's per hour exceeded
 */
+var fs = require("fs");
 var mysql = require("mysql");
 var req = require("request");
 var cons = require("./constants");
@@ -21,6 +22,7 @@ var pool = mysql.createPool({
 		password:cons.password,
 		database:cons.database
 	});
+var Tpl = null;
 
 //onSuccess: the method which should be executed if the hash has been generated successfully
 //onError: if there was an error, this function will be executed
@@ -29,10 +31,10 @@ var pool = mysql.createPool({
 //request / response: the request and response objects
 //con: the MySQL connection
 //vanity: this should be a string which represents a custom URL (e.g. "url" corresponds to d.co/url)
-function generateHash(onSuccess, onError, retryCount, url, request, response, con, vanity) {
+function generateHash(onSuccess, onError, retryCount, url, request, response, con, option) {
 	var hash = "";
-	if(vanity){
-		hash = vanity;
+	if(option.vanity){
+		hash = option.vanity;
 		var reg = /[^A-Za-z0-9-_]/;
 		//If the hash contains invalid characters or is equal to other methods ("add" or "whatis"), an error will be thrown
 		if(reg.test(hash) || hash == "add" || hash == "whatis" || hash == "statis" || hash == "admin"){
@@ -61,10 +63,10 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 			console.log(err);
 		}
         if (rows != undefined && rows.length == 0) {
-            onSuccess(hash, url, request, response, con);
+            onSuccess(hash, url, request, response, con, option);
         } else {
-            if (retryCount > 1 && !vanity) {
-                generateHash(onSuccess, onError, retryCount - 1, url, request, response, con);
+            if (retryCount > 1 && !option.vanity) {
+                generateHash(onSuccess, onError, retryCount - 1, url, request, response, con, option);
             } else {
                 onError(response, request, con, 400);
             }
@@ -79,7 +81,26 @@ function hashError(response, request, con, code){
 }
 
 //The function that is executed when the short URL has been created successfully.
-function handleHash(hash, url, request, response, con){
+function handleHash(hash, url, request, response, con, option){
+
+	if( option && option.name ){
+	
+		con.query(
+			cons.add_goods.replace("{NAME}", con.escape(option.name)).
+			replace("{SEGMENT}", con.escape(hash)).
+			replace("{PRICE}", con.escape(option.price)).
+			replace("{THUMB}", con.escape(option.thumb))
+		,
+		function(err, rows){
+			if(err){
+				console.log(err);
+			}
+		});
+	
+	}
+	
+	////////////////////
+
 	con.query(
 		cons.add_query.replace("{URL}", con.escape(url)).
 		replace("{SEGMENT}", con.escape(hash)).
@@ -127,8 +148,10 @@ var getUrl = function(segment, request, response){
 				}
 
 				var ip = getIP(request);
-				var mob = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);
 				var url = result[0].url;
+				var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);		//是否为手机访问
+				var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);			//是否在微信中
+				var iPhone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
 
 				////////////////////////
 
@@ -137,7 +160,7 @@ var getUrl = function(segment, request, response){
 					var sql = cons.insert_view.replace( '{TABLE}', getTab( result[0].id ) );
 
 					//console.log( info );
-					con.query( sql, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city, ( mob ? 1 : 0 ) ], function(err, rows){
+					con.query( sql, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city, ( mobile ? 1 : 0 ) ], function(err, rows){
 						if(err){
 							console.log(err);
 						}
@@ -153,7 +176,7 @@ var getUrl = function(segment, request, response){
 				} );
 
 				////////////////////////
-				//console.log( mob, url );
+				//console.log( mobile, url );
 
 				//是手机访问
 				if( port == 'm' ){
@@ -169,8 +192,29 @@ var getUrl = function(segment, request, response){
 					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply.htm');
 					url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
 				}
-
-				response.redirect( url );
+				
+				//是微信访问
+				if( wechat ){
+				
+					if( url.indexOf('coupon') > -1 ){
+						getTpl( response, Tpl + 'coupon.html', { 'url' : url } );
+						
+					}else{
+						
+						con.query(cons.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
+							var result = rows;
+							if(!err && rows.length > 0){
+								result[0].url = url;
+								result[0].platform = iPhone ? 'ios' : 'android';
+								getTpl( response, Tpl + 'full.html', result[0] );								
+							}
+						});						
+					}
+					
+				}else{
+					response.redirect( url );
+				}
+				
 			}
 			else{
 				response.send(urlResult(null, false, 404));
@@ -183,8 +227,27 @@ var getUrl = function(segment, request, response){
 	});
 };
 
+var getTpl = function( response, file, variable ){
+
+	return fs.readFile( file, 'utf8', function( err, body ) {
+		if (err) {
+			return console.log(err);
+		}
+		
+		if( variable ){
+			for( var k in variable ){
+				var regex = new RegExp('\{'+ k +'\}','ig');
+				body = body.replace( regex, variable[k] );
+			}
+		}
+		
+		response.set('Content-Type', 'text/html');
+		response.send( body );
+	});
+}
+
 //This function adds attempts to add an URL to the database. If the URL returns a 404 or if there is another error, this method returns an error to the client, else an object with the newly shortened URL is sent back to the client.
-var addUrl = function(url, request, response, vanity){
+var addUrl = function(url, request, response, option){
 
 	//验证 URL 有效性
 	cons.url_rule.lastIndex = 0;
@@ -224,7 +287,7 @@ var addUrl = function(url, request, response, vanity){
 					if( cons.url_verify ){
 						req(url, function(err, res, body){
 							if(res != undefined && res.statusCode == 200){
-								generateHash(handleHash, hashError, 50, url, request, response, con, vanity);
+								generateHash(handleHash, hashError, 50, url, request, response, con, option);
 							}
 							else{
 								response.send(urlResult(null, false, 401));
@@ -232,7 +295,7 @@ var addUrl = function(url, request, response, vanity){
 						});
 					}
 					else{
-						generateHash(handleHash, hashError, 50, url, request, response, con, vanity);
+						generateHash(handleHash, hashError, 50, url, request, response, con, option);
 					}
 				});
 			};
@@ -240,7 +303,7 @@ var addUrl = function(url, request, response, vanity){
 			////////////////////////
 
 			//不限制每小时生成数量
-			if( vanity === false || cons.num_of_urls_per_hour == 0 ){
+			if( option.vanity === false || cons.num_of_urls_per_hour == 0 ){
 				fn();
 			}else{
 
@@ -329,6 +392,10 @@ var statIs = function(url, request, response){
 	});
 };
 
+var setTpl = function( dir ){
+	Tpl = dir;
+}
+
 //This function returns the correct IP address. Node.js apps normally run behind a proxy, so the remoteAddress will be equal to the proxy. A proxy sends a header "X-Forwarded-For", so if this header is set, this IP address will be used.
 function getIP(request){
 	//return request.header("x-forwarded-for") || request.connection.remoteAddress;
@@ -385,3 +452,5 @@ exports.getUrl = getUrl;
 exports.addUrl = addUrl;
 exports.whatIs = whatIs;
 exports.statIs = statIs;
+exports.setTpl = setTpl;
+

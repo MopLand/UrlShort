@@ -15,7 +15,11 @@ exports.url_verify = false;
 
 /////////////////////////////
 
-//SQL
+//商品查询与写入
+exports.get_goods = 'SELECT * FROM goods WHERE segment = {SEGMENT}';
+exports.add_goods = 'INSERT INTO goods SET name = {NAME}, price = {PRICE}, thumb = {THUMB}, segment = {SEGMENT}';
+
+//短网址相关SQL
 exports.get_query = 'SELECT * FROM urls WHERE segment = {SEGMENT}';
 exports.add_query = 'INSERT INTO urls SET url = {URL}, segment = {SEGMENT}, ip = {IP}, api = {API}';
 exports.check_url_query = 'SELECT * FROM urls WHERE url = {URL}';

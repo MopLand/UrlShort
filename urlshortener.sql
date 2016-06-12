@@ -127,3 +127,17 @@ CREATE TABLE `urls` (
   KEY `api` (`api`),
   KEY `url` (`url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -------------------------------------------
+
+DROP TABLE IF EXISTS `goods`;
+CREATE TABLE `goods` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `segment` varchar(15) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `price` decimal(10,2) unsigned NOT NULL,
+  `thumb` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `segment` (`segment`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
