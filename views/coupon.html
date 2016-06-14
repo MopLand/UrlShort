@@ -6,51 +6,25 @@
 <meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0">
 <title>优惠券</title>
 <style type="text/css">
+body{margin: 0px 0px; width:100%; }
+html{margin: 0px 0px; width:100%;}
+
 iframe{width:100%; height: 615px; margin: 0px 0px;}
-.guide {width:100%;font-size:14px;background-color:#222;color:#fefefe;line-height:1.5;overflow:hidden;display:none;}
-.guide_content {background:url(/img/ios_guide.png) right center no-repeat;height:80px;padding-right:90px;margin-right:20px;background-size:80px;position:relative;}
-.guide p {text-align:right;}
-.guide_content p:first-child {padding-top:8px;}
-.guide_content a {overflow:hidden;height:20px;width:20px;position:absolute;left:15px;top:30px;background:url(/img/close.png) 0 0 no-repeat;background-size:20px;}
-.guide_android .guide_content{background-image:url(/img/android_guide.png);}
-body{margin: 0px 0px;height: 615px;width:100%;	}
-html{margin: 0px 0px; width:100%; height: 615px;}
-.mytip{font-family: Arial,Helvetica,sans-serif;
-background-color: #FF6501;display: block;
-font-size: 13px;
-border:1px solid #FF6501;
-border-radius: 0.6em;
+
+.mark{ background:rgba(0,0,0,.2); position:fixed; height:100%; width:100%; }
+	.mark div{ width:100%; height:30%; bottom:0; position:absolute; }
+.ios {
+	background: url(//gw.alicdn.com/tps/TB1PzXWKVXXXXaaaXXXXXXXXXXX-640-242.png) no-repeat #494A4D;
+	background-size: contain;
+	background-position: 50% 50%;
 }
-p{padding:0px;margin:0px;}
+
+.android {
+	background: url(//gw.alicdn.com/tps/TB1Fb00KVXXXXcKXVXXXXXXXXXX-720-242.png) no-repeat #494A4D;
+	background-size: contain;
+	background-position: 50% 50%;
+}
 </style>
-	
-<script type="text/javascript">
-window.onload = function() {		
-	
-		var tb_height = parseInt(document.getElementById('guide_ios').getAttribute("tb_height"));   		
-		var ostype = 'android';
-		
-		if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {				
-			ostype = 'ios';
-			if(tb_height == 0){
-				document.getElementById('ios_buy').style.display = "block";        	        	
-			}else{            	    	
-				document.getElementById('guide_ios').style.display = "block";
-			}
-		}else{
-			if(tb_height > 0){
-				document.getElementById('guide_android').style.display = "block";	 
-			}
-		}       	   
-		
-		var close = document.getElementById('guide_close_' + ostype);
-		var guide = document.getElementById('guide_' + ostype);	    
-		   
-		close.onclick = function(){
-			guide.style.display="none";
-		};
-};
-</script>
 </head>
   
 <body>
@@ -58,33 +32,10 @@ window.onload = function() {
 		<img src='/img/tao.png' />
 	</div>
 	
-	<div id="mcover" style="top: 0;left: 0;width: 100%;position: fixed;height: 100%;background: rgba(0, 0, 0, 0.7);display: none; z-index: 2000;" onClick="document.getElementById('mcover').style.display='none';">
-		<img style="height: 180px!important;z-index: 20001;position: fixed;right: 18px;top: 5px;width: 260px!important;" src="/img/ios_buy.png" />
-	</div>
-	
-	<div id="ios_buy" onClick="document.getElementById('mcover').style.display='block';" style="width: 100%;text-align: center;position: fixed;bottom: 0;display: none;">
-		<img style="width: 100%;" src="/img/buy.jpg">
+	<div class="mark">
+		<div class="{platform}"></div>
 	</div>
    
-	<div class="guide guide_ios" id="guide_ios" style="display: none;" tb_height="0">
-		<div class="guide_content">
-			<p>请戳右上角</p>
-			<p>然后选择‘在Safari中打开’</p>
-			<p>购买、浏览更加通畅</p>
-			<a href="javascript:;" id="guide_close_ios"></a>
-		</div>        
-	</div>
-    
-    <div class="guide guide_android" id="guide_android" style="display: none;" tb_height="0">
-        <div class="guide_content">
-            <p>请戳右上角</p>
-            <p>然后选择‘在Safari中打开’</p>
-            <p>购买、浏览更加通畅</p>
-            <a href="javascript:;" id="guide_close_android"></a>
-        </div>       
-    </div>
-   
-	<iframe src="{url}"  style="border:none !important" frameborder="no" border="0px"></iframe>
-
-  </body>
+	<iframe src="{url}" style="border:none !important" frameborder="no" border="0px"></iframe>
+</body>
 </html>

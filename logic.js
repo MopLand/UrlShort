@@ -197,7 +197,7 @@ var getUrl = function(segment, request, response){
 				if( wechat ){
 				
 					if( url.indexOf('coupon') > -1 ){
-						getTpl( response, Tpl + 'coupon.html', { 'url' : url } );
+						getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : ( iPhone ? 'ios' : 'android' ) } );
 						
 					}else{
 						
