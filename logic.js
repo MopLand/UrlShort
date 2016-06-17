@@ -203,10 +203,14 @@ var getUrl = function(segment, request, response){
 						
 						con.query(cons.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 							var result = rows;
+							
+							//找到了商品信息
 							if(!err && rows.length > 0){
 								result[0].url = url;
 								result[0].platform = iPhone ? 'ios' : 'android';
 								getTpl( response, Tpl + 'full.html', result[0] );								
+							}else{
+								response.redirect( url );	
 							}
 						});						
 					}
