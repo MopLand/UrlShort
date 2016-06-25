@@ -193,11 +193,13 @@ var getUrl = function(segment, request, response){
 					url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
 				}
 				
+				var platform = ( iPhone ? 'ios' : 'android' );
+				
 				//是微信访问
 				if( wechat ){
 				
 					if( url.indexOf('coupon') > -1 ){
-						getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : ( iPhone ? 'ios' : 'android' ) } );
+						getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : platform } );
 						
 					}else{
 						
@@ -207,7 +209,7 @@ var getUrl = function(segment, request, response){
 							//找到了商品信息
 							if(!err && rows.length > 0){
 								result[0].url = url;
-								result[0].platform = iPhone ? 'ios' : 'android';
+								result[0].platform = platform;
 								getTpl( response, Tpl + 'full.html', result[0] );								
 							}else{
 								response.redirect( url );	
@@ -216,7 +218,13 @@ var getUrl = function(segment, request, response){
 					}
 					
 				}else{
-					response.redirect( url );
+					
+					//淘宝中转页
+					if( port == 't' ){
+						getTpl( response, Tpl + 'taobao.html', { 'url' : url, 'platform' : platform } );
+					}else{
+						response.redirect( url );
+					}
 				}
 				
 			}

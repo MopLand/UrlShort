@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1, minimum-scale=1, user-scalable=no">
+<title>领取优惠券并购买</title>
+</head>
+
+<body>
+<center style="margin: 10px;">唤醒手机淘宝中...</center>
+
+<script>
+	
+function openApp(url) {
+	
+	var ua = navigator.userAgent.toLowerCase();
+	var tb = url.replace("http://", "").replace("https://", "");
+	
+	if( ua.match(/iphone os 9/i) == "iphone os 9" ) {
+	
+		window.location = "taobao://" + tb;
+		window.setTimeout(function() {window.location = url;},4000);	
+	
+	}else{
+		
+		var ifr = document.createElement('iframe');
+		ifr.src = 'taobao://' + tb;
+		ifr.style.display = 'none';
+		document.body.appendChild(ifr);
+		
+		window.location = url;
+		
+	}
+	
+}
+
+//只在有优惠券的时候执行
+openApp('{url}');
+	
+</script> 
+
+</body>
+</html>
