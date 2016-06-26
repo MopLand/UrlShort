@@ -84,7 +84,7 @@ function hashError(response, request, con, code){
 function handleHash(hash, url, request, response, con, option){
 
 	if( option && option.name ){
-	
+
 		con.query(
 			cons.add_goods.replace("{NAME}", con.escape(option.name)).
 			replace("{SEGMENT}", con.escape(hash)).
@@ -96,9 +96,9 @@ function handleHash(hash, url, request, response, con, option){
 				console.log(err);
 			}
 		});
-	
+
 	}
-	
+
 	////////////////////
 
 	con.query(
@@ -192,33 +192,34 @@ var getUrl = function(segment, request, response){
 					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply.htm');
 					url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
 				}
-				
+
 				var platform = ( iPhone ? 'ios' : 'android' );
-				
+
 				//是微信访问
 				if( wechat ){
-				
+
 					if( url.indexOf('coupon') > -1 ){
 						getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : platform } );
-						
+
 					}else{
-						
+
 						con.query(cons.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 							var result = rows;
-							
+
 							//找到了商品信息
 							if(!err && rows.length > 0){
 								result[0].url = url;
 								result[0].platform = platform;
-								getTpl( response, Tpl + 'full.html', result[0] );								
+								getTpl( response, Tpl + 'goods.html', result[0] );
 							}else{
-								response.redirect( url );	
+								//response.redirect( url );
+								getTpl( response, Tpl + 'empty.html', { 'url' : url, 'platform' : platform } );
 							}
-						});						
+						});
 					}
-					
+
 				}else{
-					
+
 					//淘宝中转页
 					if( port == 't' ){
 						getTpl( response, Tpl + 'taobao.html', { 'url' : url, 'platform' : platform } );
@@ -226,7 +227,7 @@ var getUrl = function(segment, request, response){
 						response.redirect( url );
 					}
 				}
-				
+
 			}
 			else{
 				response.send(urlResult(null, false, 404));
@@ -245,14 +246,14 @@ var getTpl = function( response, file, variable ){
 		if (err) {
 			return console.log(err);
 		}
-		
+
 		if( variable ){
 			for( var k in variable ){
 				var regex = new RegExp('\{'+ k +'\}','ig');
 				body = body.replace( regex, variable[k] );
 			}
 		}
-		
+
 		response.set('Content-Type', 'text/html');
 		response.send( body );
 	});
@@ -465,4 +466,3 @@ exports.addUrl = addUrl;
 exports.whatIs = whatIs;
 exports.statIs = statIs;
 exports.setTpl = setTpl;
-

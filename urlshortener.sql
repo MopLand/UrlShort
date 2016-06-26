@@ -28,13 +28,13 @@ ThisSP:BEGIN
 
 	-- 来源分布
 	-- SELECT IF( referer, referer, '直接访问' ) AS referer, count(*) AS stats FROM @table WHERE url_id = @url_id GROUP BY referer;
-	SET @stmt := CONCAT('SELECT IF( referer, referer, \'直接访问\' ) AS referer, count(*) AS stats FROM ',@table,' WHERE url_id = ',@url_id,' GROUP BY referer');
+	SET @stmt := CONCAT('SELECT COALESCE( referer, \'直接访问\' ) AS referer, count(*) AS stats FROM ',@table,' WHERE url_id = ',@url_id,' GROUP BY referer');
 	PREPARE STMT FROM @stmt;
 	EXECUTE STMT;
 
 	-- 地区分布
 	-- SELECT region, COUNT(*) AS stats FROM @table WHERE url_id = @url_id GROUP BY region;
-	SET @stmt := CONCAT('SELECT region, COUNT(*) AS stats FROM ',@table,' WHERE url_id = ',@url_id,' GROUP BY region');
+	SET @stmt := CONCAT('SELECT COALESCE( region, \'未知地区\' ) AS region, COUNT(*) AS stats FROM ',@table,' WHERE url_id = ',@url_id,' GROUP BY region');
 	PREPARE STMT FROM @stmt;
 	EXECUTE STMT;
 
