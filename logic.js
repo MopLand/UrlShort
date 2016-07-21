@@ -15,7 +15,7 @@ var fs = require("fs");
 var mysql = require("mysql");
 var req = require("request");
 var cons = require("./constants");
-var crypto = require('crypto');
+//var crypto = require('crypto');
 var pool = mysql.createPool({
 		host:cons.host,
 		user:cons.user,
@@ -52,9 +52,12 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 	}
 	else{
 		//This section creates a string for a short URL on basis of an SHA1 hash
+		/*
 		var shasum = crypto.createHash('sha1');
 		shasum.update((new Date).getTime()+"");
 		hash = shasum.digest('hex').substring(0, 6);
+		*/
+		hash = genTag();
 	}
 	//This section query's (with a query defined in "constants.js") and looks if the short URL with the specific segment already exists
 	//If the segment already exists, it will repeat the generateHash function until a segment is generated which does not exist in the database
@@ -461,8 +464,27 @@ function getPort( hash ){
 	}
 }
 
+/* 生成随机字符 */
+function genTag(request, response){
+	
+	var len = 6;
+　　var seed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+　　var size = seed.length;
+　　var string = '';
+　　for (i = 0; i < len; i++) {
+		string += seed.charAt(Math.floor(Math.random() * size));
+　　}
+	
+	if( response ){
+		response.send( string );
+	}else{
+		return string;
+	}	
+}
+
 exports.getUrl = getUrl;
 exports.addUrl = addUrl;
 exports.whatIs = whatIs;
 exports.statIs = statIs;
 exports.setTpl = setTpl;
+exports.genTag = genTag;

@@ -32,7 +32,7 @@ exports.get_statis = 'CALL count_by_url_hash( ? )';
 /////////////////////////////
 
 //DB
-exports.host = 'localhost';
+exports.host = '127.0.0.1';
 exports.user = 'root';
 exports.password = 'root';
 exports.database = 'yourls';

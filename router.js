@@ -28,6 +28,10 @@ var route = function(app){
 		logic.addUrl(url, request, response, { 'vanity' : false, 'name' : name, 'price' : price, 'thumb' : thumb });
 	});
 	
+	app.get('/hash', function(request, response){
+		logic.genTag(request, response);
+	});
+	
 	app.get('/whatis', function(request, response){
 		var url = request.param('url');
 		logic.whatIs(url, request, response);
@@ -39,7 +43,8 @@ var route = function(app){
 	});
 	
 	app.get('/:segment', function(request, response){
-		logic.getUrl(request.params.segment, request, response);
+		var segment = request.params.segment.trim();
+		logic.getUrl(segment, request, response);
 	});
 }
 
