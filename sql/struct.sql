@@ -1,3 +1,59 @@
+
+DROP TABLE IF EXISTS `urls`;
+CREATE TABLE `urls` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(700) BINARY NOT NULL,
+  `segment` varchar(15) NOT NULL,
+  `datetime_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `api` tinyint(4) NOT NULL DEFAULT '0',
+  `ip` varchar(25) NOT NULL,
+  `clicks` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `segment` (`segment`),
+  KEY `api` (`api`),
+  KEY `url` (`url`),
+  KEY `clicks` (`clicks`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -------------------------------------------
+
+DROP TABLE IF EXISTS `goods`;
+CREATE TABLE `goods` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `segment` varchar(15) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `price` decimal(10,2) unsigned NOT NULL,
+  `thumb` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `segment` (`segment`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -------------------------------------------
+
+DROP TABLE IF EXISTS `stats`;
+CREATE TABLE `stats` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `url_id` int(11) NOT NULL,
+  `clickdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mobile` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `country` varchar(64) DEFAULT NULL,
+  `area` varchar(64) DEFAULT NULL,
+  `region` varchar(64) DEFAULT NULL,
+  `city` varchar(64) DEFAULT NULL,
+  `ip` varchar(100) NOT NULL,
+  `referer` varchar(1000) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `url_id` (`url_id`),
+  KEY `clickdate` (`clickdate`),
+  KEY `ip` (`ip`),
+  KEY `country` (`country`),
+  KEY `mobile` (`mobile`),
+  CONSTRAINT `stats_ibfk_1` FOREIGN KEY (`url_id`) REFERENCES `urls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -------------------------------------------
+
 CREATE TABLE `stats_0` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url_id` int(11) NOT NULL,
@@ -198,73 +254,3 @@ CREATE TABLE `stats_9` (
   KEY `mobile` (`mobile`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-DELIMITER ;;
-CREATE TRIGGER `stats_0_click` AFTER INSERT ON `stats_0` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_1_click` AFTER INSERT ON `stats_1` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_2_click` AFTER INSERT ON `stats_2` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_3_click` AFTER INSERT ON `stats_3` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_4_click` AFTER INSERT ON `stats_4` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_5_click` AFTER INSERT ON `stats_5` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_6_click` AFTER INSERT ON `stats_6` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_7_click` AFTER INSERT ON `stats_7` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_8_click` AFTER INSERT ON `stats_8` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;
-
-DELIMITER ;;
-CREATE TRIGGER `stats_9_click` AFTER INSERT ON `stats_9` FOR EACH ROW
-BEGIN
-	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
-END;;
-DELIMITER ;

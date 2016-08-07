@@ -5,6 +5,63 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 DELIMITER ;;
 
+DROP PROCEDURE IF EXISTS `clean_old_url_data`;;
+CREATE PROCEDURE `clean_old_url_data`()
+BEGIN
+
+	-- 定义字段
+	DECLARE furl_id INT;
+	DECLARE fsegment VARCHAR(15);
+
+	--
+
+	-- 完成标记
+	DECLARE done INT DEFAULT FALSE;
+
+	-- 定义游标，3个月前的过期数据
+	DECLARE curs CURSOR FOR SELECT id, segment FROM urls WHERE datetime_added < curdate() - interval 3 month ORDER BY id ASC;
+
+	-- 完成标记
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+	--
+
+	OPEN curs;	loop_label: LOOP
+
+		FETCH curs INTO furl_id, fsegment;
+
+		IF done THEN
+			LEAVE loop_label;
+		ELSE
+		
+			-- 统计分表
+			SET @table = CONCAT( 'stats_', furl_id % 10 );
+
+			-- 删除统计数据
+			-- DELETE FROM stats_3 WHERE url_id = furl_id;
+			SET @stmt := CONCAT('DELETE FROM ', @table, ' WHERE url_id = ', furl_id );
+			PREPARE STMT FROM @stmt;
+			EXECUTE STMT;
+
+			-- 删除商品数据
+			DELETE FROM goods WHERE segment = fsegment;
+
+			-- 删除当前记录
+			DELETE FROM urls WHERE id = furl_id;
+
+		END IF;
+
+	END LOOP;	CLOSE curs;
+
+END;;
+
+DROP EVENT IF EXISTS `clean_expired_data`;;
+CREATE EVENT `clean_expired_data` ON SCHEDULE EVERY 1 DAY STARTS '2016-08-01 01:01:00' ON COMPLETION PRESERVE ENABLE DO BEGIN
+     CALL clean_old_url_data();
+END;;
+
+-- -------------------------------------------
+
 DROP PROCEDURE IF EXISTS `count_by_url_hash`;;
 CREATE PROCEDURE `count_by_url_hash`(IN `hash` varchar(15))
 ThisSP:BEGIN
@@ -81,28 +138,6 @@ DELIMITER ;
 
 -- -------------------------------------------
 
-DROP TABLE IF EXISTS `stats`;
-CREATE TABLE `stats` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url_id` int(11) NOT NULL,
-  `clickdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `mobile` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `country` varchar(64) DEFAULT NULL,
-  `area` varchar(64) DEFAULT NULL,
-  `region` varchar(64) DEFAULT NULL,
-  `city` varchar(64) DEFAULT NULL,
-  `ip` varchar(100) NOT NULL,
-  `referer` varchar(1000) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `url_id` (`url_id`),
-  KEY `clickdate` (`clickdate`),
-  KEY `ip` (`ip`),
-  KEY `country` (`country`),
-  KEY `mobile` (`mobile`),
-  CONSTRAINT `stats_ibfk_1` FOREIGN KEY (`url_id`) REFERENCES `urls` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 DELIMITER ;;
 
 CREATE TRIGGER `stats_urls_click` AFTER INSERT ON `stats` FOR EACH ROW
@@ -114,31 +149,73 @@ DELIMITER ;
 
 -- -------------------------------------------
 
-DROP TABLE IF EXISTS `urls`;
-CREATE TABLE `urls` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(700) BINARY NOT NULL,
-  `segment` varchar(15) NOT NULL,
-  `datetime_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ip` varchar(25) NOT NULL,
-  `clicks` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `segment` (`segment`),
-  KEY `api` (`api`),
-  KEY `url` (`url`),
-  KEY `clicks` (`clicks`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DELIMITER ;;
+CREATE TRIGGER `stats_0_click` AFTER INSERT ON `stats_0` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
 
--- -------------------------------------------
+DELIMITER ;;
+CREATE TRIGGER `stats_1_click` AFTER INSERT ON `stats_1` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
 
-DROP TABLE IF EXISTS `goods`;
-CREATE TABLE `goods` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `segment` varchar(15) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `price` decimal(10,2) unsigned NOT NULL,
-  `thumb` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `segment` (`segment`),
-  KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DELIMITER ;;
+CREATE TRIGGER `stats_2_click` AFTER INSERT ON `stats_2` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE TRIGGER `stats_3_click` AFTER INSERT ON `stats_3` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE TRIGGER `stats_4_click` AFTER INSERT ON `stats_4` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE TRIGGER `stats_5_click` AFTER INSERT ON `stats_5` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE TRIGGER `stats_6_click` AFTER INSERT ON `stats_6` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE TRIGGER `stats_7_click` AFTER INSERT ON `stats_7` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE TRIGGER `stats_8_click` AFTER INSERT ON `stats_8` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
+
+DELIMITER ;;
+CREATE TRIGGER `stats_9_click` AFTER INSERT ON `stats_9` FOR EACH ROW
+BEGIN
+	UPDATE urls SET clicks = clicks + 1 WHERE id = new.url_id;
+END;;
+DELIMITER ;
+
