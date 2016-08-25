@@ -10,34 +10,34 @@
 <center style="margin: 10px;">正在打开手机淘宝...</center>
 
 <script>
-	
+
 function openApp(url) {
 	
 	var ua = navigator.userAgent.toLowerCase();
 	var tb = url.replace("http://", "").replace("https://", "");
-	
+
 	if( ua.match(/iphone os 9/i) == "iphone os 9" ) {
-	
+
 		window.location = "taobao://" + tb;
-		window.setTimeout(function() {window.location = url;},4000);	
-	
+		window.setTimeout(function() {window.location = url;},4000);
+
 	}else{
-		
+
 		var ifr = document.createElement('iframe');
 		ifr.src = 'taobao://' + tb;
 		ifr.style.display = 'none';
 		document.body.appendChild(ifr);
-		
+
 		window.location = url;
-		
+
 	}
-	
+
 }
 
 //只在有优惠券的时候执行
 openApp('{url}');
-	
-</script> 
+
+</script>
 
 </body>
 </html>
