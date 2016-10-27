@@ -4,7 +4,7 @@ exports.root_url = "http://localhost:3500/";
 //短地址最小长度
 exports.min_vanity_length = 4;
 
-//每个IP每小时能产生的URL数量
+//每个IP每小时能产生的URL数量（0为不限制）
 exports.num_of_urls_per_hour = 500;
 
 //允许URL规则
@@ -12,6 +12,9 @@ exports.url_rule = /(taobao|tmall|alimama)\.com/gi;
 
 //是否对URL验证
 exports.url_verify = false;
+
+//是否开启统计
+exports.url_statis = true;
 
 /////////////////////////////
 

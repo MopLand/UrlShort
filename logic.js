@@ -158,22 +158,15 @@ var getUrl = function(segment, request, response){
 
 				////////////////////////
 
-				getIPInfo( ip, function( info ){
+				//写入访问统计
+				cons.url_statis && getIPInfo( ip, function( info ){
 
 					var sql = cons.insert_view.replace( '{TABLE}', getTab( result[0].id ) );
 
-					//console.log( info );
 					con.query( sql, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city, ( mobile ? 1 : 0 ) ], function(err, rows){
 						if(err){
 							console.log(err);
 						}
-						/*
-						con.query(cons.update_views_query.replace("{VIEWS}", con.escape(result[0].clicks+1)).replace("{ID}", con.escape(result[0].id)), function(err, rows){
-							if(err){
-								console.log(err);
-							}
-						});
-						*/
 					});
 
 				} );

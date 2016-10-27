@@ -16,7 +16,7 @@ function openApp(url) {
 	var ua = navigator.userAgent.toLowerCase();
 	var tb = url.replace("http://", "").replace("https://", "");
 
-	if( ua.match(/iphone os 9/i) == "iphone os 9" ) {
+	if( ua.match(/iphone/i) == "iphone" ) {
 
 		window.location = "taobao://" + tb;
 		window.setTimeout(function() {window.location = url;},4000);
