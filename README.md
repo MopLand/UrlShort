@@ -36,3 +36,14 @@ This script is meant to be used as a public URL shortener. If you want to use th
 			proxy_pass http://127.0.0.1:3500;    
 	    } 
 	}
+
+
+## Startup
+	1.使用pm2启动node：
+	pm2 start /disk/app.js --watch
+
+	2.dump这些进程列表：
+	pm2 save
+
+	3.生成自启动脚本：
+	pm2 startup centos
