@@ -120,8 +120,10 @@ function handleHash(hash, url, request, response, con, option){
 
 //This function returns the object that will be sent to the client
 function urlResult(hash, result, statusCode){
+	var domain = cons.domain[ Math.floor(Math.random()*cons.domain.length) ];
+	var prefix = 'http://'+ domain +'/';
 	return {
-		url: hash != null ? cons.root_url + hash : null,
+		url: hash != null ? prefix + hash : null,
 		result: result,
 		statusCode: statusCode
 	};
@@ -217,7 +219,7 @@ var getUrl = function(segment, request, response){
 				}else{
 
 					//淘宝中转页
-					if( port == 't' ){
+					if( port == 't' || /taobao\.com/.test( url ) ){
 						getTpl( response, Tpl + 'taobao.html', { 'url' : url, 'platform' : platform } );
 					}else{
 						response.redirect( url );
@@ -236,23 +238,47 @@ var getUrl = function(segment, request, response){
 	});
 };
 
+//读取模板并缓存
+var cached = {};
+
 var getTpl = function( response, file, variable ){
 
-	return fs.readFile( file, 'utf8', function( err, body ) {
-		if (err) {
-			return console.log(err);
-		}
-
+	var callback = function( body, variable ){
 		if( variable ){
 			for( var k in variable ){
 				var regex = new RegExp('\{'+ k +'\}','ig');
 				body = body.replace( regex, variable[k] );
 			}
 		}
-
 		response.set('Content-Type', 'text/html');
 		response.send( body );
-	});
+	}
+
+	///////////////////////
+
+	//从缓存中读取
+	if( cached[ file ] ){
+
+		callback( cached[ file ], variable );
+
+	}else{
+
+		console.log( 'read...' );
+
+		return fs.readFile( file, 'utf8', function( err, body ) {
+			if (err) {
+				return console.log(err);
+			}
+
+			//缓存进数组
+			cached[ file ] = body;
+
+			//处理模块
+			callback( body, variable );
+		});
+
+	}
+
 }
 
 //This function adds attempts to add an URL to the database. If the URL returns a 404 or if there is another error, this method returns an error to the client, else an object with the newly shortened URL is sent back to the client.
@@ -340,9 +366,6 @@ var addUrl = function(url, request, response, option){
 //This method looks up stats of a specific short URL and sends it to the client
 var whatIs = function(url, request, response){
 	pool.getConnection(function(err, con){
-		//var hash = url;
-		//if(!hash) hash = "";
-		//hash = hash.replace(cons.root_url, "");
 		var hash = getHash( url );
 		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 			if(err || rows.length == 0){
@@ -439,8 +462,14 @@ function getIPInfo( ip, fn ){
 
 /* 获取真实短网址 */
 function getHash( hash ){
+
 	hash = ( hash || '' );
-	hash = hash.replace( cons.root_url, '' );
+
+	//是完整地址，提取短地址
+	if( exec = /\/([^/]*)$/.exec( hash ) ){
+		hash = exec[1];
+	}
+
 	if( hash.length == 7 ){
 		return hash.substr(1);
 	}else{
@@ -459,7 +488,7 @@ function getPort( hash ){
 
 /* 生成随机字符 */
 function genTag(request, response){
-	
+
 	var len = 6;
 　　var seed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 　　var size = seed.length;
@@ -467,12 +496,12 @@ function genTag(request, response){
 　　for (i = 0; i < len; i++) {
 		string += seed.charAt(Math.floor(Math.random() * size));
 　　}
-	
+
 	if( response ){
 		response.send( string );
 	}else{
 		return string;
-	}	
+	}
 }
 
 exports.getUrl = getUrl;
