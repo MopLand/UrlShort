@@ -86,6 +86,7 @@ function hashError(response, request, con, code){
 //The function that is executed when the short URL has been created successfully.
 function handleHash(hash, url, request, response, con, option){
 
+	//附带商品信息
 	if( option && option.name ){
 
 		con.query(
@@ -104,6 +105,7 @@ function handleHash(hash, url, request, response, con, option){
 
 	////////////////////
 
+	//新增短链接
 	con.query(
 		cons.add_query.replace("{URL}", con.escape(url)).
 		replace("{SEGMENT}", con.escape(hash)).
@@ -115,6 +117,7 @@ function handleHash(hash, url, request, response, con, option){
 			console.log(err);
 		}
 	});
+	
 	response.send(urlResult(hash, true, 100));
 }
 
@@ -142,10 +145,10 @@ var getUrl = function(segment, request, response){
 		var port = getPort( segment );
 
 		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
-			var result = rows;
 			if(!err && rows.length > 0){
 
-				var referer = "";
+				var result = rows[0];
+				var referer = '';
 				if( request.headers.referer ){
 					referer = request.headers.referer;
 					var matches = referer.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
@@ -153,7 +156,7 @@ var getUrl = function(segment, request, response){
 				}
 
 				var ip = getIP(request);
-				var url = result[0].url;
+				var url = result.url;
 				var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);		//是否为手机访问
 				var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);			//是否在微信中
 				var iPhone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
@@ -163,9 +166,9 @@ var getUrl = function(segment, request, response){
 				//写入访问统计
 				cons.url_statis && getIPInfo( ip, function( info ){
 
-					var sql = cons.insert_view.replace( '{TABLE}', getTab( result[0].id ) );
+					var sql = cons.insert_view.replace( '{TABLE}', getTab( result.id ) );
 
-					con.query( sql, [ ip, result[0].id, referer, info.country, info.area, info.region, info.city, ( mobile ? 1 : 0 ) ], function(err, rows){
+					con.query( sql, [ ip, result.id, referer, info.country, info.area, info.region, info.city, ( mobile ? 1 : 0 ) ], function(err, rows){
 						if(err){
 							console.log(err);
 						}
@@ -197,18 +200,22 @@ var getUrl = function(segment, request, response){
 				if( wechat ){
 
 					if( url.indexOf('coupon') > -1 ){
+					
 						getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : platform } );
 
 					}else{
 
 						con.query(cons.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
-							var result = rows;
 
 							//找到了商品信息
 							if(!err && rows.length > 0){
-								result[0].url = url;
-								result[0].platform = platform;
-								getTpl( response, Tpl + 'goods.html', result[0] );
+							
+								var goods = rows[0];
+									goods.url = url;
+									goods.platform = platform;
+									
+								getTpl( response, Tpl + 'goods.html', goods );
+								
 							}else{
 								//response.redirect( url );
 								getTpl( response, Tpl + 'empty.html', { 'url' : url, 'platform' : platform } );
@@ -226,8 +233,7 @@ var getUrl = function(segment, request, response){
 					}
 				}
 
-			}
-			else{
+			}else{
 				response.send(urlResult(null, false, 404));
 			}
 			if(err){
@@ -238,8 +244,10 @@ var getUrl = function(segment, request, response){
 	});
 };
 
+////////////////////////////////////////
+
 //读取模板并缓存
-var cached = {};
+var tplSet = {};
 
 var getTpl = function( response, file, variable ){
 
@@ -257,13 +265,13 @@ var getTpl = function( response, file, variable ){
 	///////////////////////
 
 	//从缓存中读取
-	if( cached[ file ] ){
+	if( tplSet[ file ] ){
 
-		callback( cached[ file ], variable );
+		callback( tplSet[ file ], variable );
 
 	}else{
 
-		console.log( 'read...' );
+		//console.log( 'read...' );
 
 		return fs.readFile( file, 'utf8', function( err, body ) {
 			if (err) {
@@ -271,7 +279,7 @@ var getTpl = function( response, file, variable ){
 			}
 
 			//缓存进数组
-			cached[ file ] = body;
+			tplSet[ file ] = body;
 
 			//处理模块
 			callback( body, variable );
@@ -281,10 +289,12 @@ var getTpl = function( response, file, variable ){
 
 }
 
+////////////////////////////////////////
+
 //This function adds attempts to add an URL to the database. If the URL returns a 404 or if there is another error, this method returns an error to the client, else an object with the newly shortened URL is sent back to the client.
 var addUrl = function(url, request, response, option){
 
-	//验证 URL 有效性
+	//验证 URL 有效性，否则返回 403
 	cons.url_rule.lastIndex = 0;
 	if( cons.url_rule && cons.url_rule.test( url ) == false ){
 		response.send(urlResult(null, false, 403));
@@ -293,14 +303,6 @@ var addUrl = function(url, request, response, option){
 
 	pool.getConnection(function(err, con){
 		if(url){
-
-			/*
-			try{
-				url = decodeURIComponent(url).toLowerCase();
-			}catch(ex){
-				url = unescape(url).toLowerCase();
-			}
-			*/
 
 			var fn = function(){
 				con.query(cons.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
@@ -363,6 +365,8 @@ var addUrl = function(url, request, response, option){
 	});
 };
 
+////////////////////////////////////////
+
 //This method looks up stats of a specific short URL and sends it to the client
 var whatIs = function(url, request, response){
 	pool.getConnection(function(err, con){
@@ -378,6 +382,8 @@ var whatIs = function(url, request, response){
 		con.release();
 	});
 };
+
+////////////////////////////////////////
 
 //This method looks up stats of a specific short URL and sends it to the client
 var statIs = function(url, request, response){
@@ -423,6 +429,8 @@ var statIs = function(url, request, response){
 		con.release();
 	});
 };
+
+////////////////////////////////////////
 
 var setTpl = function( dir ){
 	Tpl = dir;
@@ -503,6 +511,8 @@ function genTag(request, response){
 		return string;
 	}
 }
+
+////////////////////////////////////////
 
 exports.getUrl = getUrl;
 exports.addUrl = addUrl;

@@ -6,10 +6,11 @@ exports.domain = 'flyurl.biz flyurl.co flyurl.in flyurl.xyz shzurl.biz shzurl.co
 exports.min_vanity_length = 4;
 
 //每个IP每小时能产生的URL数量（0为不限制）
-exports.num_of_urls_per_hour = 500;
+exports.num_of_urls_per_hour = 10000;
 
 //允许URL规则
-exports.url_rule = /(taobao|tmall|alimama)\.com/gi;
+//exports.url_rule = /(taobao|tmall|alimama)\.com/gi;
+exports.url_rule = /^https?:\/\/(shop\.m|s\.click|detail|taoquan|item|uland)\.(taobao|tmall|alimama)\.com/gi;
 
 //是否对URL验证
 exports.url_verify = false;
