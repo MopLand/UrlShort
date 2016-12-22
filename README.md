@@ -47,3 +47,35 @@ This script is meant to be used as a public URL shortener. If you want to use th
 
 	3.生成自启动脚本：
 	pm2 startup centos
+
+## API
+
+	1.转换链接
+	/add?url=URL	
+	/add?url=URL&vanity=Vanity
+
+	URL		原始链接地址（仅支持淘宝、天猫地址）
+	Vanity	自定义短链接（可选）
+
+	2.转换链接，支持商品信息
+	/api?url=URL&name=Name&price=Price&thumb=Thumb
+
+	URL		原始链接地址（仅支持淘宝、天猫地址）
+	Name	商品名称	
+	Price	商品价格
+	Thumb	商品图片
+
+	3.哈希测试
+	/hash
+
+	4.链接还原
+	/whatis?url=URL
+	
+	URL		短链接或完整地址
+
+	5.数据统计
+	/statis?url=URL
+
+	URL		短链接或完整地址
+	
+	

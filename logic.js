@@ -158,7 +158,7 @@ var getUrl = function(segment, request, response){
 				var ip = getIP(request);
 				var url = result.url;
 				var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);		//是否为手机访问
-				var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);			//是否在微信中
+				var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);		//是否在微信中
 				var iPhone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
 
 				////////////////////////
