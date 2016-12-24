@@ -4,10 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1, minimum-scale=1, user-scalable=no">
 <title>领取优惠券并购买</title>
+<script src="js/taobao.js"></script>
+<style>
+.wakeup{ margin: 8% auto; font-family: "Arial","Microsoft YaHei"; text-align: center; }
+.wakeup img{ max-width: 150px; }
+.wakeup p{ color: #888; }
+.wakeup a{ border: #487ef1 solid 1px; border-radius: 5px; color: #487ef1; padding: 3% 10%; max-width: 300px; line-height: 25px; text-decoration: none; display: inline-block; }
+iframe{ display:none;border:0;width:0;height:0; }
+</style>
 </head>
 
 <body>
-<center style="margin: 10px;">正在打开手机淘宝...</center>
+
+<h4 class="wakeup"><img src="img/tao.png"></h4>
+
+<h4 class="wakeup"><p>正在打开手机淘宝...</p></h4>
+
+<h4 class="wakeup"><a href="{url}">直接访问</a></h4>
 
 <script>
 
@@ -35,7 +48,8 @@ function openApp(url) {
 }
 
 //只在有优惠券的时候执行
-openApp('{url}');
+//openApp('{url}');
+window.wakeup && window.wakeup( '{url}' );
 
 </script>
 
