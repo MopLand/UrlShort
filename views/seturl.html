@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>易群推短网址 - yqt.so</title>
+  <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="http://dn-appserv.qbox.me/bootstrap.min.css" rel="stylesheet">
+  <link href="http://dn-appserv.qbox.me/freelancer.css" rel="stylesheet">
+  <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<body id="page-top" class="index">
+  
+	<div class="container">
+    <div class="jumbotron">
+
+        <form class="form-signin" method="get">
+            <h2>自定义域名</h2>
+						
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="多个域名请用空格隔开" required autofocus name="domain" value="{domain}">
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-lg btn-primary btn-block" type="submit">立即保存</button>
+            </div>
+			
+        </form>
+
+    </div>
+	</div>
+
+	<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	
+	<script>
+	$('form').on('submit', function( e ){
+		e.preventDefault();
+
+		var domain = $('[name=domain]').val();
+		
+		$.get("/set", { domain: domain }, function(data){
+			
+		});
+		
+		alert('操作成功');
+	});
+	</script>
+	
+</body>
+</html>

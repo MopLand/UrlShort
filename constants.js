@@ -1,6 +1,6 @@
 
 //短网址根域名
-exports.domain = 'flyurl.biz flyurl.co flyurl.in flyurl.xyz shzurl.biz shzurl.co shzurl.com shzurl.in shzurl.info shzurl.me shzurl.net shzurl.org shzurl.xyz yqturl.biz yqturl.co yqturl.com yqturl.in yqturl.info yqturl.net yqturl.org zhadui.in'.split(' ');
+exports.domain = 'flyurl.biz flyurl.co flyurl.in flyurl.xyz shzurl.biz shzurl.co shzurl.com shzurl.in shzurl.xyz'.split(' ');
 
 //短地址最小长度
 exports.min_vanity_length = 4;

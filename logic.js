@@ -514,9 +514,32 @@ function genTag(request, response){
 
 ////////////////////////////////////////
 
+function setUrl( request, response, domain ){
+
+	if( domain ){
+	
+		var file = __dirname + '/constants.js';
+
+		fs.readFile( file, 'utf8', function( err, body ) {			
+
+			body = body.replace( /exports.domain = '(.+?)'/, "exports.domain = '"+ domain.trim() +"'" );
+				
+			fs.writeFile( file, body );
+			
+		});
+		
+	}else{
+		getTpl( response, Tpl + 'seturl.html', { 'domain' : cons.domain.join(' ') } );
+	}	
+
+}
+
+////////////////////////////////////////
+
 exports.getUrl = getUrl;
 exports.addUrl = addUrl;
 exports.whatIs = whatIs;
 exports.statIs = statIs;
 exports.setTpl = setTpl;
 exports.genTag = genTag;
+exports.setUrl = setUrl;
