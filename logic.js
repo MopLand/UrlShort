@@ -199,7 +199,7 @@ var getUrl = function(segment, request, response){
 				//是微信访问
 				if( wechat ){
 
-					if( url.indexOf('coupon') > -1 ){
+					if( url.indexOf('coupon') > -1 && url.indexOf('.htm') > -1 ){
 					
 						getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : platform } );
 
