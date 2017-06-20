@@ -23,6 +23,7 @@ var pool = mysql.createPool({
 		database:cons.database
 	});
 var Tpl = null;
+var Cache = {};
 
 //onSuccess: the method which should be executed if the hash has been generated successfully
 //onError: if there was an error, this function will be executed
@@ -112,9 +113,14 @@ function handleHash(hash, url, request, response, con, option){
 		replace("{IP}", con.escape(getIP(request))).
 		replace("{API}", request.path == '/api' ? 1 : 0 )
 	,
-	function(err, rows){
+	function(err, res){
 		if(err){
 			console.log(err);
+		}else{
+
+			//加入到缓存
+			Cache[hash] = { 'id' : res.insertId, 'url' : url };
+			
 		}
 	});
 	
@@ -143,104 +149,130 @@ var getUrl = function(segment, request, response){
 
 		var hash = getHash( segment );
 		var port = getPort( segment );
+		
+		var fn = function( result ){
 
-		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
-			if(!err && rows.length > 0){
+			var referer = '';
+			if( request.headers.referer ){
+				referer = request.headers.referer;
+				var matches = referer.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
+				var referer = matches && matches[1];
+			}
 
-				var result = rows[0];
-				var referer = '';
-				if( request.headers.referer ){
-					referer = request.headers.referer;
-					var matches = referer.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
-					var referer = matches && matches[1];
-				}
+			var ip = getIP(request);
+			var url = result.url;
+			var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);		//是否为手机访问
+			var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);		//是否在微信中
+			var iPhone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
 
-				var ip = getIP(request);
-				var url = result.url;
-				var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);		//是否为手机访问
-				var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);		//是否在微信中
-				var iPhone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
+			////////////////////////
 
-				////////////////////////
+			//写入访问统计
+			cons.url_statis && getIPInfo( ip, function( info ){
 
-				//写入访问统计
-				cons.url_statis && getIPInfo( ip, function( info ){
+				var sql = cons.insert_view.replace( '{TABLE}', getTab( result.id ) );
 
-					var sql = cons.insert_view.replace( '{TABLE}', getTab( result.id ) );
-
-					con.query( sql, [ ip, result.id, referer, info.country, info.area, info.region, info.city, ( mobile ? 1 : 0 ) ], function(err, rows){
-						if(err){
-							console.log(err);
-						}
-					});
-
-				} );
-
-				////////////////////////
-				//console.log( mobile, url );
-
-				//是手机访问
-				if( port == 'm' ){
-					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result_tmall.htm', 'shop.m.taobao.com/shop/coupon.htm');
-					url = url.replace('taoquan.taobao.com/coupon/unify_apply_result.htm', 'shop.m.taobao.com/shop/coupon.htm');
-					url = url.replace('taoquan.taobao.com/coupon/unify_apply.htm', 'shop.m.taobao.com/shop/coupon.htm');
-				}
-
-				//是电脑访问
-				if( port == 'p' ){
-					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result_tmall.htm');
-					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result.htm');
-					url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply.htm');
-					url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
-				}
-
-				var platform = ( iPhone ? 'ios' : 'android' );
-
-				//是微信访问
-				if( wechat ){
-
-					if( url.indexOf('coupon') > -1 && url.indexOf('.htm') > -1 ){
-					
-						getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : platform } );
-
-					}else{
-
-						con.query(cons.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
-
-							//找到了商品信息
-							if(!err && rows.length > 0){
-							
-								var goods = rows[0];
-									goods.url = url;
-									goods.platform = platform;
-									
-								getTpl( response, Tpl + 'goods.html', goods );
-								
-							}else{
-								//response.redirect( url );
-								getTpl( response, Tpl + 'empty.html', { 'url' : url, 'platform' : platform } );
-							}
-						});
+				con.query( sql, [ ip, result.id, referer, info.country, info.area, info.region, info.city, ( mobile ? 1 : 0 ) ], function(err, rows){
+					if(err){
+						console.log(err);
 					}
+				});
+
+			} );
+
+			////////////////////////
+			//console.log( mobile, url );
+
+			//是手机访问
+			if( port == 'm' ){
+				url = url.replace('taoquan.taobao.com/coupon/unify_apply_result_tmall.htm', 'shop.m.taobao.com/shop/coupon.htm');
+				url = url.replace('taoquan.taobao.com/coupon/unify_apply_result.htm', 'shop.m.taobao.com/shop/coupon.htm');
+				url = url.replace('taoquan.taobao.com/coupon/unify_apply.htm', 'shop.m.taobao.com/shop/coupon.htm');
+			}
+
+			//是电脑访问
+			if( port == 'p' ){
+				url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result_tmall.htm');
+				url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result.htm');
+				url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply.htm');
+				url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
+			}
+
+			var platform = ( iPhone ? 'ios' : 'android' );
+
+			//是微信访问
+			if( wechat ){
+
+				if( url.indexOf('coupon') > -1 && url.indexOf('.htm') > -1 ){
+				
+					getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : platform } );
 
 				}else{
 
-					//淘宝中转页
-					if( port == 't' || /taobao\.com/.test( url ) ){
-						getTpl( response, Tpl + 'taobao.html', { 'url' : url, 'platform' : platform } );
-					}else{
-						response.redirect( url );
-					}
+					con.query(cons.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
+
+						//找到了商品信息
+						if(!err && rows.length > 0){
+						
+							var goods = rows[0];
+								goods.url = url;
+								goods.platform = platform;
+								
+							getTpl( response, Tpl + 'goods.html', goods );
+							
+						}else{
+							//response.redirect( url );
+							getTpl( response, Tpl + 'empty.html', { 'url' : url, 'platform' : platform } );
+						}
+					});
 				}
 
 			}else{
-				response.send(urlResult(null, false, 404));
+
+				//淘宝中转页
+				if( port == 't' || /taobao\.com/.test( url ) ){
+					getTpl( response, Tpl + 'taobao.html', { 'url' : url, 'platform' : platform } );
+				}else{
+					response.redirect( url );
+				}
 			}
-			if(err){
-				console.log(err);
-			}
-		});
-		con.release();
+			
+		};
+		
+		//////////////////////////////
+
+		//从缓存读取
+		if( result = Cache[hash] ){
+		
+			fn( result );
+			
+			console.log( hash, 'Hit Cache' );
+			
+		}else{
+			
+			console.log( hash, 'Hit DB' );
+		
+			con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function( err, rows ){
+			
+				if(!err && rows.length > 0){
+				
+					//加入到缓存
+					fn( Cache[hash] = rows[0] );
+					
+				}else{
+					response.send(urlResult(null, false, 404));
+				}
+				
+				if(err){
+					console.log(err);
+				}
+				
+			} );
+			
+			con.release();
+			
+		}
+		
 	});
 };
 
