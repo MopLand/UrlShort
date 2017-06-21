@@ -15,21 +15,21 @@ var route = function(app){
 	});
 	
 	app.get('/add', function(request, response){
-		var url = request.param('url');
-		var vanity = request.param('vanity');
+		var url = request.query['url'];
+		var vanity = request.query['vanity'];
 		logic.addUrl(url, request, response, { 'vanity' : vanity });
 	});
 	
 	app.get('/api', function(request, response){
-		var url = request.param('url');
-		var name = request.param('name');
-		var price = request.param('price');
-		var thumb = request.param('thumb');
+		var url = request.query['url'];
+		var name = request.query['name'];
+		var price = request.query['price'];
+		var thumb = request.query['thumb'];
 		logic.addUrl(url, request, response, { 'vanity' : false, 'name' : name, 'price' : price, 'thumb' : thumb });
 	});
 	
 	app.get('/set', function(request, response){
-		var domain = request.param('domain');
+		var domain = request.query['domain'];
 		if( domain ){			
 			logic.setUrl( request, response, domain );
 		}else{
@@ -42,12 +42,12 @@ var route = function(app){
 	});
 	
 	app.get('/whatis', function(request, response){
-		var url = request.param('url');
+		var url = request.query['url'];
 		logic.whatIs(url, request, response);
 	});
 	
 	app.get('/statis', function(request, response){
-		var url = request.param('url');
+		var url = request.query['url'];
 		logic.statIs(url, request, response);
 	});
 	

@@ -20,6 +20,14 @@ exports.url_statis = true;
 
 /////////////////////////////
 
+//是否开启UA验证
+exports.api_review = true;
+
+//UA 加密字符串
+exports.api_secret = 'shihuizhu.com';
+
+/////////////////////////////
+
 //商品查询与写入
 exports.get_goods = 'SELECT * FROM goods WHERE segment = {SEGMENT}';
 exports.add_goods = 'INSERT INTO goods SET name = {NAME}, price = {PRICE}, thumb = {THUMB}, segment = {SEGMENT}';
@@ -38,6 +46,7 @@ exports.get_statis = 'CALL count_by_url_hash( ? )';
 
 //数据库配置
 exports.host = '127.0.0.1';
+exports.port = '3306';
 exports.user = 'root';
 exports.password = 'root';
 exports.database = 'yourls';

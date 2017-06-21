@@ -12,12 +12,14 @@
 * 408: maximum number of URL's per hour exceeded
 */
 var fs = require("fs");
+var md5 = require('md5');
 var mysql = require("mysql");
 var req = require("request");
 var cons = require("./constants");
 //var crypto = require('crypto');
 var pool = mysql.createPool({
 		host:cons.host,
+		port:cons.port,
 		user:cons.user,
 		password:cons.password,
 		database:cons.database
@@ -88,7 +90,7 @@ function hashError(response, request, con, code){
 function handleHash(hash, url, request, response, con, option){
 
 	//附带商品信息
-	if( option && option.name ){
+	if( option && option.name && option.price ){
 
 		con.query(
 			cons.add_goods.replace("{NAME}", con.escape(option.name)).
@@ -146,6 +148,8 @@ var getTab = function( id ){
 //If the short URL exists, some statistics are saved to the database
 var getUrl = function(segment, request, response){
 	pool.getConnection(function(err, con){
+	
+		if( err ) throw err;
 
 		var hash = getHash( segment );
 		var port = getPort( segment );
@@ -241,16 +245,18 @@ var getUrl = function(segment, request, response){
 		
 		//////////////////////////////
 
+		console.log( '--------------------------' );
+
 		//从缓存读取
 		if( result = Cache[hash] ){
 		
 			fn( result );
 			
-			console.log( hash, 'Hit Cache' );
+			console.log( 'SEGMENT', hash, 'Hit Cache' );
 			
 		}else{
 			
-			console.log( hash, 'Hit DB' );
+			console.log( 'SEGMENT', hash, 'Hit DB' );
 		
 			con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function( err, rows ){
 			
@@ -269,9 +275,11 @@ var getUrl = function(segment, request, response){
 				
 			} );
 			
-			con.release();
-			
 		}
+		
+		//////////////////////////////
+			
+		con.release();
 		
 	});
 };
@@ -296,10 +304,17 @@ var getTpl = function( response, file, variable ){
 
 	///////////////////////
 
-	//从缓存中读取
-	if( tplSet[ file ] ){
+	console.log( '--------------------------' );
 
-		callback( tplSet[ file ], variable );
+	//模板名称
+	var name = file.replace(/\\/g,'/').split('/').pop();
+
+	//从缓存中读取
+	if( tplSet[ name ] ){
+
+		console.log( 'TEMPLATE', name, 'Hit Cache' );
+
+		callback( tplSet[ name ], variable );
 
 	}else{
 
@@ -310,8 +325,10 @@ var getTpl = function( response, file, variable ){
 				return console.log(err);
 			}
 
+			console.log( 'TEMPLATE', name, 'Hit File' );
+
 			//缓存进数组
-			tplSet[ file ] = body;
+			tplSet[ name ] = body;
 
 			//处理模块
 			callback( body, variable );
@@ -326,6 +343,37 @@ var getTpl = function( response, file, variable ){
 //This function adds attempts to add an URL to the database. If the URL returns a 404 or if there is another error, this method returns an error to the client, else an object with the newly shortened URL is sent back to the client.
 var addUrl = function(url, request, response, option){
 
+	//验证 UA 有效性，否则返回 401
+	if( cons.api_review ){
+
+		if( option.name ){
+
+			var year = (new Date).getFullYear();
+			var month = (new Date).getMonth() + 1;
+			var hash = md5( year + '' + ( month < 10 ? '0' : '' ) + month + '' + cons.api_secret ).substr(8, 16);
+
+			console.log( 'hash', hash );
+			console.log( 'token', request.headers['token'] );
+
+			if( !request.headers['token'] || hash != request.headers['token'] ){
+				response.send(urlResult(null, false, 401));
+				return;
+			}
+			
+		}else{
+
+			console.log( 'referer', request.headers['referer'] );
+
+			if( !request.headers['referer'] || !request.headers['x-requested-with'] ){
+				response.send(urlResult(null, false, 401));
+				return;
+			}
+
+		}
+
+	}
+	
+
 	//验证 URL 有效性，否则返回 403
 	cons.url_rule.lastIndex = 0;
 	if( cons.url_rule && cons.url_rule.test( url ) == false ){
@@ -333,8 +381,12 @@ var addUrl = function(url, request, response, option){
 		return;
 	}
 
+	////////////////////////
+
 	pool.getConnection(function(err, con){
-		if(url){
+		if( err ) throw err;
+	
+		if( url ){
 
 			var fn = function(){
 				con.query(cons.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
@@ -389,10 +441,11 @@ var addUrl = function(url, request, response, option){
 				});
 
 			}
-		}
-		else{
+			
+		}else{
 			response.send(urlResult(null, false, 402));
 		}
+		
 		con.release();
 	});
 };
@@ -402,6 +455,7 @@ var addUrl = function(url, request, response, option){
 //This method looks up stats of a specific short URL and sends it to the client
 var whatIs = function(url, request, response){
 	pool.getConnection(function(err, con){
+		if (err) throw err;
 		var hash = getHash( url );
 		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 			if(err || rows.length == 0){
@@ -420,6 +474,7 @@ var whatIs = function(url, request, response){
 //This method looks up stats of a specific short URL and sends it to the client
 var statIs = function(url, request, response){
 	pool.getConnection(function(err, con){
+		if (err) throw err;
 		//var hash = url;
 		//if(!hash) hash = "";
 		var hash = getHash( url );
