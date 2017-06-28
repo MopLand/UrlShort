@@ -346,7 +346,8 @@ var addUrl = function(url, request, response, option){
 	//验证 UA 有效性，否则返回 401
 	if( cons.api_review ){
 
-		if( option.name ){
+		//Api
+		if( option.vanity === false ){
 
 			var year = (new Date).getFullYear();
 			var month = (new Date).getMonth() + 1;
@@ -356,16 +357,17 @@ var addUrl = function(url, request, response, option){
 			console.log( 'token', request.headers['token'] );
 
 			if( !request.headers['token'] || hash != request.headers['token'] ){
-				response.send(urlResult(null, false, 401));
+				response.send(urlResult(null, 'TOKEN', 401));
 				return;
 			}
-			
+		
+		//Web
 		}else{
 
 			console.log( 'referer', request.headers['referer'] );
 
 			if( !request.headers['referer'] || !request.headers['x-requested-with'] ){
-				response.send(urlResult(null, false, 401));
+				response.send(urlResult(null, 'REFERER', 401));
 				return;
 			}
 

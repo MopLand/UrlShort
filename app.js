@@ -16,8 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(3500, function(){
-  console.log("Started listening at port 3500");
+app.listen(con.listen, function(){
+  console.log( 'Started listening at port ' + con.listen );
 });
 
 router.route(app);

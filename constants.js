@@ -2,6 +2,11 @@
 //短网址根域名
 exports.domain = 'localhost:3500'.split(' ');
 
+//监听的端口号
+exports.listen = 3500;
+
+/////////////////////////////
+
 //短地址最小长度
 exports.min_vanity_length = 4;
 
