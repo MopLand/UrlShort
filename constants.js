@@ -5,6 +5,9 @@ exports.domain = 'localhost:3500'.split(' ');
 //监听的端口号
 exports.listen = 3500;
 
+//服务器标识号
+exports.nodeid = 127;
+
 /////////////////////////////
 
 //短地址最小长度
