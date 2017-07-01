@@ -6,7 +6,7 @@
 		"md5": "*",
 		"mysql": "*",
 		"request": "*",
-		"express": "3.x",
+		"express": "4.x",
 		"body-parser": "^1.7.0"
 	}
 }

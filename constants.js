@@ -24,12 +24,12 @@ exports.url_rule = /(taobao|tmall|alimama|95095)\.(com|hk)/gi;
 exports.url_verify = false;
 
 //是否开启统计
-exports.url_statis = true;
+exports.url_statis = false;
 
 /////////////////////////////
 
 //是否开启UA验证
-exports.api_review = true;
+exports.api_review = false;
 
 //UA 加密字符串
 exports.api_secret = 'shihuizhu.com';
