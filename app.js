@@ -3,7 +3,7 @@ var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
 var router = require("./router");
-var con = require("./constants");
+var conf = require("./constants");
 
 ///////////////////
 
@@ -14,12 +14,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next){
-	res.setHeader('Node', con.nodeid);
+	res.setHeader('Node', conf.nodeid);
 	next();
 });
 
-app.listen(con.listen, function(){
-  console.log( 'Started listening at port ' + con.listen );
+app.listen(conf.listen, function(){
+	console.log( 'Started listening at port ' + conf.listen );
 });
 
 ///////////////////

@@ -2,6 +2,9 @@
 //短网址根域名
 exports.domain = 'localhost:3500'.split(' ');
 
+//打印调试信息
+exports.debug = false;
+
 //监听的端口号
 exports.listen = 3500;
 

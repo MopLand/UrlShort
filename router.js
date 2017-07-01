@@ -5,13 +5,19 @@ var route = function(app){
 	logic.setTpl( path.join(__dirname, 'views/') );
 
 	app.get('/', function(req, res){
+		
 		//res.sendFile(path.join(__dirname, 'views/index.html'));
 		//res.sendFile('views/index.html', { root: __dirname });
-		res.sendFile(path.join(__dirname, 'views/index.html'));
+
+		//res.sendFile(path.join(__dirname, 'views/index.html'));
+		//res.send('views/index.html');
+		logic.getTpl( res, 'index.html' );
+
 	});
 
 	app.get('/home', function(req, res){
-		res.sendFile(path.join(__dirname, 'views/home.html'));
+		//res.sendFile(path.join(__dirname, 'views/home.html'));
+		logic.getTpl( res, 'home.html' );
 	});
 	
 	app.get('/add', function(request, response){

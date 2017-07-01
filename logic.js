@@ -15,14 +15,14 @@ var fs = require("fs");
 var md5 = require('md5');
 var mysql = require("mysql");
 var req = require("request");
-var cons = require("./constants");
+var conf = require("./constants");
 //var crypto = require('crypto');
 var pool = mysql.createPool({
-		host:cons.host,
-		port:cons.port,
-		user:cons.user,
-		password:cons.password,
-		database:cons.database
+		host:conf.host,
+		port:conf.port,
+		user:conf.user,
+		password:conf.password,
+		database:conf.database
 	});
 var Tpl = null;
 var Cache = {};
@@ -48,7 +48,7 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 			onError(response, request, con, 405);
 			return;
 		}
-		else if(cons.min_vanity_length > 0 && hash.length < cons.min_vanity_length){
+		else if(conf.min_vanity_length > 0 && hash.length < conf.min_vanity_length){
 			onError(response, request, con, 407);
 			return;
 		}
@@ -64,7 +64,7 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 	}
 	//This section query's (with a query defined in "constants.js") and looks if the short URL with the specific segment already exists
 	//If the segment already exists, it will repeat the generateHash function until a segment is generated which does not exist in the database
-    con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
+    con.query(conf.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 		if(err){
 			console.log(err);
 		}
@@ -93,7 +93,7 @@ function handleHash(hash, url, request, response, con, option){
 	if( option && option.name && option.price ){
 
 		con.query(
-			cons.add_goods.replace("{NAME}", con.escape(option.name)).
+			conf.add_goods.replace("{NAME}", con.escape(option.name)).
 			replace("{SEGMENT}", con.escape(hash)).
 			replace("{PRICE}", con.escape(option.price)).
 			replace("{THUMB}", con.escape(option.thumb))
@@ -110,7 +110,7 @@ function handleHash(hash, url, request, response, con, option){
 
 	//新增短链接
 	con.query(
-		cons.add_query.replace("{URL}", con.escape(url)).
+		conf.add_query.replace("{URL}", con.escape(url)).
 		replace("{SEGMENT}", con.escape(hash)).
 		replace("{IP}", con.escape(getIP(request))).
 		replace("{API}", request.path == '/api' ? 1 : 0 )
@@ -131,7 +131,7 @@ function handleHash(hash, url, request, response, con, option){
 
 //This function returns the object that will be sent to the client
 function urlResult(hash, result, statusCode){
-	var domain = cons.domain[ Math.floor(Math.random()*cons.domain.length) ];
+	var domain = conf.domain[ Math.floor(Math.random()*conf.domain.length) ];
 	var prefix = 'http://'+ domain +'/';
 	return {
 		url: hash != null ? prefix + hash : null,
@@ -172,9 +172,9 @@ var getUrl = function(segment, request, response){
 			////////////////////////
 
 			//写入访问统计
-			cons.url_statis && getIPInfo( ip, function( info ){
+			conf.url_statis && getIPInfo( ip, function( info ){
 
-				var sql = cons.insert_view.replace( '{TABLE}', getTab( result.id ) );
+				var sql = conf.insert_view.replace( '{TABLE}', getTab( result.id ) );
 
 				con.query( sql, [ ip, result.id, referer, info.country, info.area, info.region, info.city, ( mobile ? 1 : 0 ) ], function(err, rows){
 					if(err){
@@ -209,11 +209,11 @@ var getUrl = function(segment, request, response){
 
 				if( url.indexOf('coupon') > -1 && url.indexOf('.htm') > -1 ){
 				
-					getTpl( response, Tpl + 'coupon.html', { 'url' : url, 'platform' : platform } );
+					getTpl( response, 'coupon.html', { 'url' : url, 'platform' : platform } );
 
 				}else{
 
-					con.query(cons.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
+					con.query(conf.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 
 						//找到了商品信息
 						if(!err && rows.length > 0){
@@ -222,11 +222,11 @@ var getUrl = function(segment, request, response){
 								goods.url = url;
 								goods.platform = platform;
 								
-							getTpl( response, Tpl + 'goods.html', goods );
+							getTpl( response, 'goods.html', goods );
 							
 						}else{
 							//response.redirect( url );
-							getTpl( response, Tpl + 'empty.html', { 'url' : url, 'platform' : platform } );
+							getTpl( response, 'empty.html', { 'url' : url, 'platform' : platform } );
 						}
 					});
 				}
@@ -235,7 +235,7 @@ var getUrl = function(segment, request, response){
 
 				//淘宝中转页
 				if( port == 't' || /taobao\.com/.test( url ) ){
-					getTpl( response, Tpl + 'taobao.html', { 'url' : url, 'platform' : platform } );
+					getTpl( response, 'taobao.html', { 'url' : url, 'platform' : platform } );
 				}else{
 					response.redirect( url );
 				}
@@ -245,20 +245,20 @@ var getUrl = function(segment, request, response){
 		
 		//////////////////////////////
 
-		console.log( '--------------------------' );
+		conf.debug && console.log( '--------------------------' );
 
 		//从缓存读取
 		if( result = Cache[hash] ){
 		
 			fn( result );
 			
-			console.log( 'SEGMENT', hash, 'Hit Cache' );
+			conf.debug && console.log( 'SEGMENT', hash, 'Hit Cache' );
 			
 		}else{
 			
-			console.log( 'SEGMENT', hash, 'Hit DB' );
+			conf.debug && console.log( 'SEGMENT', hash, 'Hit DB' );
 		
-			con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function( err, rows ){
+			con.query(conf.get_query.replace("{SEGMENT}", con.escape(hash)), function( err, rows ){
 			
 				if(!err && rows.length > 0){
 				
@@ -304,7 +304,7 @@ var getTpl = function( response, file, variable ){
 
 	///////////////////////
 
-	console.log( '--------------------------' );
+	conf.debug && console.log( '--------------------------' );
 
 	//模板名称
 	var name = file.replace(/\\/g,'/').split('/').pop();
@@ -312,7 +312,7 @@ var getTpl = function( response, file, variable ){
 	//从缓存中读取
 	if( tplSet[ name ] ){
 
-		console.log( 'TEMPLATE', name, 'Hit Cache' );
+		conf.debug && console.log( 'TEMPLATE', name, 'Hit Cache' );
 
 		callback( tplSet[ name ], variable );
 
@@ -320,12 +320,12 @@ var getTpl = function( response, file, variable ){
 
 		//console.log( 'read...' );
 
-		return fs.readFile( file, 'utf8', function( err, body ) {
+		return fs.readFile( Tpl + file, 'utf8', function( err, body ) {
 			if (err) {
 				return console.log(err);
 			}
 
-			console.log( 'TEMPLATE', name, 'Hit File' );
+			conf.debug && console.log( 'TEMPLATE', name, 'Hit File' );
 
 			//缓存进数组
 			tplSet[ name ] = body;
@@ -344,17 +344,17 @@ var getTpl = function( response, file, variable ){
 var addUrl = function(url, request, response, option){
 
 	//验证 UA 有效性，否则返回 401
-	if( cons.api_review ){
+	if( conf.api_review ){
 
 		//Api
 		if( option.vanity === false ){
 
 			var year = (new Date).getFullYear();
 			var month = (new Date).getMonth() + 1;
-			var hash = md5( year + '' + ( month < 10 ? '0' : '' ) + month + '' + cons.api_secret ).substr(8, 16);
+			var hash = md5( year + '' + ( month < 10 ? '0' : '' ) + month + '' + conf.api_secret ).substr(8, 16);
 
-			console.log( 'hash', hash );
-			console.log( 'token', request.headers['token'] );
+			conf.debug && console.log( 'hash', hash );
+			conf.debug && console.log( 'token', request.headers['token'] );
 
 			if( !request.headers['token'] || hash != request.headers['token'] ){
 				response.send(urlResult(null, 'TOKEN', 401));
@@ -364,7 +364,7 @@ var addUrl = function(url, request, response, option){
 		//Web
 		}else{
 
-			console.log( 'referer', request.headers['referer'] );
+			conf.debug && console.log( 'referer', request.headers['referer'] );
 
 			if( !request.headers['referer'] || !request.headers['x-requested-with'] ){
 				response.send(urlResult(null, 'REFERER', 401));
@@ -377,8 +377,8 @@ var addUrl = function(url, request, response, option){
 	
 
 	//验证 URL 有效性，否则返回 403
-	cons.url_rule.lastIndex = 0;
-	if( cons.url_rule && cons.url_rule.test( url ) == false ){
+	conf.url_rule.lastIndex = 0;
+	if( conf.url_rule && conf.url_rule.test( url ) == false ){
 		response.send(urlResult(null, false, 403));
 		return;
 	}
@@ -391,7 +391,7 @@ var addUrl = function(url, request, response, option){
 		if( url ){
 
 			var fn = function(){
-				con.query(cons.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
+				con.query(conf.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
 					if(err){
 						console.log(err);
 					}
@@ -407,7 +407,7 @@ var addUrl = function(url, request, response, option){
 						response.send(urlResult(rows[0].segment, true, 100));
 						return;
 					}
-					if( cons.url_verify ){
+					if( conf.url_verify ){
 						req(url, function(err, res, body){
 							if(res != undefined && res.statusCode == 200){
 								generateHash(handleHash, hashError, 50, url, request, response, con, option);
@@ -426,16 +426,16 @@ var addUrl = function(url, request, response, option){
 			////////////////////////
 
 			//不限制每小时生成数量
-			if( option.vanity === false || cons.num_of_urls_per_hour == 0 ){
+			if( option.vanity === false || conf.num_of_urls_per_hour == 0 ){
 				fn();
 			}else{
 
 				//查询此IP最近一小时生成数量
-				con.query(cons.check_ip_query.replace("{IP}", con.escape(getIP(request))), function(err, rows){
+				con.query(conf.check_ip_query.replace("{IP}", con.escape(getIP(request))), function(err, rows){
 					if(err){
 						console.log(err);
 					}
-					if(rows[0].counted != undefined && rows[0].counted < cons.num_of_urls_per_hour){
+					if(rows[0].counted != undefined && rows[0].counted < conf.num_of_urls_per_hour){
 						fn();
 					}else{
 						response.send(urlResult(null, false, 408));
@@ -459,7 +459,7 @@ var whatIs = function(url, request, response){
 	pool.getConnection(function(err, con){
 		if (err) throw err;
 		var hash = getHash( url );
-		con.query(cons.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
+		con.query(conf.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 			if(err || rows.length == 0){
 				response.send({result: false, url: null});
 			}
@@ -480,7 +480,7 @@ var statIs = function(url, request, response){
 		//var hash = url;
 		//if(!hash) hash = "";
 		var hash = getHash( url );
-		con.query(cons.get_statis, hash, function(err, rows){
+		con.query(conf.get_statis, hash, function(err, rows){
 			//console.log( JSON.stringify( rows ) );
 
 			if(err || rows.length == 0 || rows[0].length == 0){
@@ -618,7 +618,7 @@ function setUrl( request, response, domain ){
 		});
 		
 	}else{
-		getTpl( response, Tpl + 'seturl.html', { 'domain' : cons.domain.join(' ') } );
+		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' ') } );
 	}	
 
 }
@@ -630,5 +630,6 @@ exports.addUrl = addUrl;
 exports.whatIs = whatIs;
 exports.statIs = statIs;
 exports.setTpl = setTpl;
+exports.getTpl = getTpl;
 exports.genTag = genTag;
 exports.setUrl = setUrl;
