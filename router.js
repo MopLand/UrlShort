@@ -31,7 +31,8 @@ var route = function(app){
 		var name = request.query['name'];
 		var price = request.query['price'];
 		var thumb = request.query['thumb'];
-		logic.addUrl(url, request, response, { 'vanity' : false, 'name' : name, 'price' : price, 'thumb' : thumb });
+		var words = request.query['words'];
+		logic.addUrl(url, request, response, { 'vanity' : false, 'name' : name, 'price' : price, 'thumb' : thumb, 'words' : words });
 	});
 	
 	app.get('/set', function(request, response){

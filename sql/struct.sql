@@ -24,6 +24,7 @@ CREATE TABLE `goods` (
   `name` varchar(255) NOT NULL,
   `price` decimal(10,2) unsigned NOT NULL,
   `thumb` varchar(255) NOT NULL,
+  `words` varchar(30) NULL,
   PRIMARY KEY (`id`),
   KEY `segment` (`segment`),
   KEY `name` (`name`)

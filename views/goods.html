@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1, minimum-scale=1, user-scalable=no">
-</head>
-<body>
+<title>【￥{price}】{name}</title>
+<meta name="Keywords" content="{name}"/>
+<meta name="Description" content="{name}"/>
 <style>
         /*reset*/
         blockquote, body, dd, dir, dl, fieldset, figure, form, h1, h2, h3, h4, h5, h6, hr, input, legend, menu, ol, optgroup, p, pre, tbody, td, textarea, tfoot, th, thead, ul {
@@ -109,37 +110,48 @@
             text-align: right;
             margin-bottom: 16px;
         }
-    </style>
-<div class="beatHeader {platform}" id="landingHeader">
-</div>
-<div class="beatMain">
-<div class="imgContainer">
-<img src="{thumb}">
-</div>
-<p class="itemContent">{name}</p>
-<p class="itemPrice">￥{price}</p>
-<p style="font-size:12px;color:rgba(0,0,0,.4);text-align:center;">你可以通过右上角“…”的浏览器打开 </p>
-</div>
-</body>
-</html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>【￥{price}】{name}</title>
-<meta name="Keywords" content="{name}"/>
-<meta name="Description" content="{name}"/>
-<script language="JavaScript">
-        var img = document.createElement("img");
-        img.setAttribute("src", "{thumb}");
-        img.setAttribute("style", "width:0px;height:0px;position:absolute;z-index:10;overflow:hidden;margin:0;padding:0;");
-        var d = document;
-        var body = document.createElement("body");
-        body.setAttribute("style", "width:0px;height:0px;position:absolute;z-index:10;overflow:hidden;margin:0;padding:0;");
-        body.appendChild(img);
-        var html = d.querySelector('html');
-        html.appendChild(body);
-    </script>
+
+        .beatMain .itemWords {
+            font-family: STHeitiSC-Light;
+            font-size: 16px;
+            color: #FF5500;
+            line-height: 16.5px;
+            text-align: right;
+            margin-bottom: 16px;
+        }
+
+		.beatMain .itemTips{ font-size:12px;color:rgba(0,0,0,.4); text-align:center; }
+</style>
 </head>
-<frameset rows="100%" border="0" frameborder="0" framespacing="0" style="border: 0px">
-	<frame src="{url}" />
-</frameset>
+<body>
+	<div class="beatHeader {platform}" id="landingHeader"></div>
+	<div class="beatMain">
+		<div class="imgContainer">
+			<img src="{thumb}">
+		</div>
+		<p class="itemContent">{name}</p>
+		<p class="itemPrice">￥{price}</p>
+		<p class="itemWords" data-clipboard-text="{words}">淘口令：{words}</p>
+		<p class="itemTips">你可以通过右上角“…”的浏览器打开</p>
+	</div>
+	<frameset rows="100%" border="0" frameborder="0" framespacing="0" style="border: 0px">
+		<frame src="{url}" />
+	</frameset>	
+	<script src="//cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
+	<script>
+		if( '{words}' ){
+			document.querySelector('.itemTips').innerHTML = '长按并复制淘口令，打开手机淘宝购买';
+		}
+		//复制文本
+		var clipboard = new Clipboard( '.itemWords' );
+
+		//复制成功
+		clipboard.on('success', function (e) {
+			console.info('Action:', e.action);
+			console.info('Text:', e.text);
+			console.info('Trigger:', e.trigger);
+			document.querySelector('.itemTips').innerHTML = '复制成功，打开手机淘宝';
+		});
+	</script>
+</body>
 </html>

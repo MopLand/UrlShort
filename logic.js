@@ -96,7 +96,8 @@ function handleHash(hash, url, request, response, con, option){
 			conf.add_goods.replace("{NAME}", con.escape(option.name)).
 			replace("{SEGMENT}", con.escape(hash)).
 			replace("{PRICE}", con.escape(option.price)).
-			replace("{THUMB}", con.escape(option.thumb))
+			replace("{THUMB}", con.escape(option.thumb)).
+			replace("{WORDS}", con.escape(option.words))
 		,
 		function(err, rows){
 			if(err){
