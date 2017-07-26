@@ -139,18 +139,29 @@
 	</frameset>	
 	<script src="//cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
 	<script>
+		var tips = document.querySelector('.itemTips');
+		var word = document.querySelector('.itemWords');
+
 		if( '{words}' ){
-			document.querySelector('.itemTips').innerHTML = '长按并复制淘口令，打开手机淘宝购买';
+
+			tips.innerHTML = '长按并复制淘口令，打开手机淘宝购买';
+
+			document.addEventListener("selectionchange", function(e) {
+				window.getSelection().selectAllChildren( word );
+			}, false);
+
+		}else{
+			word.style.display = 'none';
 		}
+
+		//////////////////////
+
 		//复制文本
 		var clipboard = new Clipboard( '.itemWords' );
 
 		//复制成功
 		clipboard.on('success', function (e) {
-			console.info('Action:', e.action);
-			console.info('Text:', e.text);
-			console.info('Trigger:', e.trigger);
-			document.querySelector('.itemTips').innerHTML = '复制成功，打开手机淘宝';
+			tips.innerHTML = '复制成功，打开手机淘宝';
 		});
 	</script>
 </body>
