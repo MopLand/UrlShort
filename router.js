@@ -32,6 +32,9 @@ var route = function(app){
 		var price = request.query['price'];
 		var thumb = request.query['thumb'];
 		var words = request.query['words'];
+
+		if( words ) words = words.replace(/《/g,'￥');
+
 		logic.addUrl(url, request, response, { 'vanity' : false, 'name' : name, 'price' : price, 'thumb' : thumb, 'words' : words });
 	});
 	
