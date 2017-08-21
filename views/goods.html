@@ -45,7 +45,7 @@
         }
 
         .beatHeader {
-            height: 120px;
+            height: 110px;
             width: 100%;
             position: relative;
             z-index: 1;
@@ -99,7 +99,7 @@
             color: rgba(0, 0, 0, 0.80);
             line-height: 21px;
             text-align: left;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
 
         .beatMain .itemPrice {
@@ -108,19 +108,15 @@
             color: #FF5500;
             line-height: 16.5px;
             text-align: right;
-            margin-bottom: 16px;
-        }
-
-        .beatMain .itemWords {
-            font-family: STHeitiSC-Light;
-            font-size: 16px;
-            color: #FF5500;
-            line-height: 16.5px;
-            text-align: right;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
 
 		.beatMain .itemTips{ font-size:12px;color:rgba(0,0,0,.4); text-align:center; }
+
+		.beatWord{ text-align: center; }
+			.beatWord fieldset { padding: 0.8em;  margin: 0 2px; border: 1px solid #c0c0c0;  }
+			.beatWord fieldset legend {  background: #f60;  border: none; font-size: 0.8rem;  letter-spacing: 2px;  line-height: 20px;  color: #fff;  }
+			.beatWord button { border: none; font-size: 14px;  padding: 6px 10px;  background: #f60;  display: inline-block;  margin: 10px auto;  border-radius: 15px;  color: #fff;  }
 </style>
 </head>
 <body>
@@ -129,9 +125,17 @@
 		<div class="imgContainer">
 			<img src="{thumb}">
 		</div>
-		<p class="itemContent">{name}</p>
-		<p class="itemPrice">￥{price}</p>
-		<p class="itemWords" data-clipboard-text="{words}">淘口令：{words}</p>
+		<p class="itemContent">
+			<strong class="itemPrice">￥{price}</strong>
+			{name}
+		</p>
+		<div class="beatWord">
+			<fieldset>
+				<legend>长按框内>全选>复制>打开淘宝</legend>
+				<p class="itemWord">{words}</p>
+			</fieldset>
+			<button type="button" data-clipboard-text="{words}" class="itemCopy">一键复制</button>
+		</div>
 		<p class="itemTips">你可以通过右上角“…”的浏览器打开</p>
 	</div>
 	<frameset rows="100%" border="0" frameborder="0" framespacing="0" style="border: 0px">
@@ -139,29 +143,34 @@
 	</frameset>	
 	<script src="//cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
 	<script>
+		var head = document.querySelector('.beatHeader');
+		var beat = document.querySelector('.beatWord');
 		var tips = document.querySelector('.itemTips');
-		var word = document.querySelector('.itemWords');
+		var word = document.querySelector('.itemWord');
+		var copy = document.querySelector('.itemCopy');
 
-		if( '{words}' ){
+		if( '{words}' && '{words}' != 'null' ){
 
-			tips.innerHTML = '长按并复制淘口令，打开手机淘宝购买';
+			tips.innerHTML = '';
 
 			document.addEventListener("selectionchange", function(e) {
 				window.getSelection().selectAllChildren( word );
 			}, false);
+			
+			head.className = 'beatHeader';
 
 		}else{
-			word.style.display = 'none';
+			beat.style.display = 'none';
 		}
 
 		//////////////////////
 
 		//复制文本
-		var clipboard = new Clipboard( '.itemWords' );
+		var clipboard = new Clipboard( '.itemCopy' );
 
 		//复制成功
 		clipboard.on('success', function (e) {
-			tips.innerHTML = '复制成功，打开手机淘宝';
+			copy.innerHTML = '复制成功，打开手机淘宝';
 		});
 	</script>
 </body>
