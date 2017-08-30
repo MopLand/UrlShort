@@ -222,8 +222,22 @@ var getUrl = function(segment, request, response){
 							var goods = rows[0];
 								goods.url = url;
 								goods.platform = platform;
-								
-							getTpl( response, 'goods.html', goods );
+
+							//安卓引导程序
+							if( platform == 'android' && request.query['boot'] ){
+
+								response.set({
+									'Content-Type': 'application/vnd.ms-word; Charset=UTF-8',
+									'Content-Disposition': 'attachment; filename=shopping.doc',
+									'Content-Length': 39,
+									'WX-Shopping-X-Code': 'wx155615039864346546'
+								});
+
+								response.end('WX-Shopping-X-Code:wx155615039864346546');
+
+							}else{
+								getTpl( response, 'goods.html', goods );
+							}
 							
 						}else{
 							//response.redirect( url );

@@ -37,15 +37,7 @@
 
         .beatHeader {
             background: #494A4D;
-            height: 120px;
-            width: 100%;
-            position: relative;
-            z-index: 1px;
-            overflow: hidden;
-        }
-
-        .beatHeader {
-            height: 110px;
+            height: 50px;
             width: 100%;
             position: relative;
             z-index: 1;
@@ -56,18 +48,22 @@
             background: url(//gw.alicdn.com/tps/TB1PzXWKVXXXXaaaXXXXXXXXXXX-640-242.png) no-repeat #494A4D;
             background-size: contain;
             background-position: 50% 50%;
+			height: 110px;
         }
 
         .android {
             background: url(//gw.alicdn.com/tps/TB1Fb00KVXXXXcKXVXXXXXXXXXX-720-242.png) no-repeat #494A4D;
             background-size: contain;
             background-position: 50% 50%;
+			height: 110px;
         }
 
         .beatMain {
             padding: 0 16px;
             position: relative;
             z-index: 2;
+			max-width: 600px;
+			margin: auto;
         }
 
         .beatMain .imgContainer {
@@ -115,8 +111,9 @@
 
 		.beatWord{ text-align: center; }
 			.beatWord fieldset { padding: 0.8em;  margin: 0 2px; border: 1px solid #c0c0c0;  }
-			.beatWord fieldset legend {  background: #f60;  border: none; font-size: 0.8rem;  letter-spacing: 2px;  line-height: 20px;  color: #fff;  }
-			.beatWord button { border: none; font-size: 14px;  padding: 6px 10px;  background: #f60;  display: inline-block;  margin: 10px auto;  border-radius: 15px;  color: #fff;  }
+			.beatWord fieldset legend { padding: 0 5px; background: #808080;  border: none; font-size: 0.8rem;  letter-spacing: 2px;  line-height: 20px;  color: #fff;  }
+			.beatWord button { border: none; font-size: 14px;  padding: 6px 10px;  background: #f60;  display: inline-block;  margin: 10px;  border-radius: 15px; color: #fff; }
+			.beatWord button.itemOpen{ background: #00a1ff; }
 </style>
 </head>
 <body>
@@ -134,20 +131,63 @@
 				<legend>长按框内>全选>复制>打开淘宝</legend>
 				<p class="itemWord">{words}</p>
 			</fieldset>
-			<button type="button" data-clipboard-text="{words}" class="itemCopy">一键复制</button>
+			<button type="button" data-clipboard-text="{words}" class="itemCopy">复制口令</button>
+			<button type="button" class="itemOpen">立即领券</button>
 		</div>
 		<p class="itemTips">你可以通过右上角“…”的浏览器打开</p>
 	</div>
-	<frameset rows="100%" border="0" frameborder="0" framespacing="0" style="border: 0px">
-		<frame src="{url}" />
-	</frameset>	
 	<script src="//cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
-	<script>
+	<script>	
+		window.mobileUtil = (function (win, doc) {
+			var UA = navigator.userAgent,
+				isAndroid = /android|adr|linux/gi.test(UA),
+				isIOS = /iphone|ipod|ipad/gi.test(UA) && !isAndroid,
+				isBlackBerry = /BlackBerry/i.test(UA),
+				isWindowPhone = /IEMobile/i.test(UA),
+				isMobile = isAndroid || isIOS || isBlackBerry || isWindowPhone;
+			return {
+				isAndroid: isAndroid,
+				isIOS: isIOS,
+				isMobile: isMobile,
+				isWeixin: /MicroMessenger/gi.test(UA),
+				isQQ: / QQ/gi.test(UA),
+				isPC: !isMobile
+			};
+		})(window, document);
+
+		function doLnkJump(url) {
+			if (mobileUtil.isIOS){
+				url = "https://t.asczwa.com/taobao?backurl=" + encodeURIComponent(url);
+			}
+			if(mobileUtil.isAndroid){
+				if (mobileUtil.isQQ) {
+					var tb_url = url.replace("http://", "").replace("https://", "");
+					var ifr = document.createElement('iframe');
+					ifr.src = 'taobao://' + tb_url;
+					ifr.style.display = 'none';
+					document.body.appendChild(ifr);
+					window.location.href = url;
+				}else{
+					//window.location.href = location.pathname + '?boot=yes';
+
+					var ifr = document.createElement('iframe');
+					ifr.src = location.pathname + '?boot=yes';
+					ifr.style.display = 'none';
+					document.body.appendChild(ifr);
+				}
+			}else{
+				window.location.href = url;
+			}				
+		}
+	
+		//////////////////////
+	
 		var head = document.querySelector('.beatHeader');
 		var beat = document.querySelector('.beatWord');
 		var tips = document.querySelector('.itemTips');
 		var word = document.querySelector('.itemWord');
 		var copy = document.querySelector('.itemCopy');
+		var open = document.querySelector('.itemOpen');
 
 		if( '{words}' && '{words}' != 'null' ){
 
@@ -164,14 +204,35 @@
 		}
 
 		//////////////////////
+		
+		if (window.Clipboard && Clipboard.isSupported()) {
 
-		//复制文本
-		var clipboard = new Clipboard( '.itemCopy' );
+			//复制文本
+			var clipboard = new Clipboard( '.itemCopy' );
 
-		//复制成功
-		clipboard.on('success', function (e) {
-			copy.innerHTML = '复制成功，打开手机淘宝';
-		});
+			//复制成功
+			clipboard.on('success', function (e) {
+				copy.innerHTML = '复制成功';
+			});
+		
+		}else{
+			copy.style.display = 'none';
+		}
+
+		//////////////////////
+
+		/*
+		if (mobileUtil.isIOS){
+			var v = (navigator.userAgent).match(/OS (\d+)/i)[1];
+			if( v < 8 ){
+				open.style.display = 'none';
+			}
+		}
+		*/
+
+		open.onclick = function(){
+			doLnkJump('{url}');
+		}
 	</script>
 </body>
 </html>
