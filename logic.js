@@ -206,7 +206,7 @@ var getUrl = function(segment, request, response){
 			var platform = ( iPhone ? 'ios' : 'android' );
 
 			//是微信访问
-			if( wechat ){
+			if( wechat || port == 'w' ){
 
 				if( url.indexOf('coupon') > -1 && url.indexOf('.htm') > -1 ){
 				
@@ -221,6 +221,7 @@ var getUrl = function(segment, request, response){
 						
 							var goods = rows[0];
 								goods.url = url;
+								goods.port = port;
 								goods.platform = platform;
 
 							//安卓引导程序

@@ -32,8 +32,11 @@
         }
 
         body {
-            background: #F6F5F7;
+            background: #F6F5F7; font-size: 14px;
         }
+
+		body.w{ font-size: 50px; }
+		body.w .beatMain{ max-width: 85%; }
 
         .beatHeader {
             background: #494A4D;
@@ -79,53 +82,45 @@
             box-shadow: 0px 3px 12px rgba(21, 0, 71, 0.16);
         }
 
-        .beatMain .moonTitleContainer {
-            font-size: 14px;
-            color: rgba(0, 0, 0, 0.4);
-            margin-bottom: 16px;
-        }
-
-        .beatMain .moonTitleContainer span {
-            color: #FF5500;
-            margin-right: 16px;
-        }
-
         .beatMain .itemContent {
-            font-size: 14px;
+            font-size: 1em;
             color: rgba(0, 0, 0, 0.80);
-            line-height: 21px;
+            line-height: 1.3em;
             text-align: left;
             margin-bottom: 10px;
         }
 
         .beatMain .itemPrice {
             font-family: STHeitiSC-Light;
-            font-size: 16px;
+            font-size: 1em;
             color: #FF5500;
-            line-height: 16.5px;
+            line-height: 1.3em;
             text-align: right;
-            margin-bottom: 10px;
+			margin: 0 10px;
+			font-weight: bold;
+			vertical-align: baseline;
+    		display: inline-block;
         }
 
 		.beatMain .itemTips{ font-size:12px;color:rgba(0,0,0,.4); text-align:center; }
 
 		.beatWord{ text-align: center; }
 			.beatWord fieldset { padding: 0.8em;  margin: 0 2px; border: 1px solid #c0c0c0;  }
-			.beatWord fieldset legend { padding: 0 5px; background: #808080;  border: none; font-size: 0.8rem;  letter-spacing: 2px;  line-height: 20px;  color: #fff;  }
-			.beatWord button { border: none; font-size: 14px;  padding: 6px 10px;  background: #f60;  display: inline-block;  margin: 10px;  border-radius: 15px; color: #fff; }
+			.beatWord fieldset legend { padding: 0 5px; background: #808080;  border: none; font-size: 0.9em;  letter-spacing: 2px;  line-height: 1.4em;  color: #fff;  }
+			.beatWord button { border: none; font-size: 1em;  padding: 6px 10px;  background: #f60;  display: inline-block;  margin: 10px;  border-radius: 15px; color: #fff; }
 			.beatWord button.itemOpen{ background: #00a1ff; }
 </style>
 </head>
-<body>
+<body class="{port}">
 	<div class="beatHeader {platform}" id="landingHeader"></div>
 	<div class="beatMain">
 		<div class="imgContainer">
 			<img src="{thumb}">
 		</div>
-		<p class="itemContent">
-			<strong class="itemPrice">￥{price}</strong>
+		<div class="itemContent">
+			<div class="itemPrice">￥{price}</div>
 			{name}
-		</p>
+		</div>
 		<div class="beatWord">
 			<fieldset>
 				<legend>长按框内>全选>复制>打开淘宝</legend>
@@ -171,7 +166,7 @@
 					//window.location.href = location.pathname + '?boot=yes';
 
 					var ifr = document.createElement('iframe');
-					ifr.src = location.pathname + '?boot=yes';
+					ifr.src = '/{segment}?boot=yes';
 					ifr.style.display = 'none';
 					document.body.appendChild(ifr);
 				}
@@ -233,6 +228,8 @@
 		open.onclick = function(){
 			doLnkJump('{url}');
 		}
+		
+		window.setInterval(function(){ $ = null }, 1000);
 	</script>
 </body>
 </html>

@@ -14,10 +14,14 @@ var route = function(app){
 		logic.getTpl( res, 'index.html' );
 
 	});
-
+	
 	app.get('/home', function(req, res){
 		//res.sendFile(path.join(__dirname, 'views/home.html'));
 		logic.getTpl( res, 'home.html' );
+	});
+	
+	app.get('/multi', function(req, res){
+		logic.getTpl( res, 'multi.html' );
 	});
 	
 	app.get('/add', function(request, response){

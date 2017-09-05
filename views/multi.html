@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-dns-prefetch-control" content="on"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>精选商品</title>
+    <style>
+		body{ margin: 0 auto }
+        a {  text-decoration: none;  cursor: pointer;  }
+
+		[v-clock]{ display: none; }
+
+		#wrap{ max-width: 600px; margin: auto; }
+        #wrap h2{  text-align: center; background-color: #f60;  padding: 5px 0px; font-size: 16px;  margin: 0 auto;  color: #fff; }
+
+        #app {  padding-left: 0px;  margin: 10px; background-color: #FFF; list-style: none; padding: 0; }
+			#app li{  border-bottom: 1px solid #eee;  padding: 1em 0;  }
+			#app li:nth-last-child { border：none; }
+			#app li img {  width: 110px;  height: 110px;  margin-right: 20px; float: left; }
+			#app li p { line-height: 18px;  overflow: hidden;  color: #333;  }
+			#app li code { background: #EEE; padding:4px; border-radius: 5px; }
+			#app li button{  border: none;  text-align: center;  font-size: 15px;  padding: 6px 10px;  background: #f60;  display: block;  margin: 10px auto;  border-radius: 10px;  color: #fff;  }
+    </style>
+</head>
+<body>
+
+<div id="wrap">
+	<h2>精选商品</h2>
+
+	<ul id="app">
+		<li v-for="(item,idx) in goods" v-on:click="index = idx" v-clock>
+			<img v-bind:src="item.url">
+			<p>{{item.title}}</p>
+			<p>{{item.price}}</p>
+			<p><span>淘口令 : </span><code v-bind:code="idx">{{item.tkl}}</code></p>
+            <button type="button" v-bind:data-clipboard-text="item.tkl" v-if="copyd">复制淘口令</button>
+        </li>
+    </ul>
+</div>
+
+<script src="//cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
+<script src="//cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>
+
+<script>
+
+	function getURLParameter(name) {
+		return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+	}
+
+	if( data = getURLParameter('data') ){
+
+		var goods = JSON.parse( data );
+
+		var app = new Vue({
+			el: '#app',
+			data: {
+				goods: goods,
+				index: null,
+				copyd: Clipboard.isSupported()
+			}
+		});
+
+		if( !app.copyd ){
+
+			//监听事件
+			document.addEventListener("selectionchange", function (e) {
+				if( app.index ){
+					var ele = document.querySelector('[code=\''+ app.index +'\']');
+					window.getSelection().selectAllChildren( ele );
+				}
+			});
+
+		}else{
+
+			//复制文本
+            var clipboard = new Clipboard('button');
+
+            //复制成功
+            clipboard.on('success', function (e) {
+                console.info('Action:', e.action);
+                console.info('Text:', e.text);
+                console.info('Trigger:', e.trigger);
+                e.clearSelection();
+				e.trigger.innerHTML = '已复制';
+            });
+
+            //复制失败
+            clipboard.on('error', function (e) {
+                console.error('Action:', e.action);
+                console.error('Trigger:', e.trigger);
+				e.trigger.innerHTML = '复制失败，请手动复制';
+            });
+
+		}
+
+	}else{
+		alert('无效的 data 参数');
+	}
+
+</script>
+</body>
+</html>
