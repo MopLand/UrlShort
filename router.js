@@ -24,6 +24,10 @@ var route = function(app){
 		logic.getTpl( res, 'multi.html' );
 	});
 	
+	app.get('/words', function(req, res){
+		logic.getTpl( res, 'words.html' );
+	});
+	
 	app.get('/add', function(request, response){
 		var url = request.query['url'];
 		var vanity = request.query['vanity'];
@@ -37,7 +41,7 @@ var route = function(app){
 		var thumb = request.query['thumb'];
 		var words = request.query['words'];
 
-		if( words ) words = words.replace(/《/g,'￥');
+		//if( words ) words = words.replace(/《/g,'￥');
 
 		logic.addUrl(url, request, response, { 'vanity' : false, 'name' : name, 'price' : price, 'thumb' : thumb, 'words' : words });
 	});

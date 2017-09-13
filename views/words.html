@@ -1,0 +1,172 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>优惠券淘口令</title>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+    <style>
+	* {
+		margin: 0;
+		padding: 0;
+		outline: 0;
+	}
+
+	html {
+		background: #fdffff url("https://img.alicdn.com/imgextra/i4/1690419185/TB2mvGMXpZZJ1JjSZFEXXXUlXXa-1690419185.png") repeat;
+		color: #555;
+		font-size: 14px;
+		font-family: "Microsoft Yahei",Tahoma,Arial,Helvetica,STHeiti;
+		text-shadow: rgba(255,255,255,0.5) 0 1px;
+	}
+
+	html, body {
+		width: 100%;
+		height: 100%;
+	}
+
+		html body .hide {
+			display: none;
+		}
+
+	input, textarea {
+		font-family: "Microsoft Yahei",Tahoma,Arial,Helvetica,STHeiti;
+	}
+
+	.centerxy {
+		width: 100%;
+		border: 0;
+	}
+
+		.centerxy tr {
+			border: 0;
+		}
+
+		.centerxy td {
+			border: 0;
+			text-align: center;
+		}
+
+	.product-token {
+		display: block;
+		border: 0;
+		font-size: 60px;
+		font-weight: bold;
+		color: #000;
+		background: 0;
+		width: 100%;
+		margin-top: 60px;
+		margin-bottom: 60px;
+		text-align: center;
+		resize: none;
+	}
+
+
+	.product-copy {
+		background: url("https://img.alicdn.com/imgextra/i4/1690419185/TB2ZtgsbUl7MKJjSZFDXXaOEpXa-1690419185.png") no-repeat;
+		background-position: center;
+		display: block;
+		margin: 0px auto 40px;
+		text-align: center;
+		color: #999;
+		width:202px;
+		height: 84px;
+		cursor:pointer;
+	}
+
+	.product-copied {
+		background: url("https://img.alicdn.com/imgextra/i1/1690419185/TB2gRg5a3sSMeJjSsphXXXuJFXa-1690419185.png") no-repeat;
+		background-position: center;
+		display: block;
+		margin: 0px auto 40px;
+		text-align: center;
+		color: #999;
+		width:202px;
+		height: 84px
+	}
+
+	.product-tip {
+		display: block;
+		text-align: center;
+		font-size: 28px;
+		color: #999;
+		line-height: 200%;
+	}
+
+	.token {
+		display: block;
+		background: #fff;
+		padding: 50px 0;
+		box-shadow: rgba(0,0,0,0.1) 0 0 20px;
+	}
+	</style>	
+</head>
+<body>
+    <table class="centerxy">
+        <tbody>
+            <tr>
+                <td>
+                    <div class="token">
+                        <img src="https://img.alicdn.com/imgextra/i3/1690419185/TB2bOx1a9RRMKJjy0FlXXXFepXa-1690419185.png">
+                        <span id="txt_token" class="product-token">无淘口令</span>
+                        <div id="btn_copy" class="product-copy" style="display:none;"></div>
+                        <div id="div_tip" class="product-tip">打开「手机淘宝」即可「领券」并购买</div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+
+<script src="https://cdn.bootcss.com/clipboard.js/1.7.1/clipboard.js"></script>
+<script>
+    !function () {
+        function f(id) {
+            return document.getElementById(id);
+        }
+
+        var token = function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }("token");
+
+        if (!token) {
+            token = unescape(window.location.search.match("http[^&]*")[0]).match("\\?.*")[0].substr(1);
+        }
+
+        if (token) {
+            var txt_token = f("txt_token");
+            if (txt_token) {
+                var_token = txt_token.innerText = "\uffe5" + token + "\uffe5";
+            }
+
+            var btn_copy = f("btn_copy");
+            var div_tip = f("div_tip");
+            if (!window.Clipboard || !Clipboard.isSupported()) {
+                btn_copy.style.display = "none";
+                div_tip.innerHTML = "长按复制淘口令文本，打开「手机淘宝」即可「领券」并购买";
+            }
+            else {
+                btn_copy.style.display = "";
+                div_tip.innerHTML = "打开「手机淘宝」即可「领券」并购买";
+                (new Clipboard(btn_copy, {
+                    text: function () {
+                        return var_token || ""
+                    }
+                })).on("success", function (a) {
+                    a.trigger.className = "product-copied";
+                    setTimeout(function () {
+                        a.trigger.className = "product-copy";
+                    }, 3000);
+                });
+            }
+
+            document.addEventListener("selectionchange", function (e) {
+                if (window.getSelection().anchorNode.parentNode.id == 'txt_token' && document.getElementById('txt_token').innerText != window.getSelection()) {
+                    var key = document.getElementById('txt_token');
+                    window.getSelection().selectAllChildren(key);
+                }
+            }, false);
+        }
+    }();
+</script>
