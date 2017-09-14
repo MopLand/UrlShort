@@ -13,10 +13,9 @@
 */
 var fs = require("fs");
 var md5 = require('md5');
-var mysql = require("mysql");
-var req = require("request");
-var conf = require("./constants");
-//var crypto = require('crypto');
+var req = require('request');
+var mysql = require('mysql');
+var conf = require('./config');
 var pool = mysql.createPool({
 		host:conf.host,
 		port:conf.port,
@@ -62,7 +61,7 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 		*/
 		hash = genTag();
 	}
-	//This section query's (with a query defined in "constants.js") and looks if the short URL with the specific segment already exists
+	//This section query's (with a query defined in "config.js") and looks if the short URL with the specific segment already exists
 	//If the segment already exists, it will repeat the generateHash function until a segment is generated which does not exist in the database
     con.query(conf.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
 		if(err){
@@ -623,7 +622,7 @@ function setUrl( request, response, domain ){
 
 	if( domain ){
 	
-		var file = __dirname + '/constants.js';
+		var file = __dirname + '/extend.js';
 
 		fs.readFile( file, 'utf8', function( err, body ) {			
 

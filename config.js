@@ -61,3 +61,16 @@ exports.port = '3306';
 exports.user = 'root';
 exports.password = 'root';
 exports.database = 'yourls';
+
+/////////////////////////////
+
+try {
+	var exts = require('./extend');
+	for( k in exts ){
+		exports[k] = exts[k];
+	}
+	console.log('Loaded module extend.js');
+	console.log(exts);
+} catch (error) {
+	console.log('Not found extend.js');
+}

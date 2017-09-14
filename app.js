@@ -2,8 +2,8 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
-var router = require("./router");
-var conf = require("./constants");
+var router = require('./router');
+var conf = require('./config');
 
 ///////////////////
 
