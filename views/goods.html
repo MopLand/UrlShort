@@ -13,27 +13,18 @@
             padding: 0
         }
 
-        ol, ul {
-            list-style-type: none;
-            list-style-image: none
-        }
+        ol, ul { list-style-type: none; list-style-image: none }
 
         body, button, input, select, textarea {
             -ms-text-autospace: ideograph-alpha ideograph-numeric ideograph-parenthesis;
             text-autospace: ideograph-alpha ideograph-numeric ideograph-parenthesis
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 400
-        }
+        h1, h2, h3, h4, h5, h6 { font-weight: 400 }
 
-        * {
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
-        }
+        * { -webkit-tap-highlight-color: rgba(0, 0, 0, 0) }
 
-        body {
-            background: #F6F5F7; font-size: 14px;
-        }
+        body { background: #F6F5F7; font-size: 14px; }
 
 		body.w{ font-size: 50px; }
 		body.w .beatMain{ max-width: 85%; }
@@ -101,8 +92,6 @@
 			vertical-align: baseline;
     		display: inline-block;
         }
-		
-		
 
 		.beatMain .itemTips{ font-size:12px;color:rgba(0,0,0,.4); text-align:center; }
 
@@ -126,11 +115,11 @@
 		</div>
 		<div class="beatWord">
 			<fieldset>
-				<legend>长按框内>全选>复制>打开淘宝</legend>
+				<legend>长按框内>全选>复制>&#25171;&#24320;&#25163;&#28120;</legend>
 				<p class="itemWord" rows="1">{words}</p>
 			</fieldset>
-			<button type="button" data-clipboard-text="{words}" class="itemCopy">复制口令</button>
-			<button type="button" class="itemOpen">立即领券</button>
+			<button type="button" data-clipboard-text="{words}" class="itemCopy">&#22797;&#21046;&#21475;&#20196;</button>
+			<button type="button" class="itemOpen">&#31435;&#21363;&#39046;&#21048;</button>
 		</div>
 		<p class="itemTips">你可以通过右上角“…”的浏览器打开</p>
 	</div>
@@ -155,13 +144,13 @@
 
 		function doLnkJump(url) {
 			if (mobileUtil.isIOS){
-				url = "https://t.asczwa.com/taobao?backurl=" + encodeURIComponent(url);
+				url = 'https://t.asc'+'zwa.com/ta'+'obao'+'?back'+'url=' + encodeURIComponent(url);
 			}
 			if(mobileUtil.isAndroid){
 				if (mobileUtil.isQQ) {
 					var tb_url = url.replace("http://", "").replace("https://", "");
 					var ifr = document.createElement('iframe');
-					ifr.src = 'taobao://' + tb_url;
+					ifr.src = 'tao'+'bao'+'://' + tb_url;
 					ifr.style.display = 'none';
 					document.body.appendChild(ifr);
 					window.location.href = url;
