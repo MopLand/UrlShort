@@ -4,8 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1, minimum-scale=1, user-scalable=no">
 <title>【￥{price}】{name}</title>
-<meta name="Keywords" content="{name}"/>
-<meta name="Description" content="{name}"/>
 <style>
         /*reset*/
         blockquote, body, dd, dir, dl, fieldset, figure, form, h1, h2, h3, h4, h5, h6, hr, input, legend, menu, ol, optgroup, p, pre, tbody, td, textarea, tfoot, th, thead, ul {
@@ -115,13 +113,14 @@
 		</div>
 		<div class="beatWord">
 			<fieldset>
-				<legend>长按框内>全选>复制>&#25171;&#24320;&#25163;&#28120;</legend>
+				<legend>&#38271;&#25353;&#26694;&#20869;&#62;&#20840;&#36873;&#62;&#22797;&#21046;&#62;&#25171;&#24320;&#25163;&#28120;</legend>
 				<p class="itemWord" rows="1">{words}</p>
 			</fieldset>
-			<button type="button" data-clipboard-text="{words}" class="itemCopy">&#22797;&#21046;&#21475;&#20196;</button>
+			<button type="button" data-clipboard-text="{words}" data-clipboard-done="复制成功" class="itemCopy">&#22797;&#21046;&#21475;&#20196;</button>
+			<button type="button" data-clipboard-code="{base64url}" data-clipboard-done="浏览器打开" class="itemCopy">&#22797;&#21046;&#38142;&#25509;</button>
 			<button type="button" class="itemOpen">&#31435;&#21363;&#39046;&#21048;</button>
 		</div>
-		<p class="itemTips">你可以通过右上角“…”的浏览器打开</p>
+		<p class="itemTips">&#20320;&#21487;&#20197;&#36890;&#36807;&#21491;&#19978;&#35282;&#8220;&#8230;&#8221;&#30340;&#27983;&#35272;&#22120;&#25171;&#24320;</p>
 	</div>
 	<script src="//cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
 	<script>	
@@ -175,8 +174,9 @@
 		var word = document.querySelector('.itemWord');
 		var copy = document.querySelector('.itemCopy');
 		var open = document.querySelector('.itemOpen');
+		var text = '{words}';
 
-		if( '{words}' && '{words}' != 'null' ){
+		if( text && text != 'null' ){
 
 			tips.innerHTML = '';
 			
@@ -187,7 +187,7 @@
 				window.getSelection().selectAllChildren( word );
 			}, false);
 			
-			word.value = '{words}';
+			word.value = text;
 
 		}else{
 			beat.style.display = 'none';
@@ -202,7 +202,7 @@
 
 			//复制成功
 			clipboard.on('success', function (e) {
-				copy.innerHTML = '复制成功';
+				e.trigger.innerHTML = e.trigger.getAttribute( 'data-clipboard-done');
 			});
 		
 		}else{
@@ -221,14 +221,19 @@
 			}
 		}
 		
-		/*
-		if (mobileUtil.isIOS){
-			open.style.display = 'none';
+		var code = '{base64url}';
+		var url = decodeURIComponent(escape(window.atob( code )));
+		
+		open.onclick = function(){			
+			doLnkJump( url );
 		}
-		*/
-
-		open.onclick = function(){
-			doLnkJump('{url}');
+		
+		//////////////////////
+		
+		var btn = document.querySelectorAll('[data-clipboard-code]');
+		
+		for( var i = 0; i < btn.length; i++ ){
+			btn[i].setAttribute( 'data-clipboard-text', url );
 		}
 		
 		window.setInterval(function(){ $ = null }, 1000);

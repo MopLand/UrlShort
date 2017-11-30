@@ -222,6 +222,7 @@ var getUrl = function(segment, request, response){
 								goods.url = url;
 								goods.port = port;
 								goods.platform = platform;
+								goods.base64url = new Buffer( url ).toString('base64');
 
 							//安卓引导程序
 							if( platform == 'android' && request.query['boot'] ){
