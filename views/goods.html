@@ -24,9 +24,6 @@
 
         body { background: #F6F5F7; font-size: 14px; }
 
-		body.w{ font-size: 50px; }
-		body.w .beatMain{ max-width: 85%; }
-
         .beatHeader {
             background: #494A4D;
             height: 50px;
@@ -99,6 +96,10 @@
 			.beatMain textarea{ width:100%; background: transparent; border: none; resize: none; line-height:2em; text-align: center; font-size: 1.2em; }
 			.beatWord button { border: none; font-size: 1em;  padding: 6px 10px;  background: #f60;  display: inline-block;  margin: 10px;  border-radius: 15px; color: #fff; }
 			.beatWord button.itemOpen{ background: #00a1ff; }
+		
+		@media screen and (min-width:960px){
+			.beatMain{ -webkit-transform:scale(2.5); }
+		}
 </style>
 </head>
 <body class="{port}">
@@ -149,7 +150,7 @@
 				if (mobileUtil.isQQ) {
 					var tb_url = url.replace("http://", "").replace("https://", "");
 					var ifr = document.createElement('iframe');
-					ifr.src = 'tao'+'bao'+'://' + tb_url;
+					ifr.src = 'tb'+'open'+'://' + tb_url;
 					ifr.style.display = 'none';
 					document.body.appendChild(ifr);
 					window.location.href = url;

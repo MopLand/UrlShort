@@ -31,13 +31,13 @@ function openApp(url) {
 
 	if( ua.match(/iphone/i) == "iphone" || true ) {
 
-		window.location = "taobao://" + tb;
+		window.location = "tbopen://" + tb;
 		window.setTimeout(function() {window.location = url;},4000);
 
 	}else{
 
 		var ifr = document.createElement('iframe');
-		ifr.src = 'taobao://' + tb;
+		ifr.src = 'tbopen://' + tb;
 		ifr.style.display = 'none';
 		document.body.appendChild(ifr);
 
