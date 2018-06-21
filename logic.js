@@ -544,7 +544,12 @@ var setTpl = function( dir ){
 //This function returns the correct IP address. Node.js apps normally run behind a proxy, so the remoteAddress will be equal to the proxy. A proxy sends a header "X-Forwarded-For", so if this header is set, this IP address will be used.
 function getIP(request){
 	//return request.header("x-forwarded-for") || request.connection.remoteAddress;
-	return (request.headers['x-forwarded-for'] || '').split(',')[0] || request.connection.remoteAddress;
+	//return (request.headers['x-forwarded-for'] || '').split(',')[0] || request.connection.remoteAddress;
+	var address = request.headers['x-forwarded-for'] || 
+             request.connection.remoteAddress || 
+             request.socket.remoteAddress ||
+             request.connection.socket.remoteAddress;
+	return address.replace(/^.*:/, '').split(',')[0];
 }
 
 /* 获取IP归属地信息 */
