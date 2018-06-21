@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-dns-prefetch-control" content="on"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>返回淘口令页面</title>
+	<script src='//public.zhfile.com/js/pack.clipboard.js'></script>
+	<style>
+    /*淘口令购买*/
+    .bg-member {  width: 90%; max-width:600px; height: 100%; margin: 0 auto }
+    #member-code { background: #fff; padding: 10%; }
+    #member-code div.close-tag {  text-align: center;  font-size: 1rem;  color: #fff;  background: #f60;  margin: -10px -10px 20px -10px;  padding: 5px;  }
+    #member-code div.close-tag span {  float: right;  padding-right: 20px;  }
+    #member-code fieldset {  border: 2px dashed #f60;  text-align: center;  font-size: 0.9rem; padding: 1em;  }
+    fieldset {  border-width: 0;  padding: 0.35em 0.625em 0.75em;  margin: 0 2px;  border: 1px solid #c0c0c0;  }
+    #member-code fieldset legend {  background: #f60;  border: none;  width: 70%;  font-size: 0.8rem;  letter-spacing: 2px;  line-height: 20px;  color: #fff;  }
+    #member-code .bg-tcode-text {  background: #f6f4f4;  margin: 10px -10px 0px -10px;  padding: 10px 10px;  font-size: 13px;  color: #cc763d;  }
+    .copy_tkl {  border: none;  width: 40%;  text-align: center;  font-size: 15px;  padding: 6px 3px;  background: #f60;  display: block;  margin: 10px auto;  border-radius: 30px;  color: #fff;  }
+    /* 页面消息 */
+    #toast{ background:rgba(51, 51, 51, 0.85); color:#FFF; padding:10px; position:fixed; width:100%; box-sizing:border-box; left: 0; top: 0; z-index:100; display:none; }
+    #toast.success{ background:rgba(132, 197, 116, 0.9); display:block; }
+    #toast.failure{ background:rgba(197, 116, 116, 0.9); display:block; }
+</style>
+</head>
+<body>
+
+<div class="bg-member">
+    <div id="member-code">
+        <div class="close-tag" id="close">淘口令购买</div>
+        <fieldset>
+            <legend style="margin-bottom: 10px" class="copy_opp">长按框内>全选>复制>打开淘宝</legend>
+            <span id="intro"></span>
+        </fieldset>
+        <button type="button" id="all_copy" class="copy_tkl" data-clipboard-text="">一键复制</button>
+        <div class="bg-tcode-text">
+            <p>温馨提示：手机无【手机淘宝】者，可选择浏览器打开进行购买～</p>
+        </div>
+    </div>
+</div>
+
+<script src='//public.zhfile.com/js/ray.js'></script>
+<script src='/static/copy.js'></script>
+
+<script>	
+	var tkl = decodeURIComponent( R.String().get('tkl') );
+	var url = decodeURIComponent( R.String().get('url') );
+	var now = location.href;
+	
+	//赋值淘口令
+	R('#intro').html( tkl );
+	R('#all_copy').attr("data-clipboard-text",tkl);
+
+    //判断是否在微信
+    var ua = window.navigator.userAgent.toLowerCase();
+	
+    //查找是否有附加参数
+    var find = now.match(/wechat=true/i);
+	
+    //如果在微信 加上参数
+    if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+        //没有附加参数就加上附加参数
+        if(!find){
+            //加参数重定向
+            location.href = now + "&wechat=true";
+        }
+		
+	//如果浏览器打开  并且有附加参数  并且有跳转地址
+    }else if( url ){
+	
+		window.location.href = url;
+		
+    }
+</script>
+
+</body>
+</html>

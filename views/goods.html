@@ -146,25 +146,7 @@
 			if (mobileUtil.isIOS){
 				url = 'https://t.asc'+'zwa.com/ta'+'obao'+'?back'+'url=' + encodeURIComponent(url);
 			}
-			if(mobileUtil.isAndroid){
-				if (mobileUtil.isQQ) {
-					var tb_url = url.replace("http://", "").replace("https://", "");
-					var ifr = document.createElement('iframe');
-					ifr.src = 'tb'+'open'+'://' + tb_url;
-					ifr.style.display = 'none';
-					document.body.appendChild(ifr);
-					window.location.href = url;
-				}else{
-					//window.location.href = location.pathname + '?boot=yes';
-
-					var ifr = document.createElement('iframe');
-					ifr.src = '/{segment}?boot=yes';
-					ifr.style.display = 'none';
-					document.body.appendChild(ifr);
-				}
-			}else{
-				window.location.href = url;
-			}				
+			window.location.href = url;
 		}
 	
 		//////////////////////
@@ -215,11 +197,8 @@
 
 		//////////////////////
 
-		if (mobileUtil.isIOS){
-			var v = (navigator.userAgent).match(/OS (\d+)/i)[1];
-			if( v < 10 ){
-				open.style.display = 'none';
-			}
+		if (mobileUtil.isWeixin){
+			open.style.display = 'none';
 		}
 		
 		var code = '{base64url}';
