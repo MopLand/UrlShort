@@ -7,6 +7,7 @@
 		"mysql": "*",
 		"request": "*",
 		"express": "4.x",
+		"qr-image": "*",
 		"body-parser": "^1.7.0"
 	}
 }

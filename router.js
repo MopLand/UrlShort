@@ -69,6 +69,21 @@ var route = function(app){
 		logic.statIs(url, request, response);
 	});
 	
+	app.get('/qrcode', function(request, response){
+		var text = request.query['text'];
+		var size = request.query['size'] || 10;
+		var margin = request.query['margin'] || 1;
+		try {
+			var qr = require('qr-image');
+			var img = qr.image(text, {size : parseInt(size), margin : parseInt(margin)} );
+			response.writeHead(200, {'Content-Type': 'image/png', 'Access-Control-Allow-Origin':'*'});
+			img.pipe(response);
+		} catch (e) {
+			response.writeHead(414, {'Content-Type': 'text/html'});
+			response.end('<h1>414 Request-URI Too Large</h1>');
+		}
+	});
+	
 	app.get('/:segment', function(request, response){
 		var segment = request.params.segment.trim();
 		logic.getUrl(segment, request, response);
