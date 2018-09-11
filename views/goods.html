@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1, minimum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>【￥{price}】{name}</title>
 <style>
         /*reset*/
@@ -48,7 +48,7 @@
         }
 
         .beatMain {
-            padding: 0 16px;
+            padding: 5%;
             position: relative;
             z-index: 2;
 			max-width: 600px;
@@ -56,15 +56,13 @@
         }
 
         .beatMain .imgContainer {
-            padding: 0 16px;
+            padding: 0;
             text-align: center;
-            margin-bottom: 16px;
         }
 
         .beatMain .imgContainer img {
             width: 100%;
             height: auto;
-            margin-top: -16px;
             box-shadow: 0px 3px 12px rgba(21, 0, 71, 0.16);
         }
 
@@ -105,13 +103,6 @@
 <body class="{port}">
 	<div class="beatHeader {platform}" id="landingHeader"></div>
 	<div class="beatMain">
-		<div class="imgContainer">
-			<img src="{thumb}">
-		</div>
-		<div class="itemContent">
-			<div class="itemPrice">￥{price}</div>
-			{name}
-		</div>
 		<div class="beatWord">
 			<fieldset>
 				<legend>&#38271;&#25353;&#26694;&#20869;&#62;&#20840;&#36873;&#62;&#22797;&#21046;&#62;&#25171;&#24320;&#25163;&#28120;</legend>
@@ -121,7 +112,14 @@
 			<button type="button" data-clipboard-code="{base64url}" data-clipboard-done="浏览器打开" class="itemCopy">&#22797;&#21046;&#38142;&#25509;</button>
 			<button type="button" class="itemOpen">&#31435;&#21363;&#39046;&#21048;</button>
 		</div>
+		<div class="itemContent">
+			<div class="itemPrice">￥{price}</div>
+			{name}
+		</div>
 		<p class="itemTips">&#20320;&#21487;&#20197;&#36890;&#36807;&#21491;&#19978;&#35282;&#8220;&#8230;&#8221;&#30340;&#27983;&#35272;&#22120;&#25171;&#24320;</p>
+		<div class="imgContainer">
+			<img src="{thumb}">
+		</div>
 	</div>
 	<script src="//cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
 	<script>	

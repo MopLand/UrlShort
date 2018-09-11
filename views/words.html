@@ -2,7 +2,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>优惠券淘口令</title>
-    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
 	* { margin: 0; padding: 0; outline: 0;	}
 
@@ -20,22 +20,17 @@
 
 	input, textarea { font-family: "Microsoft Yahei",Tahoma,Arial,Helvetica,STHeiti; }
 
-	.centerxy { width: 100%; border: 0;	}
-
-		.centerxy tr { border: 0; }
-
-		.centerxy td { border: 0; text-align: center; }
+	.centerxy { width: 100%; border: 0; text-align: center;	}
 
 	.product-token {
 		display: block;
 		border: 0;
-		font-size: 60px;
+		font-size: 2em;
 		font-weight: bold;
 		color: #000;
 		background: 0;
 		width: 100%;
-		margin-top: 60px;
-		margin-bottom: 60px;
+		margin: 2em 0;
 		text-align: center;
 		resize: none;
 	}
@@ -66,7 +61,7 @@
 	.product-tip {
 		display: block;
 		text-align: center;
-		font-size: 28px;
+		font-size: 1.5em;
 		color: #999;
 		line-height: 200%;
 	}
@@ -74,26 +69,24 @@
 	.token {
 		display: block;
 		background: #fff;
-		padding: 50px 0;
+		padding: 5%;
 		box-shadow: rgba(0,0,0,0.1) 0 0 20px;
+	}
+
+	@media screen and (min-width:960px){
+		html{ font-size: 20px; }
 	}
 	</style>	
 </head>
 <body>
-    <table class="centerxy">
-        <tbody>
-            <tr>
-                <td>
-                    <div class="token">
-                        <img src="https://img.alicdn.com/imgextra/i3/1690419185/TB2bOx1a9RRMKJjy0FlXXXFepXa-1690419185.png">
-                        <span id="txt_token" class="product-token">无淘口令</span>
-                        <div id="btn_copy" class="product-copy" style="display:none;"></div>
-                        <div id="div_tip" class="product-tip">打开「手机淘宝」即可「领券」并购买</div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="centerxy">
+		<div class="token">
+			<img src="https://img.alicdn.com/imgextra/i3/1690419185/TB2bOx1a9RRMKJjy0FlXXXFepXa-1690419185.png">
+			<span id="txt_token" class="product-token">无淘口令</span>
+			<div id="btn_copy" class="product-copy" style="display:none;"></div>
+			<div id="div_tip" class="product-tip">打开「手机淘宝」即可「领券」并购买</div>
+		</div>
+    </div>
 </body>
 </html>
 
