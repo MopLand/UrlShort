@@ -91,4 +91,4 @@ var Copy = {
 };
 
 //初始化组件
-Copy.Init( { 'button' : '.copy_tkl', 'content' : '#intro', 'vessel' : '#member-code' } );
+Copy.Init( { 'button' : '.copy_tkl', 'content' : '#intro', 'vessel' : '#vessel' } );

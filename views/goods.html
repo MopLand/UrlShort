@@ -48,7 +48,7 @@
         }
 
         .beatMain {
-            padding: 5%;
+            padding: 0 16px;
             position: relative;
             z-index: 2;
 			max-width: 600px;
@@ -56,13 +56,15 @@
         }
 
         .beatMain .imgContainer {
-            padding: 0;
+            padding: 0 16px;
             text-align: center;
+            margin-bottom: 16px;
         }
 
         .beatMain .imgContainer img {
-            width: 100%;
+            width: 85%;
             height: auto;
+            margin-top: -16px;
             box-shadow: 0px 3px 12px rgba(21, 0, 71, 0.16);
         }
 
@@ -89,7 +91,7 @@
 		.beatMain .itemTips{ font-size:12px;color:rgba(0,0,0,.4); text-align:center; }
 
 		.beatWord{ text-align: center; }
-			.beatWord fieldset { padding: 0.8em;  margin: 0 2px; border: 1px solid #c0c0c0;  }
+			.beatWord fieldset { padding: 0.8em;  margin: 0 2px; border: 1px solid #ddd;  }
 			.beatWord fieldset legend { padding: 0 5px; background: #808080;  border: none; font-size: 0.9em;  letter-spacing: 2px;  line-height: 1.4em;  color: #fff;  }
 			.beatMain textarea{ width:100%; background: transparent; border: none; resize: none; line-height:2em; text-align: center; font-size: 1.2em; }
 			.beatWord button { border: none; font-size: 1em;  padding: 6px 10px;  background: #f60;  display: inline-block;  margin: 10px;  border-radius: 15px; color: #fff; }
@@ -103,23 +105,23 @@
 <body class="{port}">
 	<div class="beatHeader {platform}" id="landingHeader"></div>
 	<div class="beatMain">
-		<div class="beatWord">
-			<fieldset>
-				<legend>&#38271;&#25353;&#26694;&#20869;&#62;&#20840;&#36873;&#62;&#22797;&#21046;&#62;&#25171;&#24320;&#25163;&#28120;</legend>
-				<p class="itemWord" rows="1">{words}</p>
-			</fieldset>
-			<button type="button" data-clipboard-text="{words}" data-clipboard-done="复制成功" class="itemCopy">&#22797;&#21046;&#21475;&#20196;</button>
-			<button type="button" data-clipboard-code="{base64url}" data-clipboard-done="浏览器打开" class="itemCopy">&#22797;&#21046;&#38142;&#25509;</button>
-			<button type="button" class="itemOpen">&#31435;&#21363;&#39046;&#21048;</button>
+		<div class="imgContainer">
+			<img src="{thumb}">
 		</div>
 		<div class="itemContent">
 			<div class="itemPrice">￥{price}</div>
 			{name}
 		</div>
-		<p class="itemTips">&#20320;&#21487;&#20197;&#36890;&#36807;&#21491;&#19978;&#35282;&#8220;&#8230;&#8221;&#30340;&#27983;&#35272;&#22120;&#25171;&#24320;</p>
-		<div class="imgContainer">
-			<img src="{thumb}">
+		<div class="beatWord">
+			<fieldset>
+				<legend>&#38271;&#25353;&#26694;&#20869;&#62;&#20840;&#36873;&#62;&#22797;&#21046;&#62;&#25171;&#24320;&#25163;&#28120;</legend>
+				<p class="itemWord">{words}</p>
+			</fieldset>
+			<button type="button" data-clipboard-text="{words}" data-clipboard-done="复制成功" class="itemCopy">&#22797;&#21046;&#21475;&#20196;</button>
+			<button type="button" data-clipboard-code="{base64url}" data-clipboard-done="浏览器打开" class="itemCopy">&#22797;&#21046;&#38142;&#25509;</button>
+			<button type="button" class="itemOpen">&#31435;&#21363;&#39046;&#21048;</button>
 		</div>
+		<p class="itemTips">&#20320;&#21487;&#20197;&#36890;&#36807;&#21491;&#19978;&#35282;&#8220;&#8230;&#8221;&#30340;&#27983;&#35272;&#22120;&#25171;&#24320;</p>
 	</div>
 	<script src="//cdn.bootcss.com/clipboard.js/1.7.1/clipboard.min.js"></script>
 	<script>	
@@ -162,6 +164,7 @@
 			tips.innerHTML = '';
 			
 			head.className = 'beatHeader';
+			head.style.display = 'none';
 			
 			//自动选择文本
 			document.addEventListener("selectionchange", function(e) {
@@ -183,7 +186,13 @@
 
 			//复制成功
 			clipboard.on('success', function (e) {
-				e.trigger.innerHTML = e.trigger.getAttribute( 'data-clipboard-done');
+				if (e.trigger.disabled == false || e.trigger.disabled == undefined) {
+					e.trigger.innerHTML = e.trigger.getAttribute( 'data-clipboard-done');
+				}
+			});
+
+			clipboard.on('error', function(e) {
+				e.trigger.innerHTML = '拷贝失败，请手动拷贝';
 			});
 		
 		}else{
