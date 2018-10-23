@@ -23,7 +23,7 @@ var Copy = {
 
 		//自动选择文本
 		document.addEventListener("selectionchange", function(e) {
-			tkl = document.getElementById("intro");
+			var tkl = Copy.Content.item(0);
 			window.getSelection().selectAllChildren( tkl );
 		}, false);
 	
@@ -39,7 +39,6 @@ var Copy = {
 		
 		//内容容器
 		Copy.Content = R(conf.content);
-
 		
 		//浏览器支持剪贴板
 		if( Copy.Button.attr('display') || !Clipboard.isSupported() ){
@@ -48,7 +47,7 @@ var Copy = {
 			Copy.Compatibility();
 
 			//复制文本
-			var clipboard = new Clipboard( conf.vessel + 'button' );
+			var clipboard = new Clipboard( conf.button );
 
 			//复制成功
 			clipboard.on('success', function (e) {
