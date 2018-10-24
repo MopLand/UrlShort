@@ -18,6 +18,21 @@ app.use(function(req, res, next){
 	next();
 });
 
+app.use(function(req, res, next) {
+    var err = null;    
+    try {
+        decodeURIComponent(req.path)
+    }catch(e) {
+        err = e;
+    }
+    if( err ){
+        console.log(err, req.url);
+        res.status(500).send({ error: 'Invalid URL' });
+        return;
+    }
+    next();
+});
+
 app.listen(conf.listen, function(){
 	console.log( 'Started listening at port ' + conf.listen );
 });

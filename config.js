@@ -17,7 +17,7 @@ exports.nodeid = 127;
 exports.min_vanity_length = 4;
 
 //每个IP每小时能产生的URL数量（0为不限制）
-exports.num_of_urls_per_hour = 10000;
+exports.num_of_urls_per_hour = 0;
 
 //允许URL规则
 exports.url_rule = /(taobao|tmall|alimama|95095)\.(com|hk)/gi;
