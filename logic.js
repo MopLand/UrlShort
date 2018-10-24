@@ -548,7 +548,7 @@ function getIP(request){
 	var address = request.headers['x-forwarded-for'] || 
              request.connection.remoteAddress || 
              request.socket.remoteAddress ||
-             request.connection.socket.remoteAddress;
+             (request.connection.socket ? request.connection.socket.remoteAddress : '');
 	return address.replace(/^.*:/, '').split(',')[0];
 }
 
