@@ -56,6 +56,7 @@ var route = function(app){
 	});
 	
 	app.get('/hash', function(request, response){
+		response.setHeader('Access-Control-Allow-Origin','*');
 		logic.genTag(request, response);
 	});
 	
