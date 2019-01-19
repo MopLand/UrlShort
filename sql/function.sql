@@ -25,6 +25,9 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
 	--
+	
+	-- 数据数量
+	SET @count = 0;
 
 	OPEN curs;	loop_label: LOOP
 
@@ -52,6 +55,9 @@ BEGIN
 		END IF;
 
 	END LOOP;	CLOSE curs;
+
+	-- 写入日志
+	INSERT INTO `task` (`task`,`count`,`dateline`,`datetime`) VALUES('clean_old_url_data', @count, UNIX_TIMESTAMP(), NOW());
 
 END;;
 
@@ -131,6 +137,9 @@ ThisSP:BEGIN
 
 	-- 查询变量（24小时访问量、24小时独立访客、总访问量）
 	SELECT SUBSTRING( @h24uv, 2 ) AS uv, SUBSTRING( @h24ip, 2 ) AS ip, @clicks AS click;
+
+	-- 写入日志
+	INSERT INTO `task` (`task`,`dateline`,`datetime`) VALUES('count_by_url_hash', @url_id, UNIX_TIMESTAMP(), NOW());
 
 END;;
 

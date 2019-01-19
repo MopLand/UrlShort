@@ -55,6 +55,18 @@ CREATE TABLE `stats` (
 
 -- -------------------------------------------
 
+DROP TABLE IF EXISTS `tasks`;
+CREATE TABLE `tasks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `task` varchar(64) NOT NULL,
+  `count` int(10) unsigned NOT NULL,
+  `dateline` int(11) unsigned NOT NULL,
+  `datetime` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- -------------------------------------------
+
 CREATE TABLE `stats_0` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url_id` int(11) NOT NULL,
