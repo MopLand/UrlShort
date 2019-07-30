@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>果冻短网址 - GuoDongBaohe.com</title>
   <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
-  <link href="http://appserv.yqt.so/bootstrap.min.css" rel="stylesheet">
-  <link href="http://appserv.yqt.so/freelancer.css" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/freelancer.css" rel="stylesheet">
   <!--[if lt IE 9]>
     <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -56,14 +56,14 @@
     <div class="row">
       <div class="col-md-8 col-md-offset-2 text-center">
         <h4>短网址服务可以帮助你把一个长网址缩短，方便你在社交网络上分享。</h4>
-        <p class="text-warning"><img src="http://appserv.yqt.so/qcloud-safe.png" width="100" height="40" class="hidden-xs"> 目前仅允许生成 taobao.com / tmall.com 域名的短网址。</p>
+        <p class="text-warning">目前仅允许生成 taobao.com / tmall.com / alimama.com / 95095.com 域名的短网址。</p>
         <div class="bg-box">
           <div class="form-group">
             <label class="col-sm-2 control-label" for="txt-gurl">请输入网址</label>
             <div class="col-sm-8">
               <input id="url-field" name="url" type="text" class="form-control input-sm" placeholder="请输入网址" value="">
               <span class="help-block text-left">有效期为 60 天</span>
-			  <span class="text-danger help-block text-left" id="create_wrong" style="display:none;">目前仅支持 taobao.com / tmall.com / tmall.hk / 95095.com 域名的网址生成</span>
+			  <span class="text-danger help-block text-left" id="create_wrong" style="display:none;">目前仅支持 taobao.com / tmall.com / tmall.hk / alimama.com / 95095.com 域名的网址生成</span>
             </div>
 			<div class="col-sm-2">
 				<p class="help-block clear-url"><a>清除</a></p>
@@ -108,8 +108,7 @@
         <p>我们仅使用标准的 HTTP 302 方式让用户浏览器跳转到目标网址，中间过程不会修改任何用户数据（如访问来源、Cookie等），收集到的来源和地区数据仅用于生成统计报表。</p>
       </div>
       <div class="col-sm-5">
-        <p><img class="img-responsive" src="http://appserv.yqt.so/memo-1.png"></p>
-        <p><img class="img-responsive" src="http://appserv.yqt.so/memo-2.png"></p>
+        <p><img class="img-responsive" src="img/memo-1.png"></p>
       </div>
     </div>
   </div>
@@ -250,12 +249,12 @@
       <div class="row">
         <div class="col-sm-6 col-xs-4 text-right">
           <a class="logo" href="http://www.taokebaohe.com/" target="_blank">
-            <img src="http://appserv.yqt.so/logo.png" alt="果冻" />
+            <img src="img/logo.png" alt="果冻" />
           </a>
         </div>
         <div class="col-sm-6 col-xs-8 text-left">
           版权所有 &copy; <a href="http://www.taokebaohe.com/" target="_blank">果冻</a>, 2019<br>
-		  <a href="http://www.miitbeian.gov.cn/" target="_blank">鄂ICP备14020770号</a>
+		  <a href="http://www.miitbeian.gov.cn/" target="_blank">鄂ICP备18031460号</a>
         </div>
       </div>
     </div>
@@ -281,11 +280,22 @@
   </div>
 </div>
 
-  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  <script src="//cdn.bootcss.com/highcharts/4.2.3/highcharts.js"></script>
-  <script src="http://appserv.yqt.so/plugin.min.js"></script>
-  <script src="http://appserv.yqt.so/freelancer.js?"></script>
-  <code hidden="analysis"><script src="http://s95.cnzz.com/z_stat.php?id=1253142904&web_id=1253142904"></script></code>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="//cdn.bootcss.com/highcharts/4.2.3/highcharts.js"></script>
+<script src="js/plugin.min.js"></script>
+<script src="js/freelancer.js?"></script>
+<code hidden="analysis">
+<script>
+	var _hmt = _hmt || [];
+	(function() {
+	var hm = document.createElement("script");
+	hm.src = "https://hm.baidu.com/hm.js?92bcb011f0ed94f07e985f80f01f0381";
+	var s = document.getElementsByTagName("script")[0]; 
+	s.parentNode.insertBefore(hm, s);
+	})();
+</script>
+</code>
+	
 </body>
 </html>
