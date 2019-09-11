@@ -261,18 +261,18 @@ var getUrl = function(segment, request, response){
 		
 		//////////////////////////////
 
-		conf.debug && console.log( '--------------------------' );
+		debug( '--------------------------' );
 
 		//从缓存读取
 		if( result = Cache[hash] ){
 		
 			fn( result );
 			
-			conf.debug && console.log( 'SEGMENT', hash, 'Hit Cache' );
+			debug( 'SEGMENT', hash, 'Hit Cache' );
 			
 		}else{
 			
-			conf.debug && console.log( 'SEGMENT', hash, 'Hit DB' );
+			debug( 'SEGMENT', hash, 'Hit DB' );
 		
 			con.query(conf.get_query.replace("{SEGMENT}", con.escape(hash)), function( err, rows ){
 			
@@ -320,7 +320,7 @@ var getTpl = function( response, file, variable ){
 
 	///////////////////////
 
-	conf.debug && console.log( '--------------------------' );
+	debug( '--------------------------' );
 
 	//模板名称
 	var name = file.replace(/\\/g,'/').split('/').pop();
@@ -328,7 +328,7 @@ var getTpl = function( response, file, variable ){
 	//从缓存中读取
 	if( tplSet[ name ] ){
 
-		conf.debug && console.log( 'TEMPLATE', name, 'Hit Cache' );
+		debug( 'TEMPLATE', name, 'Hit Cache' );
 
 		callback( tplSet[ name ], variable );
 
@@ -337,11 +337,12 @@ var getTpl = function( response, file, variable ){
 		//console.log( 'read...' );
 
 		return fs.readFile( Tpl + file, 'utf8', function( err, body ) {
+
 			if (err) {
 				return console.log(err);
 			}
 
-			conf.debug && console.log( 'TEMPLATE', name, 'Hit File' );
+			debug( 'TEMPLATE', name, 'Hit File' );
 
 			//缓存进数组
 			tplSet[ name ] = body;
@@ -359,18 +360,23 @@ var getTpl = function( response, file, variable ){
 //This function adds attempts to add an URL to the database. If the URL returns a 404 or if there is another error, this method returns an error to the client, else an object with the newly shortened URL is sent back to the client.
 var addUrl = function(url, request, response, option){
 
+	//是否为 API 请求
+	var isapi = option.vanity === false;
+
+	debug( 'isapi', isapi );
+
 	//验证 UA 有效性，否则返回 401
 	if( conf.api_review ){
 
 		//Api
-		if( option.vanity === false ){
+		if( isapi ){
 
 			var year = (new Date).getFullYear();
 			var month = (new Date).getMonth() + 1;
 			var hash = md5( year + '' + ( month < 10 ? '0' : '' ) + month + '' + conf.api_secret ).substr(8, 16);
 
-			conf.debug && console.log( 'hash', hash );
-			conf.debug && console.log( 'token', request.headers['token'] );
+			debug( 'hash', hash );
+			debug( 'token', request.headers['token'] );
 
 			if( !request.headers['token'] || hash != request.headers['token'] ){
 				response.send(urlResult(null, 'TOKEN', 401));
@@ -380,7 +386,7 @@ var addUrl = function(url, request, response, option){
 		//Web
 		}else{
 
-			conf.debug && console.log( 'referer', request.headers['referer'] );
+			debug( 'referer', request.headers['referer'] );
 
 			if( !request.headers['referer'] || !request.headers['x-requested-with'] ){
 				response.send(urlResult(null, 'REFERER', 401));
@@ -389,12 +395,11 @@ var addUrl = function(url, request, response, option){
 
 		}
 
-	}
-	
+	}	
 
-	//验证 URL 有效性，否则返回 403
+	//非API 模式，验证 URL 有效性，否则返回 403
 	conf.url_rule.lastIndex = 0;
-	if( conf.url_rule && conf.url_rule.test( url ) == false ){
+	if( !isapi && conf.url_rule && conf.url_rule.test( url ) == false ){
 		response.send(urlResult(null, false, 403));
 		return;
 	}
@@ -408,9 +413,11 @@ var addUrl = function(url, request, response, option){
 
 			var fn = function(){
 				con.query(conf.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
+
 					if(err){
 						console.log(err);
 					}
+					
 					if(url.indexOf("http://localhost") > -1 || url.indexOf("https://localhost") > -1){
 						response.send(urlResult(null, false, 401));
 						return;
@@ -642,6 +649,10 @@ function setUrl( request, response, domain ){
 		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' ') } );
 	}	
 
+}
+
+function debug( ...msg ){
+	conf.debug && console.log( ...msg );
 }
 
 ////////////////////////////////////////

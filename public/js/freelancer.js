@@ -323,17 +323,20 @@ $('form[name=statis]').on('submit', function(){
 });
 
 $(function() {
-  // api-key
-  ZeroClipboard.config({
-    //swfPath: 'js/zeroclipboard.swf'
-    swfPath: 'http://dn-appserv.qbox.me/zeroclipboard.swf'
-  });
-  var zeroClientKey = new ZeroClipboard($('.bg-box a.txt-copy'));
-  zeroClientKey.on('ready', function(e) {
-    zeroClientKey.on('copy', function(e) {
-      e.clipboardData.setData('text/plain', $(e.target).children('b').text());
-    }).on('aftercopy', function(e) {
-      $(e.target).children('small.txt-tip').html('<i class="fa fa-check"></i> 复制成功');
-    })
-  });
+
+	var clipboard = new ClipboardJS('.bg-box a.txt-copy', {
+		text: function(trigger) {
+			return $(trigger).children('b').text();
+		}
+	});
+
+	clipboard.on('success', function(e) {
+		$(e.trigger).children('small.txt-tip').html('<i class="fa fa-check"></i> 复制成功');
+	});
+
+	clipboard.on('error', function(e) {
+		console.error('Action:', e.action);
+		console.error('Trigger:', e.trigger);
+	});
+
 });
