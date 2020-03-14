@@ -77,7 +77,8 @@ var route = function(app){
 		try {
 			var qr = require('qr-image');
 			var img = qr.image(text, {size : parseInt(size), margin : parseInt(margin)} );
-			response.writeHead(200, {'Content-Type': 'image/png', 'Access-Control-Allow-Origin':'*'});
+			//response.writeHead(200, {'Content-Type': 'image/png', 'Access-Control-Allow-Origin':'*'});
+			response.writeHead(200, {'Content-Type': 'image/png'});
 			img.pipe(response);
 		} catch (e) {
 			response.writeHead(414, {'Content-Type': 'text/html'});
