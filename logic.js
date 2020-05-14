@@ -473,6 +473,10 @@ var addUrl = function(url, request, response, option){
 		
 		con.release();
 	});
+
+	//上报日志
+	weight( 0.01 ) && report( 'UrlShort', isapi, request );
+
 };
 
 ////////////////////////////////////////
@@ -493,6 +497,37 @@ var whatIs = function(url, request, response){
 		con.release();
 	});
 };
+
+/**
+ * @desc 权重对比
+ *
+ * @param float $probability	概率 0-1
+ * @param integer $length		最大值	
+ * @return void
+ */
+var weight = function( probability = 0.1, length = 100 ){
+	test = parseInt(Math.random() * length) + 1;
+	return test <= probability * length;
+}
+
+/**
+ * requestCurl curl请求方法
+ * @param string appid 	服务标识
+ * @param string status 状态信息
+ * @param array message 消息内容
+ */
+var report = function( appid, status, message = {}, cb ) {
+	req({
+		timeout:1000 * 30,
+		method:'GET',
+		url:conf.api_report,
+		qs:{
+			appid, status, message : JSON.stringify( message )
+		}
+	},function (error, response, body) {
+		cb && cb( response.statusCode, body );
+	});
+}
 
 ////////////////////////////////////////
 
@@ -661,6 +696,7 @@ exports.getUrl = getUrl;
 exports.addUrl = addUrl;
 exports.whatIs = whatIs;
 exports.statIs = statIs;
+exports.report = report;
 exports.setTpl = setTpl;
 exports.getTpl = getTpl;
 exports.genTag = genTag;

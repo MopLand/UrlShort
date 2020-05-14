@@ -35,7 +35,10 @@ exports.url_statis = false;
 exports.api_review = false;
 
 //UA 加密字符串
-exports.api_secret = 'shihuizhu.com';
+exports.api_secret = 'veryide.com';
+
+//日志上报接口
+exports.api_report = 'http://api.example.com/report';
 
 /////////////////////////////
 
