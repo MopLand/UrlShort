@@ -475,7 +475,7 @@ var addUrl = function(url, request, response, option){
 	});
 
 	//上报日志
-	weight( 0.2 ) && report( 'UrlShort', isapi ? 'API' : 'Web' , request.query );
+	weight( 0.2 ) && report( 'UrlShort', isapi ? 'API' : 'Web' , option );
 
 };
 
