@@ -16,7 +16,9 @@
 
 	<script>
 		window.setInterval( function(){
-			location.reload();
+			var img = document.querySelector('img');
+			var src = img.src.replace(/\?t=(.+)/,'');
+				img.src = src + '?t=' + Math.random();
 		}, 2000 );
 	</script>
 
