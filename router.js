@@ -71,19 +71,29 @@ var route = function(app){
 	});
 	
 	app.get('/qrcode', function(request, response){
-		var text = request.query['text'];
-		var size = request.query['size'] || 10;
-		var margin = request.query['margin'] || 1;
-		try {
-			var qr = require('qr-image');
-			var img = qr.image(text, {size : parseInt(size), margin : parseInt(margin)} );
-			//response.writeHead(200, {'Content-Type': 'image/png', 'Access-Control-Allow-Origin':'*'});
-			response.writeHead(200, {'Content-Type': 'image/png'});
-			img.pipe(response);
-		} catch (e) {
-			response.writeHead(414, {'Content-Type': 'text/html'});
-			response.end('<h1>414 Request-URI Too Large</h1>');
+		
+		if( Object.keys(request.query).length == 0 ){
+		
+			logic.getTpl( response, 'qrcode.html' );
+				
+		}else{	
+		
+			var text = request.query['text'];
+			var size = request.query['size'] || 10;
+			var margin = request.query['margin'] || 1;
+			try {
+				var qr = require('qr-image');
+				var img = qr.image(text, {size : parseInt(size), margin : parseInt(margin)} );
+				//response.writeHead(200, {'Content-Type': 'image/png', 'Access-Control-Allow-Origin':'*'});
+				response.writeHead(200, {'Content-Type': 'image/png'});
+				img.pipe(response);
+			} catch (e) {
+				response.writeHead(414, {'Content-Type': 'text/html'});
+				response.end('<h1>414 Request-URI Too Large</h1>');
+			}
+			
 		}
+		
 	});
 	
 	app.get('/:segment', function(request, response){
