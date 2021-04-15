@@ -33,7 +33,7 @@ This script is meant to be used as a public URL shortener. If you want to use th
 		location / {
 			add_header Access-Control-Allow-Origin *;
 			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-			proxy_pass http://127.0.0.1:3500;    
+			proxy_pass http://127.0.0.1:3500;
 	    } 
 	}
 
@@ -52,7 +52,7 @@ This script is meant to be used as a public URL shortener. If you want to use th
 
 ### 转换链接
 
-	/add?url=URL	
+	/add?url=URL
 	/add?url=URL&vanity=Vanity
 
 	URL		原始链接地址（仅支持淘宝、天猫地址）
@@ -63,7 +63,7 @@ This script is meant to be used as a public URL shortener. If you want to use th
 	/api?url=URL&name=Name&price=Price&thumb=Thumb
 
 	URL		原始链接地址（仅支持淘宝、天猫地址）
-	Name	商品名称	
+	Name	商品名称
 	Price	商品价格
 	Thumb	商品图片
 

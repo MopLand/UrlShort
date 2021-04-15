@@ -20,7 +20,7 @@ exports.min_vanity_length = 4;
 exports.num_of_urls_per_hour = 0;
 
 //允许URL规则
-exports.url_rule = /(taobao|tmall|alimama|95095|jd|pinduoduo|kuaizhan)\.(com|hk)/gi;
+exports.url_allows = /(taobao|tmall|alimama|95095|jd|pinduoduo|kuaizhan)\.(com|hk)/gi;
 //exports.url_rule = /^https?:\/\/(shop\.m|s\.click|detail|taoquan|item|uland|detail\.yao)\.(taobao|tmall|alimama|95095)\.(com|hk)/gi;
 
 //是否对URL验证

@@ -167,7 +167,8 @@ var getUrl = function(segment, request, response){
 			var url = result.url;
 			var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);		//是否为手机访问
 			var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);		//是否在微信中
-			var iPhone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
+			var iphone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
+			var taobao = /(taobao|tmall|alimama|95095)\.com/.test( url );
 
 			////////////////////////
 
@@ -185,7 +186,6 @@ var getUrl = function(segment, request, response){
 			} );
 
 			////////////////////////
-			//console.log( mobile, url );
 
 			//是手机访问
 			if( port == 'm' ){
@@ -202,10 +202,10 @@ var getUrl = function(segment, request, response){
 				url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
 			}
 
-			var platform = ( iPhone ? 'ios' : 'android' );
+			var platform = ( iphone ? 'ios' : 'android' );
 
 			//是微信访问
-			if( wechat || port == 'w' ){
+			if( port == 'w' || (wechat && taobao) ){
 
 				if( url.indexOf('coupon') > -1 && url.indexOf('.htm') > -1 ){
 				
@@ -250,7 +250,7 @@ var getUrl = function(segment, request, response){
 			}else{
 
 				//淘宝中转页
-				if( port == 't' || /taobao\.com/.test( url ) ){
+				if( port == 't' || taobao ){
 					getTpl( response, 'taobao.html', { 'url' : url, 'platform' : platform } );
 				}else{
 					response.redirect( url );
@@ -398,8 +398,8 @@ var addUrl = function(url, request, response, option){
 	}	
 
 	//非API 模式，验证 URL 有效性，否则返回 403
-	conf.url_rule.lastIndex = 0;
-	if( !isapi && conf.url_rule && conf.url_rule.test( url ) == false ){
+	conf.url_allows.lastIndex = 0;
+	if( !isapi && conf.url_allows && conf.url_allows.test( url ) == false ){
 		response.send(urlResult(null, false, 403));
 		return;
 	}
