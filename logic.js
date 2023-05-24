@@ -609,10 +609,14 @@ function getIPInfo( ip, fn ){
 	req( url, function( error, response, body ){
 
 		if (!error && response.statusCode == 200) {
-			var res = JSON.parse( body );
-			if( res.code == 0 ){
-				fn && fn( res.data );
-				return;
+			try {
+				var res = JSON.parse( body );
+				if( res.code == 0 ){
+					fn && fn( res.data );
+					return;
+				}
+			} catch (e) {
+				console.log( e, body );
 			}
 		}
 
