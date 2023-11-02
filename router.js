@@ -42,6 +42,10 @@ var route = function(app){
 		var thumb = request.query['thumb'];
 		var words = request.query['words'];
 
+		if( request.headers['debug'] == 'dora' ){
+			api = 3;
+		}
+
 		//if( words ) words = words.replace(/《/g,'￥');
 
 		logic.addUrl(url, request, response, { 'vanity' : false, 'api' : api, 'name' : name, 'price' : price, 'thumb' : thumb, 'words' : words });
