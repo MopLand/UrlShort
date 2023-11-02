@@ -113,7 +113,7 @@ function handleHash(hash, url, request, response, con, option){
 		conf.add_query.replace("{URL}", con.escape(url)).
 		replace("{SEGMENT}", con.escape(hash)).
 		replace("{IP}", con.escape(getIP(request))).
-		replace("{API}", request.path == '/api' ? 1 : 0 )
+		replace("{API}", option.api || 0 )
 	,
 	function(err, res){
 		if(err){
