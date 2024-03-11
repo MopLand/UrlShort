@@ -8,7 +8,7 @@
     "merge_logs"		: true,
     "autorestart"		: true,
     "watch"			    : true,
-    "ignore_watch"	    : ["logs",".git","*.gitlock"],
+    "ignore_watch"	    : ["log",".git","*.gitlock"],
     "watch_options"	    : {
         "followSymlinks"  : false
     },
