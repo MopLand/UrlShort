@@ -60,9 +60,10 @@ This script is meant to be used as a public URL shortener. If you want to use th
 
 ### 转换链接，支持商品信息
 
-	/api?url=URL&name=Name&price=Price&thumb=Thumb
+	/api?url=URL&apid=API&name=Name&price=Price&thumb=Thumb
 
 	URL		原始链接地址（仅支持淘宝、天猫地址）
+	API		API 标记（0~127）
 	Name	商品名称
 	Price	商品价格
 	Thumb	商品图片

@@ -1,0 +1,16 @@
+{
+    "name"			    : "UrlShort",
+    "script"			: "app.js",
+    "cwd"				: "/disk/www/url.taoke.com",
+    "instances"			: "2",
+    "error_file"		: "./log/url_short_err.log",
+    "out_file"		    : "./log/url_short_out.log",
+    "merge_logs"		: true,
+    "autorestart"		: true,
+    "watch"			    : true,
+    "ignore_watch"	    : ["log",".git","*.gitlock","node_modules"],
+    "watch_options"	    : {
+        "followSymlinks"  : false
+    },
+    "log_date_format"   : "YYYY-MM-DD"
+  }

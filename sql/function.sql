@@ -18,8 +18,8 @@ BEGIN
 	-- 完成标记
 	DECLARE done INT DEFAULT FALSE;
 
-	-- 定义游标，3个月前的过期数据
-	DECLARE curs CURSOR FOR SELECT id, segment FROM urls WHERE datetime_added < curdate() - interval 3 month ORDER BY id ASC;
+	-- 定义游标，6个月前的过期数据
+	DECLARE curs CURSOR FOR SELECT id, segment FROM urls WHERE api < 2 AND datetime_added < CURDATE() - INTERVAL 6 MONTH ORDER BY id ASC;
 
 	-- 完成标记
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;

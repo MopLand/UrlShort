@@ -35,15 +35,20 @@ var route = function(app){
 	});
 	
 	app.get('/api', function(request, response){
+		var api = request.query['api'] || 1;
 		var url = request.query['url'];
 		var name = request.query['name'];
 		var price = request.query['price'];
 		var thumb = request.query['thumb'];
 		var words = request.query['words'];
 
+		if( request.headers['debug'] == 'dora' ){
+			api = 3;
+		}
+
 		//if( words ) words = words.replace(/《/g,'￥');
 
-		logic.addUrl(url, request, response, { 'vanity' : false, 'name' : name, 'price' : price, 'thumb' : thumb, 'words' : words });
+		logic.addUrl(url, request, response, { 'vanity' : false, 'api' : api, 'name' : name, 'price' : price, 'thumb' : thumb, 'words' : words });
 	});
 	
 	app.get('/set', function(request, response){
