@@ -155,13 +155,9 @@ var getUrl = function(segment, request, response){
 		var port = getPort( segment );
 		
 		var fn = function( result ){
-
-			var referer = '';
-			if( request.headers.referer ){
-				referer = request.headers.referer;
-				var matches = referer.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
-				var referer = matches && matches[1];
-			}
+			
+			var matches = (request.headers.referer || '').match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
+			var referer = matches ? matches[1] : '';
 
 			var ip = getIP(request);
 			var url = result.url;
