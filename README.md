@@ -17,24 +17,40 @@ This script is meant to be used as a public URL shortener. If you want to use th
 	
 	server {
 		listen 80;
-		server_name yqt.so www.yqt.so url.hgbang.com;
-		root /disk/www/url.hgbang.com;
+		#listen 443 ssl;
+		server_name url.taokebaohe.com ~^u\.([a-z0-9\.]+)\.(com|net|cn|so)$ ~^(www\.)?f([0-9]+)url\.com$;
+		root /disk/www/url.taoke.com;
 		error_page 500 502 503 504 =200 /public/errors/server_error.html;
 
 		#access_log off;		
-		error_log  /var/log/nginx/www.yqt.so-error.log;
-		access_log  /var/log/nginx/www.yqt.so-aceess.log main;
+		error_log  /var/log/nginx/url.taoke.com-error.log;
+		access_log  /var/log/nginx/url.taoke.com-aceess.log main;
+
+		# 启动 ssl
+		#ssl on;
+		#ssl_certificate /disk/certs/url.taokebaohe.com.crt;
+		#ssl_certificate_key /disk/certs/url.taokebaohe.com.key;
 	
-		if ($http_host != 'yqt.so') {
-			rewrite (.*)  http://yqt.so$1 permanent;
+		if ($http_host != 'url.taokebaohe.com') {
+			rewrite (.*)  http://url.taokebaohe.com$1 permanent;
 			return 301;
 		}
 	
+		# 转发请求给 Node
 		location / {
+	
+			# 允许跨域访问
 			add_header Access-Control-Allow-Origin *;
+			
+			# HTTP的请求端真实的IP
 			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-			proxy_pass http://127.0.0.1:3500;
-	    } 
+			
+			# 传递4xx和5xx错误信息到 Nginx
+			fastcgi_intercept_errors on;
+			
+			# 后端 Node 端口
+			proxy_pass http://127.0.0.1:3500;    
+		} 
 	}
 
 
