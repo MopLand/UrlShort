@@ -53,7 +53,7 @@ var route = function(app){
 	
 	app.get('/set', function(request, response){
 		var domain = request.query['domain'];
-		if( domain ){			
+		if( domain ){
 			logic.setUrl( request, response, domain );
 		}else{
 			logic.setUrl( request, response );

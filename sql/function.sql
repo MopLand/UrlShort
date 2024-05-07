@@ -57,7 +57,7 @@ BEGIN
 	END LOOP;	CLOSE curs;
 
 	-- 写入日志
-	INSERT INTO `task` (`task`,`count`,`dateline`,`datetime`) VALUES('clean_old_url_data', @count, UNIX_TIMESTAMP(), NOW());
+	INSERT INTO `tasks` (`task`,`count`,`dateline`,`datetime`) VALUES('clean_old_url_data', @count, UNIX_TIMESTAMP(), NOW());
 
 END;;
 
@@ -139,7 +139,7 @@ ThisSP:BEGIN
 	SELECT SUBSTRING( @h24uv, 2 ) AS uv, SUBSTRING( @h24ip, 2 ) AS ip, @clicks AS click;
 
 	-- 写入日志
-	INSERT INTO `task` (`task`,`dateline`,`datetime`) VALUES('count_by_url_hash', @url_id, UNIX_TIMESTAMP(), NOW());
+	INSERT INTO `tasks` (`task`,`dateline`,`datetime`) VALUES('count_by_url_hash', @url_id, UNIX_TIMESTAMP(), NOW());
 
 END;;
 

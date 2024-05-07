@@ -159,8 +159,8 @@ var getUrl = function(segment, request, response){
 			var matches = (request.headers.referer || '').match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
 			var referer = matches ? matches[1] : '';
 
-			var ip = getIP(request);
-			var url = result.url;
+			var ip = getIP( request );
+			var url = replace( result.url );
 			var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);		//是否为手机访问
 			var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);		//是否在微信中
 			var iphone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
@@ -183,6 +183,9 @@ var getUrl = function(segment, request, response){
 
 			////////////////////////
 
+			response.redirect( url );
+
+			/*
 			//是手机访问
 			if( port == 'm' ){
 				url = url.replace('taoquan.taobao.com/coupon/unify_apply_result_tmall.htm', 'shop.m.taobao.com/shop/coupon.htm');
@@ -252,6 +255,7 @@ var getUrl = function(segment, request, response){
 					response.redirect( url );
 				}
 			}
+			*/
 			
 		};
 		
@@ -483,12 +487,13 @@ var whatIs = function(url, request, response){
 		if (err) throw err;
 		var hash = getHash( url );
 		con.query(conf.get_query.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
+
 			if(err || rows.length == 0){
 				response.send({result: false, url: null});
+			}else{
+				response.send({result: true, url: replace( rows[0].url ), hash: hash, clicks: rows[0].clicks});
 			}
-			else{
-				response.send({result: true, url: rows[0].url, hash: hash, clicks: rows[0].clicks});
-			}
+
 		});
 		con.release();
 	});
@@ -534,11 +539,12 @@ var statIs = function(url, request, response){
 		//var hash = url;
 		//if(!hash) hash = "";
 		var hash = getHash( url );
+		
 		con.query(conf.get_statis, hash, function(err, rows){
 			//console.log( JSON.stringify( rows ) );
 
 			if(err || rows.length == 0 || rows[0].length == 0){
-				response.send({result: false, url: null});
+				response.send({result: false, hash: hash, url: null});
 			}else{
 
 				var res = {};
@@ -550,6 +556,7 @@ var statIs = function(url, request, response){
 				res.click	= rows[4][0]['click'];
 
 				///////////////////
+
 				res.referer	= {};
 
 				for( var k in rows[1] ){
@@ -650,12 +657,12 @@ function getPort( hash ){
 function genTag(request, response){
 
 	var len = 6;
-　　var seed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-　　var size = seed.length;
-　　var string = '';
-　　for (i = 0; i < len; i++) {
+	var seed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	var size = seed.length;
+	var string = '';
+	for (i = 0; i < len; i++) {
 		string += seed.charAt(Math.floor(Math.random() * size));
-　　}
+	}
 
 	if( response ){
 		response.send( string );
@@ -672,7 +679,7 @@ function setUrl( request, response, domain ){
 	
 		var file = __dirname + '/extend.js';
 
-		fs.readFile( file, 'utf8', function( err, body ) {			
+		fs.readFile( file, 'utf8', function( err, body ) {
 
 			body = body.replace( /exports.domain = '(.+?)'/, "exports.domain = '"+ domain.trim() +"'" );
 				
@@ -684,6 +691,15 @@ function setUrl( request, response, domain ){
 		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' ') } );
 	}	
 
+}
+
+function replace( url ){
+	if( conf.url_replace ){
+		for( old in conf.url_replace ){
+			url = url.replace( old, conf.url_replace[old] );
+		}
+	}
+	return url;	
 }
 
 function debug( ...msg ){

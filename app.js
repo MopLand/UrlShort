@@ -19,7 +19,7 @@ app.use(function(req, res, next){
 });
 
 app.use(function(req, res, next) {
-    var err = null;    
+    var err = null;
     try {
         decodeURIComponent(req.path)
     }catch(e) {
