@@ -31,7 +31,8 @@ exports.url_statis = false;
 
 //是否开启替换（会进行多次替换）
 exports.url_replace = {
-	'elpmaxe.com' : 'example.com'
+	'elpmaxe.com' : 'example.com',
+	'myurls.kuaizhan.com' : 'myurl2.kuaizhan.com'
 };
 
 /////////////////////////////
