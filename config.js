@@ -33,7 +33,8 @@ exports.url_statis = false;
 exports.url_replace = {
 	'elpmaxe.com' : 'example.com',
 	'myurls.kuaizhan.com' : 'myurl3.kuaizhan.com',
-	'myurl2.kuaizhan.com' : 'myurl3.kuaizhan.com'
+	'myurl2.kuaizhan.com' : 'myurl3.kuaizhan.com',
+	'set71.kuaizhan.com' : 'set72.kuaizhan.com'
 };
 
 /////////////////////////////
