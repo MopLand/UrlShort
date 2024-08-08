@@ -52,12 +52,14 @@ var route = function(app){
 	});
 	
 	app.get('/set', function(request, response){
-		var domain = request.query['domain'];
-		if( domain ){
-			logic.setUrl( request, response, domain );
-		}else{
-			logic.setUrl( request, response );
-		}		
+		logic.setUrl( request, response );
+	});
+
+	app.post('/set', function(request, response){
+		//console.log( request.body );
+		//var domain = request.body['domain'];
+		//var replace = request.body['replace'];
+		logic.setUrl( request, response, request.body );
 	});
 	
 	app.get('/hash', function(request, response){

@@ -673,22 +673,37 @@ function genTag(request, response){
 
 ////////////////////////////////////////
 
-function setUrl( request, response, domain ){
+function setUrl( request, response, data ){
 
-	if( domain ){
+	if( data ){
 	
 		var file = __dirname + '/extend.js';
 
+		//验证口令
+		if( conf.command && data.command != conf.command ){			
+			return response.send( { 'result' : '口令不正确' } );
+		}
+
+		console.log( data );
+
 		fs.readFile( file, 'utf8', function( err, body ) {
 
-			body = body.replace( /exports.domain = '(.+?)'/, "exports.domain = '"+ domain.trim() +"'" );
-				
-			fs.writeFile( file, body );
+			body = body.replace( /exports.domain = '(.+?)'/, "exports.domain = '"+ data.domain.trim() +"'" );
+			body = body.replace( /exports.url_replace = \{(.+?)\};/s, 'exports.url_replace = ' + data.replace.trim() + ';' );				
 			
-		});
+			fs.writeFile( file, body, err => {
+				//console.log( err );
+				if( err ){
+					response.send( { 'result' : err } );
+				}else{
+					response.send( { 'result' : 'Ok' } );
+				}
+			} );
+			
+		});	
 		
 	}else{
-		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' ') } );
+		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'replace' : JSON.stringify( conf.url_replace, null, '\t' ) } );
 	}	
 
 }
