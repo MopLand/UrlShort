@@ -16,7 +16,7 @@
 		<h2>Setting</h2>
 		<hr class="py-1 text-secondary" />
 
-		<div class="p-4 mb-4 bg-body-tertiary rounded-3">
+		<div class="p-3 mb-3 bg-body-tertiary rounded-3">
         <form method="post">
 
 			<div class="mb-3">
@@ -34,8 +34,8 @@
 				<input type="text" class="form-control" placeholder="安全验证口令" name="command">
 			</div>
 
-            <div class="form-group">
-                <button class="btn btn-lg btn-primary" type="submit">立即保存</button>
+            <div class="form-group d-grid">
+                <button class="btn btn-primary btn-block" type="submit">立即保存</button>
             </div>
 			
         </form>
@@ -46,7 +46,7 @@
 	<script>
 	$('form').on('submit', function( e ){
 		e.preventDefault();
-		var data = $('form').serialize();		
+		var data = $('form').serialize();
 		$.post("/set", data, function(data){
 			alert( data.result );
 		});
