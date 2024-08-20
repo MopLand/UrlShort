@@ -702,7 +702,7 @@ function setUrl( request, response, data ){
 		
 	}else{
 		//getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'replace' : JSON.stringify( conf.url_replace, null, '\t' ) } );
-		getTpl( response, 'seturl.html', { 'domain' : JSON.stringify( conf.domain ), 'replace' : JSON.stringify( conf.url_replace ) } );
+		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'replace' : JSON.stringify( conf.url_replace ) } );
 	}	
 
 }
