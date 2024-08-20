@@ -45,9 +45,7 @@ var route = function(app){
 		if( request.headers['debug'] == 'dora' ){
 			api = 3;
 		}
-
-		//if( words ) words = words.replace(/《/g,'￥');
-
+		
 		logic.addUrl(url, request, response, { 'vanity' : false, 'api' : api, 'name' : name, 'price' : price, 'thumb' : thumb, 'words' : words });
 	});
 	

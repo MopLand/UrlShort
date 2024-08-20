@@ -434,13 +434,11 @@ var addUrl = function(url, request, response, option){
 						req(url, function(err, res, body){
 							if(res != undefined && res.statusCode == 200){
 								generateHash(handleHash, hashError, 50, url, request, response, con, option);
-							}
-							else{
+							}else{
 								response.send(urlResult(null, false, 401));
 							}
 						});
-					}
-					else{
+					}else{
 						generateHash(handleHash, hashError, 50, url, request, response, con, option);
 					}
 				});
@@ -703,7 +701,8 @@ function setUrl( request, response, data ){
 		});	
 		
 	}else{
-		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'replace' : JSON.stringify( conf.url_replace, null, '\t' ) } );
+		//getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'replace' : JSON.stringify( conf.url_replace, null, '\t' ) } );
+		getTpl( response, 'seturl.html', { 'domain' : JSON.stringify( conf.domain ), 'replace' : JSON.stringify( conf.url_replace ) } );
 	}	
 
 }
