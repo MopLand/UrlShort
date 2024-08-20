@@ -170,92 +170,17 @@ var getUrl = function(segment, request, response){
 
 			//写入访问统计
 			conf.url_statis && getIPInfo( ip, function( info ){
-
 				var sql = conf.insert_view.replace( '{TABLE}', getTab( result.id ) );
-
 				con.query( sql, [ ip, result.id, referer, info.country, info.area, info.region, info.city, ( mobile ? 1 : 0 ) ], function(err, rows){
 					if(err){
 						console.log(err);
 					}
 				});
-
 			} );
 
 			////////////////////////
 
 			response.redirect( url );
-
-			/*
-			//是手机访问
-			if( port == 'm' ){
-				url = url.replace('taoquan.taobao.com/coupon/unify_apply_result_tmall.htm', 'shop.m.taobao.com/shop/coupon.htm');
-				url = url.replace('taoquan.taobao.com/coupon/unify_apply_result.htm', 'shop.m.taobao.com/shop/coupon.htm');
-				url = url.replace('taoquan.taobao.com/coupon/unify_apply.htm', 'shop.m.taobao.com/shop/coupon.htm');
-			}
-
-			//是电脑访问
-			if( port == 'p' ){
-				url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result_tmall.htm');
-				url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply_result.htm');
-				url = url.replace('shop.m.taobao.com/shop/coupon.htm','taoquan.taobao.com/coupon/unify_apply.htm');
-				url = url + ( url.indexOf('?') > -1 ? '&need_ok=true' : '' );
-			}
-
-			var platform = ( iphone ? 'ios' : 'android' );
-
-			//是微信访问
-			if( port == 'w' || (wechat && taobao) ){
-
-				if( url.indexOf('coupon') > -1 && url.indexOf('.htm') > -1 ){
-				
-					getTpl( response, 'coupon.html', { 'url' : url, 'platform' : platform } );
-
-				}else{
-
-					con.query(conf.get_goods.replace("{SEGMENT}", con.escape(hash)), function(err, rows){
-
-						//找到了商品信息
-						if(!err && rows.length > 0){
-						
-							var goods = rows[0];
-								goods.url = url;
-								goods.port = port;
-								goods.platform = platform;
-								goods.base64url = new Buffer( url ).toString('base64');
-
-							//安卓引导程序
-							if( platform == 'android' && request.query['boot'] ){
-
-								response.set({
-									'Content-Type': 'application/vnd.ms-word; Charset=UTF-8',
-									'Content-Disposition': 'attachment; filename=shopping.doc',
-									'Content-Length': 39,
-									'WX-Shopping-X-Code': 'wx155615039864346546'
-								});
-
-								response.end('WX-Shopping-X-Code:wx155615039864346546');
-
-							}else{
-								getTpl( response, 'goods.html', goods );
-							}
-							
-						}else{
-							//response.redirect( url );
-							getTpl( response, 'empty.html', { 'url' : url, 'platform' : platform } );
-						}
-					});
-				}
-
-			}else{
-
-				//淘宝中转页
-				if( port == 't' || taobao ){
-					getTpl( response, 'taobao.html', { 'url' : url, 'platform' : platform } );
-				}else{
-					response.redirect( url );
-				}
-			}
-			*/
 			
 		};
 		
@@ -373,7 +298,7 @@ var addUrl = function(url, request, response, option){
 
 			var year = (new Date).getFullYear();
 			var month = (new Date).getMonth() + 1;
-			var hash = md5( year + '' + ( month < 10 ? '0' : '' ) + month + '' + conf.api_secret ).substr(8, 16);
+			var hash = md5( year + '' + ( month < 10 ? '0' : '' ) + month + '' + conf.api_secret ).substring(8, 24);
 
 			debug( 'hash', hash );
 			debug( 'token', request.headers['token'] );
