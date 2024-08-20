@@ -31,9 +31,9 @@
 				<template v-for="( v, k ) in newdata">
 					<div class="input-group mb-3">
 						<input type="text" class="form-control" v-model="v.old" placeholder="原链接" required />
-						<span class="input-group-text">&rightarrow;</span>
+						<span class="input-group-text text-muted">&rightarrow;</span>
 						<input type="text" class="form-control" v-model="v.new" placeholder="新链接" required />
-						<span class="input-group-text">
+						<span class="input-group-text p-1">
 							<button type="button" class="btn btn-success btn-sm" v-if="!k" @click="addData( k, v )" title="添加">&plus;</button>
 							<button type="button" class="btn btn-warning btn-sm" v-if="k" @click="delData( k, v )" title="移除">&minus;</button>
 						</span>
@@ -66,17 +66,17 @@
 			},
 			methods: {
 
-				//添加数据源
+				//添加数据
                 addData: function ( k, i ) {
                     this.$set( this.newdata, this.newdata.length, {'new':'', 'old':''} );
                 },
 
-                //删除数据源
+                //删除数据
                 delData: function ( k, i ) {
                     this.$delete( this.newdata, k );
                 },
 
-				//同步replace提交
+				//格式化数据
 				getData: function () {
 
 					//拼接数组
