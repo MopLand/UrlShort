@@ -382,7 +382,7 @@ var addUrl = function(url, request, response, option){
 			}else{
 
 				//查询此IP最近一小时生成数量
-				con.query(conf.check_ip_query.replace("{IP}", con.escape(getIP(request))), function(err, rows){
+				con.query( conf.check_ip_query, con.escape(getIP(request)), function(err, rows){
 					if(err){
 						console.log(err);
 					}
