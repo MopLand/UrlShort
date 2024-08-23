@@ -71,7 +71,7 @@ exports.host = '127.0.0.1';
 exports.port = '3306';
 exports.user = 'root';
 exports.password = 'root';
-exports.database = 'yourls';
+exports.database = 'project_urlshort';
 
 /////////////////////////////
 
