@@ -63,7 +63,7 @@ function generateHash(onSuccess, onError, retryCount, url, request, response, co
 	}
 	//This section query's (with a query defined in "config.js") and looks if the short URL with the specific segment already exists
 	//If the segment already exists, it will repeat the generateHash function until a segment is generated which does not exist in the database
-    con.query(conf.get_query, con.escape(hash)), function(err, rows){
+    con.query(conf.get_query, con.escape(hash), function(err, rows){
 		if(err){
 			console.log(err);
 		}
@@ -199,7 +199,7 @@ var getUrl = function(segment, request, response){
 			
 			debug( 'SEGMENT', hash, 'Hit DB' );
 		
-			con.query(conf.get_query, con.escape(hash)), function( err, rows ){
+			con.query(conf.get_query, con.escape(hash), function( err, rows ){
 			
 				if(!err && rows.length > 0){
 				
@@ -337,7 +337,7 @@ var addUrl = function(url, request, response, option){
 		if( url ){
 
 			var fn = function(){
-				con.query(conf.check_url_query.replace("{URL}", con.escape(url)), function(err, rows){
+				con.query( conf.check_url_query, con.escape(url), function(err, rows){
 
 					if(err){
 						console.log(err);
@@ -415,7 +415,7 @@ var whatIs = function(url, request, response){
 	pool.getConnection( function(err, con){
 		if (err) throw err;
 		var hash = getHash( url );
-		con.query(conf.get_query, con.escape(hash)), function(err, rows){
+		con.query(conf.get_query, con.escape(hash), function(err, rows){
 
 			if(err || rows.length == 0){
 				response.send({result: false, url: null});
