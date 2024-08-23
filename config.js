@@ -55,7 +55,7 @@ exports.get_goods = 'SELECT * FROM goods WHERE segment = {SEGMENT}';
 exports.add_goods = 'INSERT INTO goods SET name = {NAME}, price = {PRICE}, thumb = {THUMB}, words = {WORDS}, segment = {SEGMENT}';
 
 //短网址相关SQL
-exports.get_query = 'SELECT * FROM urls WHERE segment = {SEGMENT}';
+exports.get_query = 'SELECT * FROM urls WHERE segment = ?';
 exports.add_query = 'INSERT INTO urls SET url = {URL}, segment = {SEGMENT}, ip = {IP}, api = {API}';
 exports.check_url_query = 'SELECT * FROM urls WHERE url = {URL}';
 exports.update_views_query = 'UPDATE urls SET num_of_clicks = {VIEWS} WHERE id = {ID}';
