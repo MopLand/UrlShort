@@ -42,6 +42,7 @@ var route = function(app){
 		var thumb = request.query['thumb'];
 		var words = request.query['words'];
 
+		//内部调用，API = 3
 		if( request.headers['debug'] == 'dora' ){
 			api = 3;
 		}

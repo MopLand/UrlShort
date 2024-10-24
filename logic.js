@@ -160,8 +160,8 @@ var getUrl = function(segment, request, response){
 			var referer = matches ? matches[1] : '';
 
 			var ip = getIP( request );
-			var url = replace( result.url );
-			var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);		//是否为手机访问
+			var url = replace( result.url, result.api == 3 ? request.query : {} );				//API 3 内部短链，支持参数替换
+			var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);	//是否为手机访问
 			var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);		//是否在微信中
 			var iphone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
 			var taobao = /(taobao|tmall|alimama|95095)\.com/.test( url );
@@ -433,7 +433,7 @@ var whatIs = function(url, request, response){
  * @desc 权重对比
  *
  * @param float $probability	概率 0-1
- * @param integer $length		最大值	
+ * @param integer $length		最大值
  * @return void
  */
 var weight = function( probability = 0.1, length = 100 ){
@@ -610,7 +610,7 @@ function setUrl( request, response, data ){
 		var file = __dirname + '/extend.js';
 
 		//验证口令
-		if( conf.command && data.command != conf.command ){			
+		if( conf.command && data.command != conf.command ){
 			return response.send( { 'result' : '口令不正确' } );
 		}
 
@@ -619,7 +619,7 @@ function setUrl( request, response, data ){
 		fs.readFile( file, 'utf8', function( err, body ) {
 
 			body = body.replace( /exports.domain = '(.+?)'/, "exports.domain = '"+ data.domain.trim() +"'" );
-			body = body.replace( /exports.url_replace = \{(.+?)\};/s, 'exports.url_replace = ' + data.replace.trim() + ';' );				
+			body = body.replace( /exports.url_replace = \{(.+?)\};/s, 'exports.url_replace = ' + data.replace.trim() + ';' );
 			
 			fs.writeFile( file, body, err => {
 				//console.log( err );
@@ -639,15 +639,25 @@ function setUrl( request, response, data ){
 
 }
 
-function replace( url ){
+/* 原始网址替换 */
+function replace( url, query ){
 	if( conf.url_replace ){
 		for( old in conf.url_replace ){
 			url = url.replace( old, conf.url_replace[old] );
 		}
+		debug( 'REWRITE', url );
 	}
-	return url;	
+	if( query ){
+		debug( 'REPLACE', query );
+		for( key in query ){
+			url = url.replace( new RegExp( '((&|\\?)'+ key +'=)([^&]*)(?=&|$)' ), '$1'+ query[key] );
+		}
+		debug( 'ADDRESS', url );
+	}
+	return url;
 }
 
+/* 打印调试信息 */
 function debug( ...msg ){
 	conf.debug && console.log( ...msg );
 }
