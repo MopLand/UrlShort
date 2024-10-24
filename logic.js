@@ -181,10 +181,10 @@ var getUrl = function(segment, request, response){
 
 		//从缓存读取
 		if( result = Cache[hash] ){
-		
-			fn( result );
 			
 			debug( 'SEGMENT', hash, 'Hit Cache' );
+		
+			fn( result );
 			
 		}else{
 			
@@ -634,19 +634,28 @@ function setUrl( request, response, data ){
 
 /* 原始网址替换 */
 function replace( url, query ){
+
+	var raw = url;
+
 	if( conf.url_replace ){
 		for( old in conf.url_replace ){
 			url = url.replace( old, conf.url_replace[old] );
 		}
-		debug( 'REWRITE', url );
 	}
 	if( query ){
-		debug( 'REPLACE', query );
 		for( key in query ){
 			url = url.replace( new RegExp( '((&|\\?)'+ key +'=)([^&]*)(?=&|$)' ), '$1'+ query[key] );
 		}
+	}
+
+	if( url != raw ){
+		debug( 'RAWDATA', raw );
+		debug( 'REPLACE', query );
+		debug( 'REWRITE', url );
+	}else{
 		debug( 'ADDRESS', url );
 	}
+
 	return url;
 }
 
