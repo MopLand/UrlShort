@@ -112,6 +112,9 @@ function handleHash(hash, url, request, response, con, option){
 			Cache[hash] = { 'id' : res.insertId, 'url' : url, 'api' : api };
 		}
 	});
+
+	debug( '--------------------------' );
+	debug( 'SHORTEN', hash, url );
 	
 	response.send(urlResult(hash, true, 100));
 }
@@ -255,7 +258,7 @@ var getTpl = function( response, file, variable ){
 				return console.log(err);
 			}
 
-			debug( 'TEMPLATE', name, 'Hit File' );
+			debug( 'TEMPLATE', name, 'Read File' );
 
 			//缓存进数组
 			tplSet[ name ] = body;
@@ -288,9 +291,10 @@ var addUrl = function(url, request, response, option){
 			var month = (new Date).getMonth() + 1;
 			var hash = md5( year + '' + ( month < 10 ? '0' : '' ) + month + '' + conf.api_secret ).substring(8, 24);
 
-			debug( 'hash', hash );
-			debug( 'token', request.headers['token'] );
+			//debug( 'hash', hash );
+			//debug( 'token', request.headers['token'] );
 
+			//验证 Token 有效性，否则返回 401
 			if( !request.headers['token'] || hash != request.headers['token'] ){
 				response.send(urlResult(null, 'TOKEN', 401));
 				return;
@@ -299,8 +303,9 @@ var addUrl = function(url, request, response, option){
 		//Web
 		}else{
 
-			debug( 'referer', request.headers['referer'] );
+			//debug( 'referer', request.headers['referer'] );
 
+			//验证 Referer 有效性，否则返回 401
 			if( !request.headers['referer'] || !request.headers['x-requested-with'] ){
 				response.send(urlResult(null, 'REFERER', 401));
 				return;
