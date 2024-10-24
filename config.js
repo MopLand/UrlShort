@@ -52,13 +52,13 @@ exports.api_report = 'http://api.example.com/report';
 
 //商品查询与写入
 exports.get_goods = 'SELECT * FROM goods WHERE segment = {SEGMENT}';
-exports.add_goods = 'INSERT INTO goods SET name = {NAME}, price = {PRICE}, thumb = {THUMB}, words = {WORDS}, segment = {SEGMENT}';
+exports.add_goods = 'INSERT INTO goods SET name = ?, price = ?, thumb = ?, words = ?, segment = ?';
 
 //短网址相关SQL
 exports.get_query = 'SELECT * FROM urls WHERE segment = ?';
-exports.add_query = 'INSERT INTO urls SET url = {URL}, segment = {SEGMENT}, ip = {IP}, api = {API}';
+exports.add_query = 'INSERT INTO urls SET url = ?, segment = ?, ip = ?, api = ?';
 exports.check_url_query = 'SELECT * FROM urls WHERE url = ?';
-exports.update_views_query = 'UPDATE urls SET num_of_clicks = {VIEWS} WHERE id = {ID}';
+//exports.update_views_query = 'UPDATE urls SET num_of_clicks = {VIEWS} WHERE id = {ID}';
 //exports.insert_view = 'INSERT INTO stats SET ip = {IP}, url_id = {URL_ID}, referer = {REFERER}';
 exports.insert_view = 'INSERT INTO {TABLE} SET ip = ?, url_id = ?, referer = ?, country = ?, area = ?, region = ?, city = ?, mobile = ?';
 exports.check_ip_query = 'SELECT COUNT(id) as counted FROM urls WHERE datetime_added >= now() - INTERVAL 1 HOUR AND ip = ?';

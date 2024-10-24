@@ -91,14 +91,7 @@ function handleHash(hash, url, request, response, con, option){
 	//附带商品信息
 	if( option && option.name && option.price ){
 
-		con.query(
-			conf.add_goods.replace("{NAME}", con.escape(option.name)).
-			replace("{SEGMENT}", con.escape(hash)).
-			replace("{PRICE}", con.escape(option.price)).
-			replace("{THUMB}", con.escape(option.thumb)).
-			replace("{WORDS}", con.escape(option.words))
-		,
-		function(err, rows){
+		con.query( conf.add_goods, [ con.escape(option.name), con.escape(hash), con.escape(option.price), con.escape(option.thumb), con.escape(option.words) ], function(err, rows){
 			if(err){
 				console.log(err);
 			}
@@ -108,21 +101,15 @@ function handleHash(hash, url, request, response, con, option){
 
 	////////////////////
 
-	//新增短链接
-	con.query(
-		conf.add_query.replace("{URL}", con.escape(url)).
-		replace("{SEGMENT}", con.escape(hash)).
-		replace("{IP}", con.escape(getIP(request))).
-		replace("{API}", option.api || 0 )
-	,
-	function(err, res){
+	//API 类型：0 web，1 接口，3 后台
+	var api = option.api || 0;
+
+	//新增短链接，成功时加入到缓存
+	con.query( conf.add_query, [ con.escape(url), con.escape(hash), con.escape(getIP(request)), api ], function(err, res){
 		if(err){
 			console.log(err);
 		}else{
-
-			//加入到缓存
-			Cache[hash] = { 'id' : res.insertId, 'url' : url };
-			
+			Cache[hash] = { 'id' : res.insertId, 'url' : url, 'api' : api };
 		}
 	});
 	
@@ -147,6 +134,7 @@ var getTab = function( id ){
 //This method looks handles a short URL and redirects to that URL if it exists
 //If the short URL exists, some statistics are saved to the database
 var getUrl = function(segment, request, response){
+
 	pool.getConnection(function(err, con){
 	
 		if( err ) throw err;
@@ -197,7 +185,7 @@ var getUrl = function(segment, request, response){
 			
 		}else{
 			
-			debug( 'SEGMENT', hash, 'Hit DB' );
+			debug( 'SEGMENT', hash, 'Query DB' );
 		
 			con.query(conf.get_query, hash, function( err, rows ){
 			
@@ -225,7 +213,7 @@ var getUrl = function(segment, request, response){
 	});
 };
 
-////////////////////////////////////////
+////////////////////////
 
 //读取模板并缓存
 var tplSet = {};
@@ -280,7 +268,7 @@ var getTpl = function( response, file, variable ){
 
 }
 
-////////////////////////////////////////
+////////////////////////
 
 //This function adds attempts to add an URL to the database. If the URL returns a 404 or if there is another error, this method returns an error to the client, else an object with the newly shortened URL is sent back to the client.
 var addUrl = function(url, request, response, option){
@@ -288,7 +276,7 @@ var addUrl = function(url, request, response, option){
 	//是否为 API 请求
 	var isapi = option.vanity === false;
 
-	debug( 'isapi', isapi );
+	//debug( 'isapi', isapi );
 
 	//验证 UA 有效性，否则返回 401
 	if( conf.api_review ){
@@ -320,7 +308,7 @@ var addUrl = function(url, request, response, option){
 
 		}
 
-	}	
+	}
 
 	//非API 模式，验证 URL 有效性，否则返回 403
 	conf.url_allows.lastIndex = 0;
@@ -407,7 +395,7 @@ var addUrl = function(url, request, response, option){
 
 };
 
-////////////////////////////////////////
+////////////////////////
 
 //This method looks up stats of a specific short URL and sends it to the client
 var whatIs = function(url, request, response){
@@ -424,7 +412,7 @@ var whatIs = function(url, request, response){
 			}
 
 		});
-		con.release();		
+		con.release();
 	} );
 
 };
@@ -460,7 +448,7 @@ var report = function( appid, status, message = {}, cb ) {
 	});
 }
 
-////////////////////////////////////////
+////////////////////////
 
 //This method looks up stats of a specific short URL and sends it to the client
 var statIs = function(url, request, response){
@@ -510,7 +498,7 @@ var statIs = function(url, request, response){
 	});
 };
 
-////////////////////////////////////////
+////////////////////////
 
 var setTpl = function( dir ){
 	Tpl = dir;
@@ -601,7 +589,7 @@ function genTag(request, response){
 	}
 }
 
-////////////////////////////////////////
+////////////////////////
 
 function setUrl( request, response, data ){
 
@@ -662,7 +650,7 @@ function debug( ...msg ){
 	conf.debug && console.log( ...msg );
 }
 
-////////////////////////////////////////
+////////////////////////
 
 exports.getUrl = getUrl;
 exports.addUrl = addUrl;
