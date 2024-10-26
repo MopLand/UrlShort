@@ -105,7 +105,7 @@ function handleHash(hash, url, request, response, con, option){
 	var api = option.api || 0;
 
 	//新增短链接，成功时加入到缓存
-	con.query( conf.add_query, [ con.escape(url), con.escape(hash), con.escape(getIP(request)), api ], function(err, res){
+	con.query( conf.add_query, [ url, hash, getIP(request), api ], function(err, res){
 		if(err){
 			console.log(err);
 		}else{
