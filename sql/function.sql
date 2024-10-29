@@ -46,6 +46,9 @@ BEGIN
 			PREPARE STMT FROM @stmt;
 			EXECUTE STMT;
 
+			-- 统计删除行数
+			SET @count = @count + 1;
+
 			-- 删除商品数据
 			DELETE FROM goods WHERE segment = fsegment;
 

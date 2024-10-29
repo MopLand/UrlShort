@@ -113,7 +113,7 @@ function handleHash(hash, url, request, response, con, option){
 		}
 	});
 
-	debug( '--------------------------' );
+	debug( '---------------' );
 	debug( 'SHORTEN', hash, url );
 	
 	response.send(urlResult(hash, true, 100));
@@ -177,7 +177,7 @@ var getUrl = function(segment, request, response){
 		
 		//////////////////////////////
 
-		debug( '--------------------------' );
+		debug( '---------------' );
 
 		//从缓存读取
 		if( result = Cache[hash] ){
@@ -236,7 +236,7 @@ var getTpl = function( response, file, variable ){
 
 	///////////////////////
 
-	debug( '--------------------------' );
+	debug( '---------------' );
 
 	//模板名称
 	var name = file.replace(/\\/g,'/').split('/').pop();
