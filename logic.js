@@ -599,15 +599,35 @@ function genTag(request, response){
 function setUrl( request, response, data ){
 
 	if( data ){
-	
-		var file = __dirname + '/extend.js';
 
-		//验证口令
-		if( conf.command && data.command != conf.command ){
-			return response.send( { 'result' : '口令不正确' } );
+		console.log( 'INPUT', data );
+
+		//追加域名
+		if( data.command == 'append' ){
+
+			if( data.replace ){
+				try {
+					var replace =JSON.parse( data.replace );
+				} catch (e) {
+					return response.send( { 'result' : 'replace 参数有误' } );
+				}
+			}
+
+			data.domain = data.domain || conf.domain.join(' ');
+			data.replace = JSON.stringify( Object.assign( conf.url_replace, replace ) );
+
+		}else{
+			//更新域名，验证口令
+			if( conf.command && data.command != conf.command ){
+				return response.send( { 'result' : '口令不正确' } );
+			}
 		}
 
-		console.log( data );
+		console.log( 'VALUE', data );
+
+		////////////////////////
+	
+		var file = __dirname + '/extend.js';
 
 		fs.readFile( file, 'utf8', function( err, body ) {
 

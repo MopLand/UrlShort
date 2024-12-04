@@ -58,6 +58,7 @@ var route = function(app){
 		//console.log( request.body );
 		//var domain = request.body['domain'];
 		//var replace = request.body['replace'];
+		//body { command: 口令 | append, domain: 原域名, replace: 新域名 }
 		logic.setUrl( request, response, request.body );
 	});
 	
