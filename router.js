@@ -11,12 +11,16 @@ var route = function(app){
 
 		//res.sendFile(path.join(__dirname, 'views/index.html'));
 		//res.send('views/index.html');
-		logic.getTpl( res, 'index.html' );
+
+		const { execSync } = require('child_process');
+		let revid = execSync('git rev-parse --short HEAD').toString().trim();
+		let years = (new Date).getFullYear();
+
+		logic.getTpl( res, 'index.html', {'revid': revid, 'years': years} );
 
 	});
 	
 	app.get('/home', function(req, res){
-		//res.sendFile(path.join(__dirname, 'views/home.html'));
 		logic.getTpl( res, 'home.html' );
 	});
 	

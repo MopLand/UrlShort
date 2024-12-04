@@ -101,7 +101,7 @@
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
             var r = window.location.search.substr(1).match(reg);
             if (r != null) return unescape(r[2]); return null;
-        }("token");
+        }("text");
 
         if (!token) {
             token = unescape(window.location.search.match("http[^&]*")[0]).match("\\?.*")[0].substr(1);
