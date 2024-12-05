@@ -47,7 +47,7 @@ $('.navbar-collapse ul li a').click(function() {
 $('.clear-url').click(function() {
 	$('form[name=create] input[name=url]').val('').focus();
 	$('#create_wrong, #create_qrcode').hide();
-	$('#create_result, #create_mobile').hide();
+	$('#create_result').hide();
 });
 
 $('form[name=create]').on('submit', function(){
@@ -68,26 +68,12 @@ $('form[name=create]').on('submit', function(){
 			//console.log( data );
 
 			$('#create_wrong, #create_qrcode').hide();
-			$('#create_result, #create_mobile').hide();
+			$('#create_result').hide();
 
 			if( data.result ){
-
-				var coupon = /(taoquan|shop\.m)\.taobao\.com/i.test( $('[name=url]', self).val() );
-				var oblique = data.url.lastIndexOf('/') + 1;
-				//alert( coupon );
-
 				$('#create_result').show();
-				$('#create_result b').html( ( coupon ? data.url.splice(oblique, 0, 'p') : data.url ) ).show().fadeIn('slow');
-
-				if( coupon ){
-					$('#create_mobile').show();
-					$('#create_mobile b').html( ( coupon ? data.url.splice(oblique, 0, 'm') : data.url ) ).show().fadeIn('slow');
-
-					$('#create_result label').html( '电脑券网址' );
-				}else{
-					$('#create_result label').html( '生成短网址' );
-				}
-
+				$('#create_result b').html( data.url ).show().fadeIn('slow');
+				$('#create_result label').html( '生成短网址' );
 				$('#create_qrcode').show().fadeIn('slow');
 				$('#create_qrcode img').attr('src','https://api.qrserver.com/v1/create-qr-code/?data='+ data.url);
 				//$('#create_result').hide().fadeIn('slow');

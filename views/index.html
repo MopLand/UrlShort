@@ -68,16 +68,7 @@
             <label class="col-sm-3 control-label tl">生成短网址</label>
             <span id="txt-result" class="col-sm-9 control-label">
               <a href="javascript:void(0)" class="txt-copy">
-                <b>http://url.taokebaohe.com/taobao</b>
-                <small class="txt-tip"><i class="fa fa-hand-o-left"></i> 点击复制</small>
-              </a>
-            </span>
-          </div>
-		  <div class="form-group" id="create_mobile" style="display:none;">
-            <label class="col-sm-3 control-label tl">手机券网址</label>
-            <span id="txt-result" class="col-sm-9 control-label">
-              <a href="javascript:void(0)" class="txt-copy">
-                <b>http://url.taokebaohe.com/taobao</b>
+                <b>http://example.com/taobao</b>
                 <small class="txt-tip"><i class="fa fa-hand-o-left"></i> 点击复制</small>
               </a>
             </span>
@@ -103,7 +94,20 @@
         <p>我们仅使用标准的 HTTP 302 方式让用户浏览器跳转到目标网址，中间过程不会修改任何用户数据（如访问来源、Cookie等），收集到的来源和地区数据仅用于生成统计报表。</p>
       </div>
       <div class="col-sm-5">
-        <p><img class="img-responsive" src="img/memo-1.png"></p>
+		<table class="table table-bordered">
+			<tr>
+				<td>2</td>
+				<td>GET</td>
+				<td><span class="badge bg-success">200</span></td>
+				<td>https://www.taobao.com</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>GET</td>
+				<td><span class="badge bg-primary">302</span></td>
+				<td>https://example.com/taobao</td>
+			</tr>
+		</table>
       </div>
     </div>
   </div>
