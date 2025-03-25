@@ -32,6 +32,9 @@ exports.url_statis = false;
 //安全验证口令
 exports.command = '';
 
+//域名验证字符
+exports.authcode = '';
+
 //是否开启替换（会进行多次替换）
 exports.url_replace = {
 	'elpmaxe.com' : 'example.com',

@@ -503,6 +503,11 @@ var statIs = function(url, request, response){
 	});
 };
 
+var getTxt = function( segment, request, response ){
+	response.set('Content-Type', 'text/plain');
+	response.send( conf.authcode );
+}
+
 ////////////////////////
 
 var setTpl = function( dir ){
@@ -632,6 +637,7 @@ function setUrl( request, response, data ){
 		fs.readFile( file, 'utf8', function( err, body ) {
 
 			body = body.replace( /exports.domain = '(.+?)'/, "exports.domain = '"+ data.domain.trim() +"'" );
+			body = body.replace( /exports.authcode = '(.+?)'/, "exports.authcode = '"+ data.authcode.trim() +"'" );
 			body = body.replace( /exports.url_replace = \{(.+?)\};/s, 'exports.url_replace = ' + data.replace.trim() + ';' );
 			
 			fs.writeFile( file, body, err => {
@@ -647,7 +653,7 @@ function setUrl( request, response, data ){
 		
 	}else{
 		//getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'replace' : JSON.stringify( conf.url_replace, null, '\t' ) } );
-		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'replace' : JSON.stringify( conf.url_replace ) } );
+		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'authcode' : conf.authcode, 'replace' : JSON.stringify( conf.url_replace ) } );
 	}
 
 }
@@ -693,5 +699,6 @@ exports.statIs = statIs;
 exports.report = report;
 exports.setTpl = setTpl;
 exports.getTpl = getTpl;
+exports.getTxt = getTxt;
 exports.genTag = genTag;
 exports.setUrl = setUrl;

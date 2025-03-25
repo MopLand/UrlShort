@@ -107,6 +107,11 @@ var route = function(app){
 		
 	});
 	
+	app.get('/:filename.txt', function(request, response){
+		var segment = request.params.filename.trim();
+		logic.getTxt(segment, request, response);
+	});
+	
 	app.get('/:segment', function(request, response){
 		var segment = request.params.segment.trim();
 		logic.getUrl(segment, request, response);

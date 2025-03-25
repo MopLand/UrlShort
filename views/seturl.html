@@ -42,9 +42,14 @@
 			</div>
 
 			<div class="mb-3">
+				<label class="form-label">AuthCode</label>
+				<input type="text" class="form-control" placeholder="域名验证字符" name="authcode" :value="authcode">
+			</div>
+
+			<div class="mb-3">
 				<label class="form-label">Command</label>
 				<input type="hidden" class="form-control" name="replace" v-bind:value="getData()" />
-				<input type="text" class="form-control" placeholder="安全验证口令" name="command">
+				<input type="password" class="form-control" placeholder="安全验证口令" name="command">
 			</div>
 
             <div class="form-group d-grid">
@@ -61,6 +66,7 @@
 			el: '#app',
 			data: {
 				domain: '{domain}',
+				authcode: '{authcode}',
                 replace:{replace},
                 newdata:[],
 			},
