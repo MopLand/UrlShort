@@ -29,6 +29,9 @@ exports.url_verify = false;
 //是否开启统计
 exports.url_statis = false;
 
+//重定向方式：redirect, refresh
+exports.url_direct = 'redirect';
+
 //安全验证口令
 exports.command = '';
 

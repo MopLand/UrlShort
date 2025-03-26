@@ -171,7 +171,12 @@ var getUrl = function(segment, request, response){
 
 			////////////////////////
 
-			response.redirect( url );
+			//跳转方式：refresh HTML跳转, redirect 重定向
+			if( conf.url_direct == 'refresh' ){
+				getTpl( response, 'refresh.html', { 'url' : url } );
+			}else{
+				response.redirect( url );
+			}
 			
 		};
 		
