@@ -75,7 +75,7 @@ $('form[name=create]').on('submit', function(){
 				$('#create_result b').html( data.url ).show().fadeIn('slow');
 				$('#create_result label').html( '生成短网址' );
 				$('#create_qrcode').show().fadeIn('slow');
-				$('#create_qrcode img').attr('src','https://api.qrserver.com/v1/create-qr-code/?data='+ data.url);
+				$('#create_qrcode img').attr('src','/qrcode?text='+ data.url);
 				//$('#create_result').hide().fadeIn('slow');
 			}else{
 				$('#create_wrong').show().fadeIn('slow');
