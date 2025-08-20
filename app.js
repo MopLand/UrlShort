@@ -1,9 +1,15 @@
-var express = require('express');
+
+import path from 'path';
+import express from 'express';
+import { fileURLToPath } from 'url';
+import bodyParser from 'body-parser';
+import router from './router.js';
+import conf from './config.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 var app = express();
-var path = require('path');
-var bodyParser = require('body-parser');
-var router = require('./router');
-var conf = require('./config');
 
 ///////////////////
 
@@ -39,4 +45,4 @@ app.listen(conf.listen, function(){
 
 ///////////////////
 
-router.route(app);
+router(app, __dirname);

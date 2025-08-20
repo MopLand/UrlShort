@@ -1,8 +1,12 @@
-var logic = require('./logic');
-var path = require('path');
-var route = function(app){
+
+import path from 'path';
+//import sharp from 'sharp';
+import fetch from 'node-fetch';
+import { execSync } from 'child_process';
+import logic from './logic.js';
+var route = function(app, base){
 	
-	logic.setTpl( path.join(__dirname, 'views/') );
+	logic.setTpl( path.join(base, 'views/') );
 
 	app.get('/', function(req, res){
 		
@@ -12,7 +16,7 @@ var route = function(app){
 		//res.sendFile(path.join(__dirname, 'views/index.html'));
 		//res.send('views/index.html');
 
-		const { execSync } = require('child_process');
+		//const { execSync } = require('child_process');
 		let revid = execSync('git rev-parse --short HEAD').toString().trim();
 		let years = (new Date).getFullYear();
 
@@ -72,7 +76,7 @@ var route = function(app){
 		//var domain = request.body['domain'];
 		//var replace = request.body['replace'];
 		//body { command: 口令 | append, domain: 原域名, replace: 新域名 }
-		logic.setUrl( request, response, request.body );
+		logic.setUrl( request, response, request.body, base );
 	});
 	
 	app.get('/hash', function(request, response){
@@ -132,7 +136,7 @@ var route = function(app){
 	 */
 	app.get('/poster', async function(req, res) {
 
-		const fetch = require('node-fetch');
+		//const fetch = require('node-fetch');		
 
 		try {
 		  const { bg, icon, x = 0, y = 0, scale = 1 } = req.query;
@@ -150,14 +154,14 @@ var route = function(app){
 		  if (!bgResponse.ok) {
 			throw new Error(`Failed to fetch background: ${bgResponse.statusText}`);
 		  }
-		  const backgroundBuffer = await bgResponse.buffer();
+		  const backgroundBuffer = await bgResponse.arrayBuffer();
 		  
 		  // 从 URL 获取图标
 		  const iconResponse = await fetch(icon);
 		  if (!iconResponse.ok) {
 			throw new Error(`Failed to fetch icon: ${iconResponse.statusText}`);
 		  }
-		  const iconBuffer = await iconResponse.buffer();
+		  const iconBuffer = await iconResponse.arrayBuffer();
 		  
 		  // 处理背景图
 		  const background = sharp(backgroundBuffer);
@@ -206,4 +210,5 @@ var route = function(app){
 	});
 }
 
-exports.route = route;
+//exports.route = route;
+export default route;

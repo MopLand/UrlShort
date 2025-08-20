@@ -11,11 +11,12 @@
 * 407: the vanity string has to contain more characters
 * 408: maximum number of URL's per hour exceeded
 */
-var fs = require("fs");
-var md5 = require('md5');
-var req = require('request');
-var mysql = require('mysql');
-var conf = require('./config');
+import fs from 'fs';
+import md5 from 'md5';
+import mysql from 'mysql';
+import req from 'request';
+import conf from './config.js';
+
 var pool = mysql.createPool({
 		host:conf.host,
 		port:conf.port,
@@ -185,7 +186,8 @@ var getUrl = function(segment, request, response){
 		debug( '---------------' );
 
 		//从缓存读取
-		if( result = Cache[hash] ){
+		var result = Cache[hash];
+		if( result ){
 			
 			debug( 'SEGMENT', hash, 'Hit Cache' );
 		
@@ -435,7 +437,7 @@ var whatIs = function(url, request, response){
  * @return void
  */
 var weight = function( probability = 0.1, length = 100 ){
-	test = parseInt(Math.random() * length) + 1;
+	var test = parseInt(Math.random() * length) + 1;
 	return test <= probability * length;
 }
 
@@ -566,7 +568,8 @@ function getHash( hash ){
 	hash = ( hash || '' );
 
 	//是完整地址，提取短地址
-	if( exec = /\/([^/]*)$/.exec( hash ) ){
+	var exec = /\/([^/]*)$/.exec( hash );
+	if( exec ){
 		hash = exec[1];
 	}
 
@@ -593,7 +596,7 @@ function genTag(request, response){
 	var seed = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 	var size = seed.length;
 	var string = '';
-	for (i = 0; i < len; i++) {
+	for ( var i = 0; i < len; i++) {
 		string += seed.charAt(Math.floor(Math.random() * size));
 	}
 
@@ -606,7 +609,7 @@ function genTag(request, response){
 
 ////////////////////////
 
-function setUrl( request, response, data ){
+function setUrl( request, response, data, base ){
 
 	if( data ){
 
@@ -637,13 +640,13 @@ function setUrl( request, response, data ){
 
 		////////////////////////
 	
-		var file = __dirname + '/extend.js';
+		var file = base + '/extend.js';
 
 		fs.readFile( file, 'utf8', function( err, body ) {
 
-			body = body.replace( /exports.domain = '(.+?)'/, "exports.domain = '"+ data.domain.trim() +"'" );
-			body = body.replace( /exports.authcode = '(.+?)'/, "exports.authcode = '"+ data.authcode.trim() +"'" );
-			body = body.replace( /exports.url_replace = \{(.+?)\};/s, 'exports.url_replace = ' + data.replace.trim() + ';' );
+			body = body.replace( /domain : '(.+?)'/, "domain : '"+ data.domain.trim() +"'" );
+			body = body.replace( /authcode : '(.+?)'/, "authcode : '"+ data.authcode.trim() +"'" );
+			body = body.replace( /url_replace : \{(.+?)\},/s, 'url_replace : ' + data.replace.trim() + ',' );
 			
 			fs.writeFile( file, body, err => {
 				//console.log( err );
@@ -669,12 +672,12 @@ function replace( url, query ){
 	var raw = url;
 
 	if( conf.url_replace ){
-		for( old in conf.url_replace ){
+		for( var old in conf.url_replace ){
 			url = url.replace( old, conf.url_replace[old] );
 		}
 	}
 	if( query ){
-		for( key in query ){
+		for( var key in query ){
 			url = url.replace( new RegExp( '((&|\\?)'+ key +'=)([^&]*)(?=&|$)' ), '$1'+ query[key] );
 		}
 	}
@@ -697,6 +700,7 @@ function debug( ...msg ){
 
 ////////////////////////
 
+/*
 exports.getUrl = getUrl;
 exports.addUrl = addUrl;
 exports.whatIs = whatIs;
@@ -707,3 +711,18 @@ exports.getTpl = getTpl;
 exports.getTxt = getTxt;
 exports.genTag = genTag;
 exports.setUrl = setUrl;
+*/
+
+// 集中导出（与原 exports 对应）
+export default {
+	getUrl,
+	addUrl,
+	whatIs,
+	statIs,
+	report,
+	setTpl,
+	getTpl,
+	getTxt,
+	genTag,
+	setUrl
+};
