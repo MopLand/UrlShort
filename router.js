@@ -37,7 +37,16 @@ var route = function(app){
 		var vanity = request.query['vanity'];
 		logic.addUrl(url, request, response, { 'vanity' : vanity });
 	});
-	
+
+	/**
+	 * API 接口
+	 * @param string api 标识
+	 * @param string url 长链接
+	 * @param string name 商品名称
+	 * @param string price 商品价格
+	 * @param string thumb 缩略图
+	 * @param string words 口令
+	 */
 	app.get('/api', function(request, response){
 		var api = request.query['api'] || 1;
 		var url = request.query['url'];
@@ -81,6 +90,12 @@ var route = function(app){
 		logic.statIs(url, request, response);
 	});
 	
+	/**
+	 * 二维码
+	 * @param string text 文本
+	 * @param integer size 尺寸
+	 * @param integer margin 边距
+	 */
 	app.get('/qrcode', function(request, response){
 		
 		if( Object.keys(request.query).length == 0 ){
@@ -106,12 +121,85 @@ var route = function(app){
 		}
 		
 	});
+
+	/**
+	 * 合成海报
+	 * @param string bg 背景
+	 * @param string icon 图标
+	 * @param integer x 水平位置
+	 * @param integer y 垂直位置
+	 * @param integer scale 缩放
+	 */
+	app.get('/poster', async function(req, res) {
+
+		const fetch = require('node-fetch');
+
+		try {
+		  const { bg, icon, x = 0, y = 0, scale = 1 } = req.query;
+		  
+		  if (!bg || !icon) {
+			return res.status(400).send('Missing required parameters: bg or icon');
+		  }
+		  
+		  const positionX = parseInt(x, 10);
+		  const positionY = parseInt(y, 10);
+		  const scaleFactor = parseFloat(scale);
+		  
+		  // 从 URL 获取背景图
+		  const bgResponse = await fetch(bg);
+		  if (!bgResponse.ok) {
+			throw new Error(`Failed to fetch background: ${bgResponse.statusText}`);
+		  }
+		  const backgroundBuffer = await bgResponse.buffer();
+		  
+		  // 从 URL 获取图标
+		  const iconResponse = await fetch(icon);
+		  if (!iconResponse.ok) {
+			throw new Error(`Failed to fetch icon: ${iconResponse.statusText}`);
+		  }
+		  const iconBuffer = await iconResponse.buffer();
+		  
+		  // 处理背景图
+		  const background = sharp(backgroundBuffer);
+		  const bgMetadata = await background.metadata();
+		  
+		  // 处理图标并缩放
+		  const iconImage = sharp(iconBuffer)
+			.resize({
+			  width: Math.round((bgMetadata.width || 800) * scaleFactor),
+			  height: Math.round((bgMetadata.height || 600) * scaleFactor),
+			  fit: 'contain'
+			});
+		  
+		  // 合成图像
+		  const compositeImage = await background
+			.composite([{
+			  input: await iconImage.toBuffer(),
+			  left: positionX,
+			  top: positionY
+			}])
+			.toBuffer();
+		  
+		  res.set('Content-Type', 'image/png');
+		  res.send(compositeImage);
+		  
+		} catch (error) {
+		  console.error('Error generating poster:', error.message);
+		  res.status(500).send(`Error generating poster: ${error.message}`);
+		}
+	});
 	
+	/**
+	 * 验证文本
+	 */
 	app.get('/:filename.txt', function(request, response){
 		var segment = request.params.filename.trim();
 		logic.getTxt(segment, request, response);
 	});
 	
+	/**
+	 * 短链入口
+	 */
 	app.get('/:segment', function(request, response){
 		var segment = request.params.segment.trim();
 		logic.getUrl(segment, request, response);
