@@ -7,8 +7,12 @@ import { execSync } from 'child_process';
 import logic from './logic.js';
 var route = function(app, base){
 	
+	//视图目录
 	logic.setTpl( path.join(base, 'views/') );
 
+	/**
+	 * 首页入口
+	 */
 	app.get('/', function(req, res){
 		
 		//res.sendFile(path.join(__dirname, 'views/index.html'));
@@ -25,18 +29,11 @@ var route = function(app, base){
 
 	});
 	
-	app.get('/home', function(req, res){
-		logic.getTpl( res, 'home.html' );
-	});
-	
-	app.get('/multi', function(req, res){
-		logic.getTpl( res, 'multi.html' );
-	});
-	
-	app.get('/words', function(req, res){
-		logic.getTpl( res, 'words.html' );
-	});
-	
+	/**
+	 * 写入接口
+	 * @param string url 长链接
+	 * @param string vanity 短名称（可选）
+	 */
 	app.get('/add', function(request, response){
 		var url = request.query['url'];
 		var vanity = request.query['vanity'];
@@ -68,10 +65,16 @@ var route = function(app, base){
 		logic.addUrl(url, request, response, { 'vanity' : false, 'api' : api, 'name' : name, 'price' : price, 'thumb' : thumb, 'words' : words });
 	});
 	
+	/**
+	 * 设置
+	 */
 	app.get('/set', function(request, response){
 		logic.setUrl( request, response );
 	});
 
+	/**
+	 * 保存设置
+	 */
 	app.post('/set', function(request, response){
 		//console.log( request.body );
 		//var domain = request.body['domain'];
@@ -80,16 +83,27 @@ var route = function(app, base){
 		logic.setUrl( request, response, request.body, base );
 	});
 	
+	/**
+	 * 哈希测试
+	 */
 	app.get('/hash', function(request, response){
 		response.setHeader('Access-Control-Allow-Origin','*');
 		logic.genTag(request, response);
 	});
 	
+	/**
+	 * 查询接口
+	 * @param string url 短链接
+	 */
 	app.get('/whatis', function(request, response){
 		var url = request.query['url'];
 		logic.whatIs(url, request, response);
 	});
 	
+	/**
+	 * 统计接口
+	 * @param string url 短链接
+	 */
 	app.get('/statis', function(request, response){
 		var url = request.query['url'];
 		logic.statIs(url, request, response);
@@ -103,25 +117,17 @@ var route = function(app, base){
 	 */
 	app.get('/qrcode', function(request, response){
 		
-		if( Object.keys(request.query).length == 0 ){
-		
-			logic.getTpl( response, 'qrcode.html' );
-				
-		}else{	
-		
-			var text = request.query['text'];
-			var size = request.query['size'] || 10;
-			var margin = request.query['margin'] || 1;
-			try {
-				var img = qrcode.image(text, {size : parseInt(size), margin : parseInt(margin)} );
-				//response.writeHead(200, {'Content-Type': 'image/png', 'Access-Control-Allow-Origin':'*'});
-				response.writeHead(200, {'Content-Type': 'image/png'});
-				img.pipe(response);
-			} catch (e) {
-				response.writeHead(414, {'Content-Type': 'text/html'});
-				response.end('<h1>414 Request-URI Too Large</h1>');
-			}
-			
+		var text = request.query['text'];
+		var size = request.query['size'] || 10;
+		var margin = request.query['margin'] || 1;
+		try {
+			var img = qrcode.image(text, {size : parseInt(size), margin : parseInt(margin)} );
+			//response.writeHead(200, {'Content-Type': 'image/png', 'Access-Control-Allow-Origin':'*'});
+			response.writeHead(200, {'Content-Type': 'image/png'});
+			img.pipe(response);
+		} catch (e) {
+			response.writeHead(414, {'Content-Type': 'text/html'});
+			response.end('<h1>414 Request-URI Too Large</h1>');
 		}
 		
 	});
