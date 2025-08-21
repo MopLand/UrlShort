@@ -156,7 +156,6 @@ var getUrl = function(segment, request, response){
 			var mobile = /(Mobile|Android|iPhone|iPad)/i.test(request.headers['user-agent']);	//是否为手机访问
 			var wechat = /MicroMessenger\/([\d\.]+)/i.test(request.headers['user-agent']);		//是否在微信中
 			var iphone = /(iPhone|iPad|iPod|iOS)/i.test(request.headers['user-agent']);
-			var taobao = /(taobao|tmall|alimama|95095)\.com/.test( url );
 
 			////////////////////////
 
@@ -660,7 +659,6 @@ function setUrl( request, response, data, base ){
 		});	
 		
 	}else{
-		//getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'replace' : JSON.stringify( conf.url_replace, null, '\t' ) } );
 		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'authcode' : conf.authcode, 'replace' : JSON.stringify( conf.url_replace ) } );
 	}
 

@@ -8,7 +8,7 @@ import logic from './logic.js';
 var route = function(app, base){
 	
 	//视图目录
-	logic.setTpl( path.join(base, 'views/') );
+	logic.setTpl( path.join(base, 'tpl/') );
 
 	/**
 	 * 首页入口
