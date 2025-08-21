@@ -2,6 +2,7 @@
 import path from 'path';
 //import sharp from 'sharp';
 import fetch from 'node-fetch';
+import qrcode from 'qr-image';
 import { execSync } from 'child_process';
 import logic from './logic.js';
 var route = function(app, base){
@@ -112,8 +113,7 @@ var route = function(app, base){
 			var size = request.query['size'] || 10;
 			var margin = request.query['margin'] || 1;
 			try {
-				var qr = require('qr-image');
-				var img = qr.image(text, {size : parseInt(size), margin : parseInt(margin)} );
+				var img = qrcode.image(text, {size : parseInt(size), margin : parseInt(margin)} );
 				//response.writeHead(200, {'Content-Type': 'image/png', 'Access-Control-Allow-Origin':'*'});
 				response.writeHead(200, {'Content-Type': 'image/png'});
 				img.pipe(response);
