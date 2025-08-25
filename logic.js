@@ -409,7 +409,7 @@ var addUrl = function(url, request, response, option){
 ////////////////////////
 
 //This method looks up stats of a specific short URL and sends it to the client
-var whatIs = function(url, request, response){
+var whatIs = function(url, request, response, query){
 
 	pool.getConnection( function(err, con){
 		if (err) throw err;
@@ -419,7 +419,7 @@ var whatIs = function(url, request, response){
 			if(err || rows.length == 0){
 				response.send({result: false, url: null});
 			}else{
-				response.send({result: true, url: replace( rows[0].url ), hash: hash, clicks: rows[0].clicks});
+				response.send({result: true, url: replace( rows[0].url, query ), hash: hash, clicks: rows[0].clicks});
 			}
 
 		});

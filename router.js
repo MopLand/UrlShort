@@ -94,10 +94,13 @@ var route = function(app, base){
 	/**
 	 * 查询接口
 	 * @param string url 短链接
+	 * @param string query 重写参数，query[x]=a&query[y]=b
 	 */
 	app.get('/whatis', function(request, response){
 		var url = request.query['url'];
-		logic.whatIs(url, request, response);
+		var query = request.query['query'];
+		//console.log( query );
+		logic.whatIs(url, request, response, query);
 	});
 	
 	/**
