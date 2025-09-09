@@ -121,13 +121,13 @@ function handleHash(hash, url, request, response, con, option){
 }
 
 //This function returns the object that will be sent to the client
-function urlResult(hash, result, statusCode){
-	var domain = conf.domain[ Math.floor(Math.random()*conf.domain.length) ];
+function urlResult(hash, result, status){
+	var domain = conf.domain[ Math.floor(Math.random() * conf.domain.length) ];
 	var prefix = 'http://'+ domain +'/';
 	return {
 		url: hash != null ? prefix + hash : null,
 		result: result,
-		statusCode: statusCode
+		status: status
 	};
 }
 
@@ -302,7 +302,7 @@ var addUrl = function(url, request, response, option){
 
 			//验证 Token 有效性，否则返回 401
 			if( !request.headers['token'] || hash != request.headers['token'] ){
-				response.send(urlResult(null, 'TOKEN', 401));
+				response.send(urlResult(null, 'TOKEN is invalid', 401));
 				return;
 			}
 		
@@ -313,7 +313,7 @@ var addUrl = function(url, request, response, option){
 
 			//验证 Referer 有效性，否则返回 401
 			if( !request.headers['referer'] || !request.headers['x-requested-with'] ){
-				response.send(urlResult(null, 'REFERER', 401));
+				response.send(urlResult(null, 'REFERER is invalid', 401));
 				return;
 			}
 
