@@ -341,14 +341,19 @@ var addUrl = function(url, request, response, option){
 					if(err){
 						console.log(err);
 					}
+
+					if (!/^(ftp|http|https):\/\/(.{5,})/i.test(url)) {
+						response.send(urlResult(null, 'URL is invalid', 401));
+						return;
+					}
 					
 					if( /(ftp|http|https):\/\/localhost/i.test( url ) ){
-						response.send(urlResult(null, false, 401));
+						response.send(urlResult(null, 'URL is invalid', 401));
 						return;
 					}
 
 					if( url.length > 1000 ){
-						response.send(urlResult(null, false, 406));
+						response.send(urlResult(null, 'URL is too long', 406));
 						return;
 					}
 
@@ -364,7 +369,7 @@ var addUrl = function(url, request, response, option){
 							if(res != undefined && res.statusCode == 200){
 								generateHash(handleHash, hashError, 50, url, request, response, con, option);
 							}else{
-								response.send(urlResult(null, false, 401));
+								response.send(urlResult(null, 'URL is invalid', 401));
 							}
 						});
 					}else{
