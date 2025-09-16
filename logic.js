@@ -227,6 +227,12 @@ var getUrl = function(segment, request, response){
 //读取模板并缓存
 var tplSet = {};
 
+/**
+ * 读取模板并缓存
+ * @param {Object} response - Response对象
+ * @param {String} file - 模板文件路径
+ * @param {Object} variable - 替模块变量
+ */
 var getTpl = function( response, file, variable ){
 
 	var callback = function( body, variable ){
@@ -514,6 +520,13 @@ var statIs = function(url, request, response){
 	});
 };
 
+/**
+ * Returns the authentication code for the given segment.
+ *
+ * @param {string} segment - The segment of the URL.
+ * @param {Object} request - The request object.
+ * @param {Object} response - The response object.
+ */
 var getTxt = function( segment, request, response ){
 	response.set('Content-Type', 'text/plain');
 	response.send( conf.authcode );
@@ -521,6 +534,10 @@ var getTxt = function( segment, request, response ){
 
 ////////////////////////
 
+/**
+ * Set the template directory for the application.
+ * @param {string} dir - The path to the template directory.
+ */
 var setTpl = function( dir ){
 	Tpl = dir;
 }
@@ -536,7 +553,16 @@ function getIP(request){
 	return address.replace(/^.*:/, '').split(',')[0];
 }
 
-/* 获取IP归属地信息 */
+/**
+ * Get IP information from Taobao API.
+ * @param {string} ip - IP address.
+ * @param {function} fn - Callback function.
+ * @param {object} empty - Returned object when IP is invalid or Taobao API returns error.
+ * Example:
+ * getIPInfo( '171.41.72.243', function( res ){
+ *   console.log( res );
+ * } );
+ */
 function getIPInfo( ip, fn ){
 	//var ip = '171.41.72.243';
 
@@ -593,7 +619,12 @@ function getPort( hash ){
 	}
 }
 
-/* 生成随机字符 */
+/**
+ * 生成一个随机的6位字符串
+ * @param {Object} request - Express req 对象
+ * @param {Object} response - Express res 对象
+ * @returns {String} - 6位字符串
+ */
 function genTag(request, response){
 
 	var len = 6;
@@ -613,6 +644,14 @@ function genTag(request, response){
 
 ////////////////////////
 
+/**
+ * Set domain and authcode in the extend.js file.
+ *
+ * @param {Object} request
+ * @param {Object} response
+ * @param {Object} data
+ * @param {String} base
+ */
 function setUrl( request, response, data, base ){
 
 	if( data ){
@@ -664,12 +703,17 @@ function setUrl( request, response, data, base ){
 		});	
 		
 	}else{
-		getTpl( response, 'seturl.html', { 'domain' : conf.domain.join(' '), 'authcode' : conf.authcode, 'replace' : JSON.stringify( conf.url_replace ) } );
+		getTpl( response, 'setting.html', { 'domain' : conf.domain.join(' '), 'authcode' : conf.authcode, 'replace' : JSON.stringify( conf.url_replace ) } );
 	}
 
 }
 
-/* 原始网址替换 */
+/**
+ * Replace the domain and parameters of the URL according to the configuration.
+ * @param {string} url - The original URL.
+ * @param {Object} query - The parameters to be replaced in the URL.
+ * @returns {string} - The replaced URL.
+ */
 function replace( url, query ){
 
 	var raw = url;

@@ -34,8 +34,8 @@
 						<span class="input-group-text text-muted">&rightarrow;</span>
 						<input type="text" class="form-control" v-model="v.new" placeholder="新链接" required />
 						<span class="input-group-text p-1">
-							<button type="button" class="btn btn-success btn-sm" v-if="!k" @click="addData( k, v )" title="添加">&plus;</button>
-							<button type="button" class="btn btn-warning btn-sm" v-if="k" @click="delData( k, v )" title="移除">&minus;</button>
+							<button type="button" class="btn btn-warning btn-sm" v-if="k != newdata.length - 1" @click="delData( k, v )" title="移除">&minus;</button>
+							<button type="button" class="btn btn-success btn-sm" v-if="k == newdata.length - 1" @click="addData( k, v )" title="添加">&plus;</button>
 						</span>
 					</div>
 				</template>
@@ -114,6 +114,11 @@
                         data.push( { 'old': key, 'new' : this.replace[key] } );
                     }
 				}
+
+				if( data.length == 0 ){
+					data.push( { 'old': '', 'new' : '' } );
+				}
+				
 				this.newdata = data;
             },
 
